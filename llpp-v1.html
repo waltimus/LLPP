@@ -377,29 +377,60 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
       <svg id="body-svg" viewBox="0 0 832 1248" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:340px;display:block;background:#000;">
         <defs>
           <radialGradient id="grad-r" cx="50%" cy="50%" r="65%">
-            <stop offset="0%" stop-color="#ff2020" stop-opacity="0.85"/>
-            <stop offset="40%" stop-color="#ff3030" stop-opacity="0.55"/>
-            <stop offset="80%" stop-color="#ff2020" stop-opacity="0.18"/>
+            <stop offset="0%" stop-color="#ff2020" stop-opacity="0.98"/>
+            <stop offset="45%" stop-color="#ff3030" stop-opacity="0.90"/>
+            <stop offset="80%" stop-color="#ff2020" stop-opacity="0.45"/>
             <stop offset="100%" stop-color="#ff2020" stop-opacity="0"/>
           </radialGradient>
           <radialGradient id="grad-o" cx="50%" cy="50%" r="65%">
-            <stop offset="0%" stop-color="#ff8800" stop-opacity="0.78"/>
-            <stop offset="40%" stop-color="#ff9020" stop-opacity="0.5"/>
-            <stop offset="80%" stop-color="#ff8800" stop-opacity="0.15"/>
+            <stop offset="0%" stop-color="#ff8800" stop-opacity="0.92"/>
+            <stop offset="45%" stop-color="#ff9020" stop-opacity="0.75"/>
+            <stop offset="80%" stop-color="#ff8800" stop-opacity="0.32"/>
             <stop offset="100%" stop-color="#ff8800" stop-opacity="0"/>
           </radialGradient>
           <radialGradient id="grad-y" cx="50%" cy="50%" r="65%">
-            <stop offset="0%" stop-color="#ffe000" stop-opacity="0.72"/>
-            <stop offset="40%" stop-color="#ffd800" stop-opacity="0.46"/>
-            <stop offset="80%" stop-color="#ffd800" stop-opacity="0.13"/>
+            <stop offset="0%" stop-color="#ffe000" stop-opacity="0.85"/>
+            <stop offset="45%" stop-color="#ffd800" stop-opacity="0.60"/>
+            <stop offset="80%" stop-color="#ffd800" stop-opacity="0.24"/>
             <stop offset="100%" stop-color="#ffd800" stop-opacity="0"/>
           </radialGradient>
           <radialGradient id="grad-g" cx="50%" cy="50%" r="65%">
-            <stop offset="0%" stop-color="#c5ff00" stop-opacity="0.7"/>
-            <stop offset="40%" stop-color="#a8ff20" stop-opacity="0.42"/>
-            <stop offset="80%" stop-color="#c5ff00" stop-opacity="0.12"/>
+            <stop offset="0%" stop-color="#c5ff00" stop-opacity="0.72"/>
+            <stop offset="45%" stop-color="#a8ff20" stop-opacity="0.45"/>
+            <stop offset="80%" stop-color="#c5ff00" stop-opacity="0.18"/>
             <stop offset="100%" stop-color="#c5ff00" stop-opacity="0"/>
           </radialGradient>
+
+          <!-- GLOW FILTERS -->
+          <filter id="glow-marg" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="4" result="b"/>
+            <feColorMatrix in="b" type="matrix" values="0 0 0 0 1  0 0 0 0 0.72  0 0 0 0 0.10  0 0 0 0.55 0"/>
+            <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="glow-mod" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="6" result="b"/>
+            <feColorMatrix in="b" type="matrix" values="0 0 0 0 1  0 0 0 0 0.66  0 0 0 0 0.05  0 0 0 0.85 0"/>
+            <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="glow-sev" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur stdDeviation="8" result="b"/>
+            <feColorMatrix in="b" type="matrix" values="0 0 0 0 1  0 0 0 0 0.48  0 0 0 0 0  0 0 0 1.05 0"/>
+            <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="glow-inc" x="-120%" y="-120%" width="340%" height="340%">
+            <feGaussianBlur stdDeviation="7" result="b">
+              <animate attributeName="stdDeviation" values="6;13;6" dur="1.4s" repeatCount="indefinite"/>
+            </feGaussianBlur>
+            <feColorMatrix in="b" type="matrix" values="0 0 0 0 0.77  0 0 0 0 1  0 0 0 0 0  0 0 0 1.3 0">
+              <animate attributeName="values" values="0 0 0 0 0.77  0 0 0 0 1  0 0 0 0 0  0 0 0 1.0 0;0 0 0 0 0.77  0 0 0 0 1  0 0 0 0 0  0 0 0 1.6 0;0 0 0 0 0.77  0 0 0 0 1  0 0 0 0 0  0 0 0 1.0 0" dur="1.4s" repeatCount="indefinite"/>
+            </feColorMatrix>
+            <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="glow-leth" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="6" result="b"/>
+            <feColorMatrix in="b" type="matrix" values="0 0 0 0 1  0 0 0 0 0.12  0 0 0 0 0.12  0 0 0 1.1 0"/>
+            <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
         </defs>
 
         <!-- Holographic body scan base layer -->
@@ -421,12 +452,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
         <path id="z-solar" d="M 364 458 C 356 466 354 482 360 498 C 368 510 392 516 416 516 C 440 516 464 510 472 498 C 478 482 476 466 468 458 C 458 450 438 448 416 448 C 394 448 374 450 364 458 Z" fill="rgba(0,0,0,0)"/>
         <text id="tl-solar" x="416" y="488" text-anchor="middle" font-family="Share Tech Mono" font-size="18" fill="rgba(0,0,0,0)" letter-spacing="2">SOLAR</text>
 
-        <!-- L SERRATUS (viewer left = subject right, lateral ribcage) -->
-        <path id="z-lserr" d="M 286 402 C 274 422 272 454 282 484 C 294 496 308 494 316 484 C 320 456 318 424 310 402 C 302 393 290 394 286 402 Z" fill="rgba(0,0,0,0)"/>
-        <text id="tl-lserr" x="296" y="448" text-anchor="middle" font-family="Share Tech Mono" font-size="11" fill="rgba(0,0,0,0)" letter-spacing="1">SERR</text>
-        <!-- R SERRATUS -->
-        <path id="z-rserr" d="M 546 402 C 558 422 560 454 550 484 C 538 496 524 494 516 484 C 512 456 514 424 522 402 C 530 393 542 394 546 402 Z" fill="rgba(0,0,0,0)"/>
-        <text x="536" y="448" text-anchor="middle" font-family="Share Tech Mono" font-size="11" fill="rgba(0,0,0,0)" letter-spacing="1">SERR</text>
+        <!-- SERRATUS — description retained in legend only; no figure overlay -->
 
         <!-- ABDOMEN / Rectus Abdominis -->
         <path id="z-abdom" d="M 354 522 C 348 532 346 548 348 568 C 350 592 354 614 360 632 C 368 644 386 648 416 648 C 446 648 464 644 472 632 C 478 614 482 592 484 568 C 486 548 484 532 478 522 C 468 514 442 512 416 512 C 390 512 364 514 354 522 Z" fill="rgba(0,0,0,0)"/>
@@ -435,29 +461,29 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
         <!-- GROIN / Pubic shield -->
         <path id="z-groin" d="M 376 678 C 366 690 364 706 370 724 C 378 742 396 752 416 752 C 436 752 454 742 462 724 C 468 706 466 690 456 678 C 444 668 430 666 416 666 C 402 666 388 668 376 678 Z" fill="rgba(0,0,0,0)"/>
 
-        <!-- L DELTOID (viewer left = subject right) -->
-        <path id="z-lsh" d="M 244 296 C 240 270 270 262 304 282 C 326 298 336 328 332 360 C 326 388 308 408 282 412 C 254 410 232 388 230 356 C 230 326 234 304 244 296 Z" fill="rgba(0,0,0,0)"/>
-        <text id="tl-lsh" x="282" y="346" text-anchor="middle" font-family="Share Tech Mono" font-size="14" fill="rgba(0,0,0,0)" letter-spacing="1">DELT</text>
-        <!-- R DELTOID -->
-        <path id="z-rsh" d="M 588 296 C 592 270 562 262 528 282 C 506 298 496 328 500 360 C 506 388 524 408 550 412 C 578 410 600 388 602 356 C 602 326 598 304 588 296 Z" fill="rgba(0,0,0,0)"/>
-        <text x="550" y="346" text-anchor="middle" font-family="Share Tech Mono" font-size="14" fill="rgba(0,0,0,0)" letter-spacing="1">DELT</text>
+        <!-- L SHOULDER CAP (viewer left = subject right) — tight cap over the joint only -->
+        <ellipse id="z-lsh" cx="276" cy="300" rx="28" ry="22" fill="rgba(0,0,0,0)"/>
+        <text id="tl-lsh" x="276" y="305" text-anchor="middle" font-family="Share Tech Mono" font-size="10" fill="rgba(0,0,0,0)" letter-spacing="1">SH</text>
+        <!-- R SHOULDER CAP -->
+        <ellipse id="z-rsh" cx="556" cy="300" rx="28" ry="22" fill="rgba(0,0,0,0)"/>
+        <text x="556" y="305" text-anchor="middle" font-family="Share Tech Mono" font-size="10" fill="rgba(0,0,0,0)" letter-spacing="1">SH</text>
 
-        <!-- L THIGH / Full quadriceps (vastus lateralis + rectus femoris + vastus medialis) -->
-        <path id="z-lth" d="M 412 740 C 388 736 354 740 332 754 C 312 770 302 800 300 838 C 300 878 308 918 322 952 C 336 980 360 992 386 990 C 404 988 414 978 415 958 C 416 918 416 878 414 838 C 412 802 412 770 412 740 Z" fill="rgba(0,0,0,0)"/>
-        <text id="tl-lth" x="358" y="880" text-anchor="middle" font-family="Share Tech Mono" font-size="16" fill="rgba(0,0,0,0)" letter-spacing="2">THIGH</text>
+        <!-- L THIGH / Full quadriceps — shifted outward for anatomical alignment -->
+        <path id="z-lth" d="M 382 740 C 358 736 324 740 302 754 C 282 770 272 800 270 838 C 270 878 278 918 292 952 C 306 980 330 992 356 990 C 374 988 384 978 385 958 C 386 918 386 878 384 838 C 382 802 382 770 382 740 Z" fill="rgba(0,0,0,0)"/>
+        <text id="tl-lth" x="328" y="880" text-anchor="middle" font-family="Share Tech Mono" font-size="16" fill="rgba(0,0,0,0)" letter-spacing="2">THIGH</text>
         <!-- R THIGH -->
-        <path id="z-rth" d="M 420 740 C 444 736 478 740 500 754 C 520 770 530 800 532 838 C 532 878 524 918 510 952 C 496 980 472 992 446 990 C 428 988 418 978 417 958 C 416 918 416 878 418 838 C 420 802 420 770 420 740 Z" fill="rgba(0,0,0,0)"/>
-        <text x="474" y="880" text-anchor="middle" font-family="Share Tech Mono" font-size="16" fill="rgba(0,0,0,0)" letter-spacing="2">THIGH</text>
+        <path id="z-rth" d="M 450 740 C 474 736 508 740 530 754 C 550 770 560 800 562 838 C 562 878 554 918 540 952 C 526 980 502 992 476 990 C 458 988 448 978 447 958 C 446 918 446 878 448 838 C 450 802 450 770 450 740 Z" fill="rgba(0,0,0,0)"/>
+        <text x="504" y="880" text-anchor="middle" font-family="Share Tech Mono" font-size="16" fill="rgba(0,0,0,0)" letter-spacing="2">THIGH</text>
 
         <!-- L KNEE / Patella -->
-        <rect id="z-lkn" x="338" y="990" width="76" height="62" rx="14" fill="rgba(0,0,0,0)"/>
+        <rect id="z-lkn" x="308" y="990" width="76" height="62" rx="14" fill="rgba(0,0,0,0)"/>
         <!-- R KNEE / Patella -->
-        <rect id="z-rkn" x="418" y="990" width="76" height="62" rx="14" fill="rgba(0,0,0,0)"/>
+        <rect id="z-rkn" x="448" y="990" width="76" height="62" rx="14" fill="rgba(0,0,0,0)"/>
 
         <!-- L SHIN / Tibia (anterior) -->
-        <ellipse id="z-lshin" cx="378" cy="1145" rx="38" ry="88" fill="rgba(0,0,0,0)"/>
+        <ellipse id="z-lshin" cx="348" cy="1145" rx="38" ry="88" fill="rgba(0,0,0,0)"/>
         <!-- R SHIN / Tibia (anterior) -->
-        <ellipse id="z-rshin" cx="454" cy="1145" rx="38" ry="88" fill="rgba(0,0,0,0)"/>
+        <ellipse id="z-rshin" cx="484" cy="1145" rx="38" ry="88" fill="rgba(0,0,0,0)"/>
 
         <!-- Scan line animation -->
         <rect width="832" height="6" fill="rgba(0,200,255,0.18)" opacity="0.9">
@@ -657,20 +683,20 @@ const LAUNCHERS={
 
 const ZONES=[
   {id:'z-chest',tl:'tl-chest',label:'Chest / Sternum',type:'primary',mJ:25,yJ:38,oJ:55,rJ:72,
-   eff:(j,z)=>j>=z.rJ?'CHEST WALL DEVASTATION. Major rib fractures. Cardiac concussion risk. Complete incapacitation.'
-        :j>=z.oJ?'RIB FRACTURE probable. Diaphragm spasm. High incapacitation.'
-        :j>=z.yJ?'Deep bruising. Rib involvement probable. Significant pain compliance.'
-        :j>=z.mJ?'Surface bruising. Hematoma. Mild pain compliance.'
+   eff:(j,z)=>j>=z.rJ?'Rib fracture probable. Internal bleeding risk at fracture site. Immediate diaphragm spasm. Skin breakdown, deep hemorrhagic bruising. Complete incapacitation. Highly body-composition dependent — lean targets reach this threshold at significantly lower joule levels.'
+        :j>=z.oJ?'Rib bruising confirmed, fracture possible on direct sternum hit. Subcutaneous hemorrhage, egg-sized hematoma formation. Diaphragm involvement. Significant pain for days. Empirically confirmed at ~30J on lean subjects.'
+        :j>=z.yJ?'Deep tissue bruising. Rib compression. Possible skin breakdown on lean targets. Soreness for days.'
+        :j>=z.mJ?'Surface impact. Skin reddening, minor bruising. Psychological effect on most subjects.'
         :'Surface trauma only.',
    desc:'High value center mass target. Energy transfers directly to rib structure and underlying organs with minimal muscle absorption on average builds. Rib bruising probable above 38J, fracture possible above 55J. Diaphragm involvement likely on clean sternum hit above 42J. Effectiveness highly body-composition dependent — lean targets incapacitate at significantly lower thresholds, heavily muscled targets may require 80J+.'},
   {id:'z-solar',tl:'tl-solar',label:'Solar Plexus',type:'primary',mJ:22,yJ:32,oJ:42,rJ:55,
-   eff:(j,z)=>j>=z.rJ?'SEVERE diaphragm trauma. Vagal response possible. Prolonged incapacitation.'
-        :j>=z.oJ?'DIAPHRAGM SPASM. Involuntary breath expulsion. Wind knockout.'
-        :j>=z.yJ?'Significant wind disruption. High pain compliance.'
-        :j>=z.mJ?'Wind disruption. Pain compliance likely.'
+   eff:(j,z)=>j>=z.rJ?'Complete diaphragm shutdown. Subcutaneous hemorrhage, significant bruising. Subject cannot stand or continue aggression. Recovery minutes to hours.'
+        :j>=z.oJ?'Forced exhalation, inability to breathe for 3-8 seconds. Deep hematoma. Confirmed: ~30J impact dropped a lean trained fighter at 35-40ft.'
+        :j>=z.yJ?'Diaphragm spasm. Involuntary breath expulsion. Surface bruising, minor hematoma.'
+        :j>=z.mJ?'Minor diaphragm disruption. Wind knockback possible.'
         :'Minor effect.',
    desc:'Primary fight-stopping zone. Diaphragm disruption causes involuntary breath expulsion and temporary inability to continue aggression. Empirically confirmed: 30-32J on a lean subject at 20 feet produced immediate knockdown, significant swelling, and days of soreness. Effectiveness reduced on high body fat targets due to adipose cushioning over the epigastric region. Most reliable incapacitation zone in the system after groin.'},
-  {id:'z-lserr',tl:'tl-lserr',label:'Serratus (bilateral)',type:'secondary',mJ:22,yJ:32,oJ:45,rJ:60,
+  {id:'z-lserr',tl:null,label:'Serratus (bilateral)',type:'secondary',mJ:22,yJ:32,oJ:45,rJ:60,
    eff:(j,z)=>j>=z.rJ?'SEVERE lateral rib trauma. Intercostal nerve damage. Lung contusion risk. Major incapacitation.'
         :j>=z.oJ?'Lateral rib fracture probable. Breathing severely disrupted.'
         :j>=z.yJ?'Significant lateral pain. Breathing disrupted. High pain compliance.'
@@ -678,38 +704,38 @@ const ZONES=[
         :'Surface bruising.',
    desc:'Lateral ribcage muscle (the so-called boxers muscle). Less protected than central chest because the lateral ribs lack sternal coverage and the muscle layer is thin. A clean serratus hit can fracture lateral ribs at lower energy than the central chest due to impact angle and the absence of bony reinforcement on the side. Pain response is severe because of intercostal nerve density, and breathing mechanics are directly disrupted via rib involvement rather than diaphragm spasm. Distinct injury profile from solar plexus: solar plexus knocks the wind out via central diaphragm disruption, serratus impairs breathing via lateral rib and intercostal injury. Often partially obscured by the upper arm in a relaxed standing posture, so accuracy and angle matter.'},
   {id:'z-abdom',tl:'tl-abdom',label:'Abdomen',type:'secondary',mJ:35,yJ:50,oJ:65,rJ:85,
-   eff:(j,z)=>j>=z.rJ?'Organ damage risk. Possible internal bleeding. Major incapacitation.'
-        :j>=z.oJ?'Deep organ proximity. High pain compliance. Mobility degraded.'
-        :j>=z.yJ?'Deep muscle trauma. Significant pain compliance.'
-        :j>=z.mJ?'Surface bruising. Mild pain compliance.'
+   eff:(j,z)=>j>=z.rJ?'Deep organ compression. Internal bruising, possible organ wall trauma. Significant hemorrhagic hematoma. Subject non-functional.'
+        :j>=z.oJ?'Deep tissue trauma. Possible organ proximity effect. Hemorrhagic bruising, significant swelling. Most subjects stop.'
+        :j>=z.yJ?'Deep muscle compression. Hematoma formation. Significant pain.'
+        :j>=z.mJ?'Surface bruising. Pain compliance uncertain.'
         :'Surface bruising.',
    desc:'Effective pain compliance zone. Deep muscle and organ proximity above 50J. Less reliable than chest and solar plexus for immediate incapacitation — abdominal muscle wall absorbs significant energy on fit targets. Best used as follow-up zone or when center mass is obstructed.'},
   {id:'z-groin',tl:null,label:'Groin',type:'secondary',mJ:18,yJ:28,oJ:38,rJ:52,
-   eff:(j,z)=>j>=z.rJ?'TESTICULAR TRAUMA. Vagal shock probable. Complete incapacitation.'
-        :j>=z.oJ?'IMMEDIATE pain compliance. High incapacitation likely.'
-        :j>=z.yJ?'Severe pain. Pain compliance highly likely.'
-        :j>=z.mJ?'Significant pain.'
+   eff:(j,z)=>j>=z.rJ?'Testicular trauma. Vagal shock probable. Immediate skin breakdown, hemorrhagic bruising, complete incapacitation. Recovery days to weeks.'
+        :j>=z.oJ?'Vascular compression, deep hematoma formation. Extreme pain. Most subjects non-functional.'
+        :j>=z.yJ?'Deep tissue compression. Significant pain. Scrotal/perineal bruising. Temporary functional disruption likely.'
+        :j>=z.mJ?'Surface impact. Pain registered. Response uncertain.'
         :'Minor effect.',
    desc:'Highest sensitivity zone. Lowest threshold for pain compliance and incapacitation due to nerve density. Marginal impact registers immediate pain response in most subjects. Incapacitation likely at 52J regardless of build. Least affected by body composition variables. Accuracy dependent — small target under stress.'},
   {id:'z-lsh',tl:'tl-lsh',label:'Shoulder (bilateral)',type:'secondary',mJ:40,yJ:55,oJ:70,rJ:90,
-   eff:(j,z)=>j>=z.rJ?'Clavicle fracture probable. Joint disruption. Arm incapacitation.'
-        :j>=z.oJ?'Joint / clavicle involvement. Arm function degraded.'
-        :j>=z.yJ?'Deep bruising. Joint pain. Reduced arm function.'
-        :j>=z.mJ?'Bruising. Mild pain compliance.'
+   eff:(j,z)=>j>=z.rJ?'Clavicle fracture risk. Deep hemorrhagic bruising. Arm non-functional. Not a primary fight-stopper — use to degrade weapon retention or follow up.'
+        :j>=z.oJ?'AC joint and clavicle involvement. Significant bruising, possible skin breakdown. Arm incapacitated.'
+        :j>=z.yJ?'Deep bruising. Deltoid trauma. Arm function mildly degraded.'
+        :j>=z.mJ?'Surface impact. Minor pain.'
         :'Surface bruising only.',
    desc:'Pain compliance and arm incapacitation zone. Clavicle and acromioclavicular joint involvement above 55J. Arm function degraded, weapon retention compromised. Not a primary fight-stopper — use to degrade threat capability or as follow-up. Higher threshold required due to deltoid muscle mass in most subjects.'},
   {id:'z-lth',tl:'tl-lth',label:'Thigh / Quad (bilateral)',type:'secondary',mJ:45,yJ:60,oJ:75,rJ:95,
-   eff:(j,z)=>j>=z.rJ?'MASSIVE HEMATOMA. Femoral involvement risk. Complete mobility loss.'
-        :j>=z.oJ?'MAJOR MUSCLE TRAUMA. Deep hematoma. Partial mobility loss.'
-        :j>=z.yJ?'Deep bruising. Mobility degraded.'
-        :j>=z.mJ?'Surface bruising. Mild mobility impact.'
+   eff:(j,z)=>j>=z.rJ?'Maximum muscle trauma. Skin breakdown, open wound risk, deep hemorrhagic bruising. Mobility severely compromised on average builds. WARNING: Least reliable zone. Heavily muscled targets, heavy clothing, and adrenaline can negate effect entirely. Treat as mobility disruption only — never rely on thigh for threat stopping.'
+        :j>=z.oJ?'Major muscle trauma. Deep hemorrhagic hematoma. Significant bruising across impact area. Mobility degraded. Empirical reference: 21 shots at ~35-42J on heavily muscled quad produced open wounds, full-leg swelling, inability to walk for days — with zero immediate incapacitation.'
+        :j>=z.yJ?'Deep muscle trauma. Hematoma forming. Mobility mildly degraded.'
+        :j>=z.mJ?'Surface bruising through clothing. Pain variable.'
         :'Surface bruising.',
    desc:'Least reliable incapacitation zone in the system. Largest muscle group in the body absorbs and distributes energy across a wide area. Empirical reference: 21 shots at estimated 35-42J impact energy to a heavily muscled quad produced severe trauma — open wounds, full-leg swelling, inability to walk for days — but zero immediate incapacitation during the engagement. On average builds expect deep hematoma and mobility degradation above 60J, partial mobility loss above 75J. Treat as harassment and mobility disruption target only. Do not rely on thigh hits for threat stopping. Effectiveness further reduced by heavy denim, cargo pants, or multiple clothing layers.'},
   {id:'z-lkn',tl:null,label:'Knee (bilateral)',type:'secondary',mJ:32,yJ:48,oJ:62,rJ:78,
-   eff:(j,z)=>j>=z.rJ?'Joint destruction. Patella fracture probable. Complete mobility loss.'
-        :j>=z.oJ?'Joint disruption. Immediate mobility loss.'
-        :j>=z.yJ?'Joint pain. Temporary mobility reduction.'
-        :j>=z.mJ?'Pain compliance. Reduced mobility.'
+   eff:(j,z)=>j>=z.rJ?'Patella fracture risk. Joint destruction. Immediate mobility elimination. Hemorrhagic swelling. Effective on all body types — minimal tissue protection over joint. Small target — precision required.'
+        :j>=z.oJ?'Ligament and joint trauma. Significant bruising, swelling. Subject cannot pursue.'
+        :j>=z.yJ?'Joint capsule trauma. Bruising over patella. Temporary mobility reduction.'
+        :j>=z.mJ?'Joint compression. Minor pain. Slight mobility disruption.'
         :'Pain compliance only.',
    desc:'Structural joint target. Energy transfers to joint capsule, ligaments, and surrounding bone with minimal muscle absorption. Immediate mobility disruption above 62J. Incapacitation via mobility elimination rather than pain — threat cannot pursue or maintain aggressive stance. Small target, precision required. Highly effective on all body types due to minimal tissue protection over the joint.'},
   {id:'z-lshin',tl:null,label:'Shin / Tibia (bilateral)',type:'secondary',mJ:22,yJ:32,oJ:45,rJ:62,
@@ -727,7 +753,7 @@ const ZONES=[
    desc:'NEVER TARGET. Tracheal and laryngeal cartilage will collapse under kinetic projectile impact at any achievable .68 cal energy level, producing airway closure within minutes and likely death without immediate intervention. No threshold tier applies. Excluded from doctrine entirely.'},
 ];
 
-const PAIRS={'z-lsh':'z-rsh','z-lth':'z-rth','z-lkn':'z-rkn','z-lserr':'z-rserr','z-lshin':'z-rshin'};
+const PAIRS={'z-lsh':'z-rsh','z-lth':'z-rth','z-lkn':'z-rkn','z-lshin':'z-rshin'};
 
 // Round catalogs by caliber
 const ROUNDS_68=[
@@ -954,8 +980,8 @@ function clearPlacement(){
   const badge=document.getElementById('pl-badge');if(badge)badge.innerHTML='';
   // Clear all zone fills
   ZONES.forEach(z=>{
-    const el=document.getElementById(z.id);if(el)el.setAttribute('fill','rgba(0,0,0,0)');
-    if(PAIRS[z.id]){const p=document.getElementById(PAIRS[z.id]);if(p)p.setAttribute('fill','rgba(0,0,0,0)');}
+    const el=document.getElementById(z.id);if(el){el.setAttribute('fill','rgba(0,0,0,0)');el.setAttribute('filter','none');}
+    if(PAIRS[z.id]){const p=document.getElementById(PAIRS[z.id]);if(p){p.setAttribute('fill','rgba(0,0,0,0)');p.setAttribute('filter','none');}}
     if(z.tl){const tl=document.getElementById(z.tl);if(tl)tl.setAttribute('fill','rgba(0,0,0,0)');}
   });
   const legend=document.getElementById('zone-legend');if(legend)legend.innerHTML='';
@@ -966,12 +992,12 @@ function renderMods(){}
 function toggleMod(){}
 
 function zCol(z,j){
-  if(z.type==='lethal')return{f:'url(#grad-r)'};
-  if(j>=z.rJ)return{f:'url(#grad-r)'};
-  if(j>=z.oJ)return{f:'url(#grad-o)'};
-  if(j>=z.yJ)return{f:'url(#grad-y)'};
-  if(j>=z.mJ)return{f:'url(#grad-g)'};
-  return{f:'rgba(0,0,0,0)'};
+  if(z.type==='lethal')return{f:'url(#grad-r)',fl:'url(#glow-leth)'};
+  if(j>=z.rJ)return{f:'url(#grad-r)',fl:'url(#glow-inc)'};
+  if(j>=z.oJ)return{f:'url(#grad-o)',fl:'url(#glow-sev)'};
+  if(j>=z.yJ)return{f:'url(#grad-y)',fl:'url(#glow-mod)'};
+  if(j>=z.mJ)return{f:'url(#grad-g)',fl:'url(#glow-marg)'};
+  return{f:'rgba(0,0,0,0)',fl:'none'};
 }
 function tCol(z,j){
   if(z.type==='lethal')return'#ffeaea';
@@ -1006,8 +1032,9 @@ function updatePlacement(impact,muzzle,dist){
     if(!el)return;
     const c=zCol(z,impact);
     el.setAttribute('fill',c.f);
+    el.setAttribute('filter',c.fl);
     if(z.tl){const tl=document.getElementById(z.tl);if(tl)tl.setAttribute('fill',tCol(z,impact));}
-    if(PAIRS[z.id]){const p=document.getElementById(PAIRS[z.id]);if(p)p.setAttribute('fill',c.f);}
+    if(PAIRS[z.id]){const p=document.getElementById(PAIRS[z.id]);if(p){p.setAttribute('fill',c.f);p.setAttribute('filter',c.fl);}}
   });
 
   // Sort zones by severity (highest first) so worst injuries are at the top
@@ -1020,7 +1047,8 @@ function updatePlacement(impact,muzzle,dist){
     if(j>=z.mJ)return 1;
     return 0;
   }
-  const sorted=[...azones].sort((a,b)=>{
+  // Exclude lethal (never-target) zones from the legend list — they stay red on the figure only.
+  const sorted=[...azones].filter(z=>z.type!=='lethal').sort((a,b)=>{
     const ta=sevTier(a,impact),tb=sevTier(b,impact);
     if(ta!==tb)return tb-ta;
     // within same tier, sort by how much current impact exceeds the tier threshold (more margin = more severe)
