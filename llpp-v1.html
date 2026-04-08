@@ -352,6 +352,13 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
         <path id="z-solar" d="M 364 458 C 356 466 354 482 360 498 C 368 510 392 516 416 516 C 440 516 464 510 472 498 C 478 482 476 466 468 458 C 458 450 438 448 416 448 C 394 448 374 450 364 458 Z" fill="rgba(0,0,0,0)"/>
         <text id="tl-solar" x="416" y="488" text-anchor="middle" font-family="Share Tech Mono" font-size="18" fill="rgba(0,0,0,0)" letter-spacing="2">SOLAR</text>
 
+        <!-- L SERRATUS (viewer left = subject right, lateral ribcage) -->
+        <path id="z-lserr" d="M 286 402 C 274 422 272 454 282 484 C 294 496 308 494 316 484 C 320 456 318 424 310 402 C 302 393 290 394 286 402 Z" fill="rgba(0,0,0,0)"/>
+        <text id="tl-lserr" x="296" y="448" text-anchor="middle" font-family="Share Tech Mono" font-size="11" fill="rgba(0,0,0,0)" letter-spacing="1">SERR</text>
+        <!-- R SERRATUS -->
+        <path id="z-rserr" d="M 546 402 C 558 422 560 454 550 484 C 538 496 524 494 516 484 C 512 456 514 424 522 402 C 530 393 542 394 546 402 Z" fill="rgba(0,0,0,0)"/>
+        <text x="536" y="448" text-anchor="middle" font-family="Share Tech Mono" font-size="11" fill="rgba(0,0,0,0)" letter-spacing="1">SERR</text>
+
         <!-- ABDOMEN / Rectus Abdominis -->
         <path id="z-abdom" d="M 354 522 C 348 532 346 548 348 568 C 350 592 354 614 360 632 C 368 644 386 648 416 648 C 446 648 464 644 472 632 C 478 614 482 592 484 568 C 486 548 484 532 478 522 C 468 514 442 512 416 512 C 390 512 364 514 354 522 Z" fill="rgba(0,0,0,0)"/>
         <text id="tl-abdom" x="416" y="588" text-anchor="middle" font-family="Share Tech Mono" font-size="18" fill="rgba(0,0,0,0)" letter-spacing="2">ABD</text>
@@ -416,6 +423,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
           <tbody>
             <tr><td class="zn">Groin</td><td class="tm">18 J</td><td class="ty">28 J</td><td class="tov">38 J</td><td class="tr">52 J</td></tr>
             <tr><td class="zn">Solar Plexus</td><td class="tm">22 J</td><td class="ty">32 J</td><td class="tov">42 J</td><td class="tr">55 J</td></tr>
+            <tr><td class="zn">Serratus</td><td class="tm">22 J</td><td class="ty">32 J</td><td class="tov">45 J</td><td class="tr">60 J</td></tr>
             <tr><td class="zn">Chest / Sternum</td><td class="tm">25 J</td><td class="ty">38 J</td><td class="tov">55 J</td><td class="tr">72 J</td></tr>
             <tr><td class="zn">Abdomen</td><td class="tm">35 J</td><td class="ty">50 J</td><td class="tov">65 J</td><td class="tr">85 J</td></tr>
             <tr><td class="zn">Knee</td><td class="tm">32 J</td><td class="ty">48 J</td><td class="tov">62 J</td><td class="tr">78 J</td></tr>
@@ -597,6 +605,13 @@ const ZONES=[
         :j>=22?'Wind disruption. Pain compliance likely.'
         :'Minor effect.',
    desc:'Primary fight-stopping zone. Diaphragm disruption causes involuntary breath expulsion and temporary inability to continue aggression. Empirically confirmed: 30-32J on a lean subject at 20 feet produced immediate knockdown, significant swelling, and days of soreness. Effectiveness reduced on high body fat targets due to adipose cushioning over the epigastric region. Most reliable incapacitation zone in the system after groin.'},
+  {id:'z-lserr',tl:'tl-lserr',label:'Serratus (bilateral)',type:'secondary',mJ:22,yJ:32,oJ:45,rJ:60,
+   eff:j=>j>=60?'SEVERE lateral rib trauma. Intercostal nerve damage. Lung contusion risk. Major incapacitation.'
+        :j>=45?'Lateral rib fracture probable. Breathing severely disrupted.'
+        :j>=32?'Significant lateral pain. Breathing disrupted. High pain compliance.'
+        :j>=22?'Sharp lateral pain. Pain compliance likely.'
+        :'Surface bruising.',
+   desc:'Lateral ribcage muscle (the so-called boxers muscle). Less protected than central chest because the lateral ribs lack sternal coverage and the muscle layer is thin. A clean serratus hit can fracture lateral ribs at lower energy than the central chest due to impact angle and the absence of bony reinforcement on the side. Pain response is severe because of intercostal nerve density, and breathing mechanics are directly disrupted via rib involvement rather than diaphragm spasm. Distinct injury profile from solar plexus: solar plexus knocks the wind out via central diaphragm disruption, serratus impairs breathing via lateral rib and intercostal injury. Often partially obscured by the upper arm in a relaxed standing posture, so accuracy and angle matter.'},
   {id:'z-abdom',tl:'tl-abdom',label:'Abdomen',type:'secondary',mJ:35,yJ:50,oJ:65,rJ:85,
    eff:j=>j>=85?'Organ damage risk. Possible internal bleeding. Major incapacitation.'
         :j>=65?'Deep organ proximity. High pain compliance. Mobility degraded.'
@@ -640,7 +655,7 @@ const ZONES=[
    desc:'NEVER TARGET. Tracheal and laryngeal cartilage will collapse under kinetic projectile impact at any achievable .68 cal energy level, producing airway closure within minutes and likely death without immediate intervention. No threshold tier applies. Excluded from doctrine entirely.'},
 ];
 
-const PAIRS={'z-lsh':'z-rsh','z-lth':'z-rth','z-lkn':'z-rkn'};
+const PAIRS={'z-lsh':'z-rsh','z-lth':'z-rth','z-lkn':'z-rkn','z-lserr':'z-rserr'};
 
 let selMods=new Set();
 let sessionLog=[];
