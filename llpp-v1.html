@@ -104,7 +104,8 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;background:var(--pip)
 .dmg-text{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--text);line-height:1.6;letter-spacing:0.02em;}
 
 /* PLACEMENT */
-.pl-grid{display:grid;grid-template-columns:220px 1fr;gap:16px;align-items:start;}
+.pl-grid{display:grid;grid-template-columns:300px 1fr;gap:16px;align-items:start;}
+@media (max-width:720px){.pl-grid{grid-template-columns:1fr;}}
 .zone-legend{overflow-y:auto;max-height:480px;}
 .zone-item{padding:8px 0;border-bottom:1px solid rgba(197,255,0,0.05);}
 .zone-name{font-family:'Orbitron',monospace;font-size:12px;color:var(--bright);margin-bottom:3px;letter-spacing:0.08em;}
@@ -273,119 +274,72 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 
   <div class="pl-grid">
     <div>
-      <svg id="body-svg" viewBox="0 0 200 415" width="210" height="436" xmlns="http://www.w3.org/2000/svg">
+      <svg id="body-svg" viewBox="0 0 784 1168" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:300px;display:block;background:#000;">
         <defs>
-          <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(0,200,255,0.04)" stroke-width="0.5"/>
-          </pattern>
           <filter id="glow-g">
-            <feGaussianBlur stdDeviation="2" result="blur"/>
+            <feGaussianBlur stdDeviation="6" result="blur"/>
             <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
         </defs>
 
-        <!-- Grid BG -->
-        <rect width="200" height="415" fill="url(#grid)"/>
+        <!-- Holographic body scan base layer -->
+        <image href="body_scan.jpg" x="0" y="0" width="784" height="1168" preserveAspectRatio="xMidYMid slice"/>
 
-        <!-- Corner targeting brackets -->
-        <line x1="0" y1="0" x2="18" y2="0" stroke="rgba(0,200,255,0.5)" stroke-width="1.5"/>
-        <line x1="0" y1="0" x2="0" y2="18" stroke="rgba(0,200,255,0.5)" stroke-width="1.5"/>
-        <line x1="200" y1="0" x2="182" y2="0" stroke="rgba(0,200,255,0.5)" stroke-width="1.5"/>
-        <line x1="200" y1="0" x2="200" y2="18" stroke="rgba(0,200,255,0.5)" stroke-width="1.5"/>
-        <line x1="0" y1="415" x2="18" y2="415" stroke="rgba(0,200,255,0.5)" stroke-width="1.5"/>
-        <line x1="0" y1="415" x2="0" y2="397" stroke="rgba(0,200,255,0.5)" stroke-width="1.5"/>
-        <line x1="200" y1="415" x2="182" y2="415" stroke="rgba(0,200,255,0.5)" stroke-width="1.5"/>
-        <line x1="200" y1="415" x2="200" y2="397" stroke="rgba(0,200,255,0.5)" stroke-width="1.5"/>
-
-        <!-- Crosshair center lines -->
-        <line x1="100" y1="0" x2="100" y2="415" stroke="rgba(0,200,255,0.06)" stroke-width="0.5"/>
-        <line x1="0" y1="207" x2="200" y2="207" stroke="rgba(0,200,255,0.06)" stroke-width="0.5"/>
-
-        <!-- BODY FILL STRUCTURE -->
-        <circle cx="100" cy="37" r="27" fill="#040608" stroke="#00c8ff" stroke-width="1"/>
-        <rect x="88" y="63" width="24" height="16" fill="#040608" stroke="#00c8ff" stroke-width="0.8"/>
-        <path d="M 52,79 L 148,79 L 140,200 L 60,200 Z" fill="#040608" stroke="#00c8ff" stroke-width="1"/>
-        <path d="M 52,80 C 35,83 22,96 20,120 L 20,194 L 43,194 L 50,120 L 53,96 Z" fill="#040608" stroke="#00c8ff" stroke-width="1"/>
-        <path d="M 148,80 C 165,83 178,96 180,120 L 180,194 L 157,194 L 150,120 L 147,96 Z" fill="#040608" stroke="#00c8ff" stroke-width="1"/>
-        <path d="M 60,200 L 98,200 L 96,405 L 57,405 Z" fill="#040608" stroke="#00c8ff" stroke-width="1"/>
-        <path d="M 102,200 L 140,200 L 143,405 L 104,405 Z" fill="#040608" stroke="#00c8ff" stroke-width="1"/>
-
-        <!-- TARGETING ZONES -->
+        <!-- TARGETING ZONES (transparent until activated by JS) -->
         <!-- HEAD — lethal -->
-        <circle id="z-head" cx="100" cy="37" r="24" fill="rgba(60,0,0,0.85)" stroke="#ff2020" stroke-width="1.2"/>
-        <text x="100" y="33" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#ff4040">HEAD</text>
-        <text x="100" y="44" text-anchor="middle" font-family="Share Tech Mono" font-size="5.5" fill="#ff4040">LETHAL</text>
+        <ellipse id="z-head" cx="392" cy="158" rx="62" ry="72" fill="rgba(0,0,0,0)" stroke="rgba(0,0,0,0)" stroke-width="3"/>
 
         <!-- THROAT — lethal -->
-        <rect id="z-throat" x="90" y="64" width="20" height="13" fill="rgba(60,0,0,0.85)" stroke="#ff2020" stroke-width="1"/>
+        <rect id="z-throat" x="358" y="222" width="68" height="34" rx="4" fill="rgba(0,0,0,0)" stroke="rgba(0,0,0,0)" stroke-width="3"/>
 
-        <!-- CHEST -->
-        <rect id="z-chest" x="62" y="80" width="76" height="36" fill="rgba(8,10,14,0.9)" stroke="#1a2a0a" stroke-width="1"/>
-        <text id="tl-chest" x="100" y="102" text-anchor="middle" font-family="Share Tech Mono" font-size="5.5" fill="#2a3a1a">CHEST</text>
+        <!-- CHEST / Sternum -->
+        <rect id="z-chest" x="298" y="258" width="188" height="100" rx="6" fill="rgba(0,0,0,0)" stroke="rgba(0,0,0,0)" stroke-width="3"/>
+        <text id="tl-chest" x="392" y="314" text-anchor="middle" font-family="Share Tech Mono" font-size="20" fill="rgba(0,0,0,0)" letter-spacing="2">CHEST</text>
 
         <!-- SOLAR PLEXUS -->
-        <rect id="z-solar" x="63" y="116" width="74" height="25" fill="rgba(8,10,14,0.9)" stroke="#1a2a0a" stroke-width="1"/>
-        <text id="tl-solar" x="100" y="132" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#2a3a1a">SOLAR</text>
+        <rect id="z-solar" x="312" y="358" width="160" height="60" rx="6" fill="rgba(0,0,0,0)" stroke="rgba(0,0,0,0)" stroke-width="3"/>
+        <text id="tl-solar" x="392" y="395" text-anchor="middle" font-family="Share Tech Mono" font-size="18" fill="rgba(0,0,0,0)" letter-spacing="2">SOLAR</text>
 
         <!-- ABDOMEN -->
-        <rect id="z-abdom" x="63" y="141" width="74" height="25" fill="rgba(6,8,12,0.9)" stroke="#111a08" stroke-width="1"/>
-        <text id="tl-abdom" x="100" y="157" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#1a2a0a">ABD</text>
+        <rect id="z-abdom" x="312" y="418" width="160" height="74" rx="6" fill="rgba(0,0,0,0)" stroke="rgba(0,0,0,0)" stroke-width="3"/>
+        <text id="tl-abdom" x="392" y="461" text-anchor="middle" font-family="Share Tech Mono" font-size="18" fill="rgba(0,0,0,0)" letter-spacing="2">ABD</text>
 
         <!-- GROIN -->
-        <rect id="z-groin" x="77" y="166" width="46" height="17" fill="rgba(6,8,12,0.9)" stroke="#111a08" stroke-width="1"/>
+        <rect id="z-groin" x="342" y="492" width="100" height="62" rx="6" fill="rgba(0,0,0,0)" stroke="rgba(0,0,0,0)" stroke-width="3"/>
 
-        <!-- L SHOULDER -->
-        <path id="z-lsh" d="M 52,80 C 35,83 23,94 21,118 L 22,138 L 43,136 L 51,114 L 53,95 Z" fill="rgba(6,8,12,0.9)" stroke="#111a08" stroke-width="1"/>
+        <!-- L SHOULDER (viewer left = subject right) -->
+        <ellipse id="z-lsh" cx="278" cy="278" rx="48" ry="58" fill="rgba(0,0,0,0)" stroke="rgba(0,0,0,0)" stroke-width="3"/>
+        <text id="tl-lsh" x="278" y="284" text-anchor="middle" font-family="Share Tech Mono" font-size="16" fill="rgba(0,0,0,0)" letter-spacing="1">SHD</text>
         <!-- R SHOULDER -->
-        <path id="z-rsh" d="M 148,80 C 165,83 177,94 179,118 L 178,138 L 157,136 L 149,114 L 147,95 Z" fill="rgba(6,8,12,0.9)" stroke="#111a08" stroke-width="1"/>
+        <ellipse id="z-rsh" cx="506" cy="278" rx="48" ry="58" fill="rgba(0,0,0,0)" stroke="rgba(0,0,0,0)" stroke-width="3"/>
+        <text x="506" y="284" text-anchor="middle" font-family="Share Tech Mono" font-size="16" fill="rgba(0,0,0,0)" letter-spacing="1">SHD</text>
 
-        <!-- ARMS low -->
-        <path d="M 22,138 L 43,136 L 41,192 L 20,192 Z" fill="rgba(4,6,8,0.9)" stroke="#0a0f06" stroke-width="1"/>
-        <path d="M 178,138 L 157,136 L 159,192 L 180,192 Z" fill="rgba(4,6,8,0.9)" stroke="#0a0f06" stroke-width="1"/>
-
-        <!-- L THIGH -->
-        <rect id="z-lth" x="60" y="201" width="36" height="56" fill="rgba(6,8,12,0.9)" stroke="#111a08" stroke-width="1"/>
-        <text id="tl-lth" x="78" y="232" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#1a2a0a">THIGH</text>
+        <!-- L THIGH (viewer left) -->
+        <rect id="z-lth" x="304" y="568" width="84" height="200" rx="8" fill="rgba(0,0,0,0)" stroke="rgba(0,0,0,0)" stroke-width="3"/>
+        <text id="tl-lth" x="346" y="678" text-anchor="middle" font-family="Share Tech Mono" font-size="18" fill="rgba(0,0,0,0)" letter-spacing="2">THIGH</text>
         <!-- R THIGH -->
-        <rect id="z-rth" x="104" y="201" width="36" height="56" fill="rgba(6,8,12,0.9)" stroke="#111a08" stroke-width="1"/>
-        <text x="122" y="232" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#1a2a0a">THIGH</text>
+        <rect id="z-rth" x="396" y="568" width="84" height="200" rx="8" fill="rgba(0,0,0,0)" stroke="rgba(0,0,0,0)" stroke-width="3"/>
+        <text x="438" y="678" text-anchor="middle" font-family="Share Tech Mono" font-size="18" fill="rgba(0,0,0,0)" letter-spacing="2">THIGH</text>
 
         <!-- L KNEE -->
-        <rect id="z-lkn" x="60" y="257" width="36" height="15" fill="rgba(6,8,12,0.9)" stroke="#111a08" stroke-width="1"/>
+        <rect id="z-lkn" x="306" y="772" width="80" height="58" rx="6" fill="rgba(0,0,0,0)" stroke="rgba(0,0,0,0)" stroke-width="3"/>
         <!-- R KNEE -->
-        <rect id="z-rkn" x="104" y="257" width="36" height="15" fill="rgba(6,8,12,0.9)" stroke="#111a08" stroke-width="1"/>
-
-        <!-- SHINS low -->
-        <rect x="62" y="272" width="32" height="54" fill="rgba(4,6,8,0.9)" stroke="#0a0f06" stroke-width="1"/>
-        <rect x="106" y="272" width="32" height="54" fill="rgba(4,6,8,0.9)" stroke="#0a0f06" stroke-width="1"/>
-
-        <!-- TOP OUTLINE (crisp edge on top) -->
-        <circle cx="100" cy="37" r="27" fill="none" stroke="#00c8ff" stroke-width="1" stroke-opacity="0.6"/>
-        <rect x="88" y="63" width="24" height="16" fill="none" stroke="#00c8ff" stroke-width="0.8" stroke-opacity="0.5"/>
-        <path d="M 52,79 L 148,79 L 140,200 L 60,200 Z" fill="none" stroke="#00c8ff" stroke-width="1" stroke-opacity="0.5"/>
-        <path d="M 52,80 C 35,83 22,96 20,120 L 20,194 L 43,194 L 50,120 L 53,96 Z" fill="none" stroke="#00c8ff" stroke-width="1" stroke-opacity="0.5"/>
-        <path d="M 148,80 C 165,83 178,96 180,120 L 180,194 L 157,194 L 150,120 L 147,96 Z" fill="none" stroke="#00c8ff" stroke-width="1" stroke-opacity="0.5"/>
-        <path d="M 60,200 L 98,200 L 96,405 L 57,405 Z" fill="none" stroke="#00c8ff" stroke-width="1" stroke-opacity="0.5"/>
-        <path d="M 102,200 L 140,200 L 143,405 L 104,405 Z" fill="none" stroke="#00c8ff" stroke-width="1" stroke-opacity="0.5"/>
-
-        <!-- Shoulder zone labels -->
-        <text id="tl-lsh" x="33" y="112" text-anchor="middle" font-family="Share Tech Mono" font-size="4.5" fill="#1a2a0a">SHD</text>
-        <text x="167" y="112" text-anchor="middle" font-family="Share Tech Mono" font-size="4.5" fill="#1a2a0a">SHD</text>
+        <rect id="z-rkn" x="398" y="772" width="80" height="58" rx="6" fill="rgba(0,0,0,0)" stroke="rgba(0,0,0,0)" stroke-width="3"/>
 
         <!-- Scan line animation -->
-        <rect width="200" height="2" fill="rgba(0,200,255,0.12)" opacity="0.8">
-          <animate attributeName="y" from="-2" to="417" dur="4s" repeatCount="indefinite"/>
+        <rect width="784" height="6" fill="rgba(0,200,255,0.18)" opacity="0.9">
+          <animate attributeName="y" from="-6" to="1170" dur="4s" repeatCount="indefinite"/>
         </rect>
 
         <!-- Target ID tag -->
-        <text x="2" y="412" font-family="Share Tech Mono" font-size="5" fill="rgba(0,200,255,0.3)">TGT-ID:UNKNOWN · SCAN ACTIVE</text>
+        <text x="14" y="1152" font-family="Share Tech Mono" font-size="20" fill="rgba(0,200,255,0.45)" letter-spacing="2">TGT-ID:UNKNOWN · SCAN ACTIVE</text>
       </svg>
 
       <div class="svg-legend">
-        <div class="svg-legend-item"><div class="swatch" style="background:rgba(60,0,0,0.85);border:1px solid #ff2020;"></div>LETHAL — never target</div>
-        <div class="svg-legend-item"><div class="swatch" style="background:rgba(30,80,0,0.85);border:1px solid #c5ff00;"></div>EFFECTIVE at current J</div>
-        <div class="svg-legend-item"><div class="swatch" style="background:rgba(80,40,0,0.85);border:1px solid #ff6600;"></div>MARGINAL</div>
-        <div class="svg-legend-item"><div class="swatch" style="background:rgba(6,8,12,0.9);border:1px solid #1a2a0a;"></div>INACTIVE</div>
+        <div class="svg-legend-item"><div class="swatch" style="background:rgba(255,30,30,0.28);border:1px solid #ff2020;"></div>LETHAL — never target</div>
+        <div class="svg-legend-item"><div class="swatch" style="background:rgba(120,255,40,0.28);border:1px solid #c5ff00;"></div>EFFECTIVE at current J</div>
+        <div class="svg-legend-item"><div class="swatch" style="background:rgba(255,140,0,0.28);border:1px solid #ff6600;"></div>MARGINAL</div>
+        <div class="svg-legend-item"><div class="swatch" style="background:transparent;border:1px dashed rgba(0,200,255,0.25);"></div>INACTIVE — transparent</div>
       </div>
     </div>
     <div class="zone-legend" id="zone-legend"></div>
@@ -634,16 +588,16 @@ function renderMods(){}
 function toggleMod(){}
 
 function zCol(z,j){
-  if(z.type==='lethal')return{f:'rgba(60,0,0,0.85)',s:'#ff2020'};
-  if(j>=z.gJ)return{f:'rgba(20,60,0,0.85)',s:'#c5ff00'};
-  if(j>=z.wJ)return{f:'rgba(60,30,0,0.85)',s:'#ff6600'};
-  return{f:'rgba(6,8,12,0.9)',s:'#111a08'};
+  if(z.type==='lethal')return{f:'rgba(255,30,30,0.28)',s:'#ff2020'};
+  if(j>=z.gJ)return{f:'rgba(120,255,40,0.28)',s:'#c5ff00'};
+  if(j>=z.wJ)return{f:'rgba(255,140,0,0.28)',s:'#ff6600'};
+  return{f:'rgba(0,0,0,0)',s:'rgba(0,0,0,0)'};
 }
 function tCol(z,j){
   if(z.type==='lethal')return'#ff4040';
   if(j>=z.gJ)return'#c5ff00';
   if(j>=z.wJ)return'#ff6600';
-  return'#1a2a0a';
+  return'rgba(0,0,0,0)';
 }
 
 function updatePlacement(impact,muzzle,dist){
