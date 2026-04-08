@@ -111,6 +111,37 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;background:var(--pip)
 .zone-name{font-family:'Orbitron',monospace;font-size:12px;color:var(--bright);margin-bottom:3px;letter-spacing:0.08em;}
 .zone-eff{font-family:'Barlow Condensed',sans-serif;font-size:14px;color:var(--text);line-height:1.4;}
 .zone-status-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.1em;}
+.zone-row{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:3px;}
+.zone-row-r{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.zone-info{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.08em;color:rgba(0,200,255,0.55);border:1px solid rgba(0,200,255,0.25);padding:1px 6px;cursor:pointer;user-select:none;transition:all 0.12s;}
+.zone-info:hover{color:#00c8ff;border-color:rgba(0,200,255,0.6);background:rgba(0,200,255,0.06);}
+.zone-desc{margin-top:8px;padding:10px 12px;background:rgba(0,200,255,0.03);border-left:2px solid rgba(0,200,255,0.35);}
+.zone-thr{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:0.06em;margin-bottom:8px;color:var(--muted);}
+.thr-m{color:#c5ff00;}
+.thr-y{color:#ffd800;}
+.thr-o{color:#ff8800;}
+.thr-r{color:#ff4040;}
+.zone-desc-body{font-family:'Barlow Condensed',sans-serif;font-size:13px;line-height:1.5;color:var(--text);}
+
+/* DOCTRINE CARD */
+.doc-card{background:linear-gradient(180deg,rgba(14,17,22,0.92),rgba(8,10,14,0.88));border:1px solid var(--border);padding:14px 16px;margin-top:14px;position:relative;}
+.doc-card::before{content:'';position:absolute;top:-1px;left:-1px;width:12px;height:12px;border-top:2px solid rgba(197,255,0,0.4);border-left:2px solid rgba(197,255,0,0.4);}
+.doc-card::after{content:'';position:absolute;bottom:-1px;right:-1px;width:12px;height:12px;border-bottom:2px solid rgba(197,255,0,0.4);border-right:2px solid rgba(197,255,0,0.4);}
+.doc-hdr-row{display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-family:'Orbitron',monospace;font-size:11px;font-weight:700;letter-spacing:0.18em;color:var(--pip);text-transform:uppercase;text-shadow:0 0 12px rgba(197,255,0,0.3);user-select:none;}
+.doc-hdr-row:hover{color:#daff40;}
+.doc-section{margin-top:14px;}
+.doc-section-hdr{font-family:'Orbitron',monospace;font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:rgba(0,200,255,0.65);padding-bottom:5px;border-bottom:1px solid rgba(0,200,255,0.15);margin-bottom:8px;}
+.doc-text{font-family:'Barlow Condensed',sans-serif;font-size:14px;line-height:1.55;color:var(--text);letter-spacing:0.01em;}
+.doc-text strong{color:var(--bright);font-weight:500;}
+.doc-table{width:100%;border-collapse:collapse;margin-top:10px;font-family:'Share Tech Mono',monospace;font-size:11px;}
+.doc-table th{text-align:left;padding:6px 8px;color:var(--muted);font-weight:400;letter-spacing:0.08em;border-bottom:1px solid rgba(197,255,0,0.12);text-transform:uppercase;}
+.doc-table td{padding:6px 8px;border-bottom:1px solid rgba(197,255,0,0.05);color:var(--bright);}
+.doc-table td.zn{color:var(--text);}
+.doc-table td.tm{color:#c5ff00;text-shadow:0 0 6px rgba(197,255,0,0.25);}
+.doc-table td.ty{color:#ffd800;text-shadow:0 0 6px rgba(255,216,0,0.25);}
+.doc-table td.tov{color:#ff8800;text-shadow:0 0 6px rgba(255,130,0,0.25);}
+.doc-table td.tr{color:#ff4040;text-shadow:0 0 6px rgba(255,30,30,0.3);}
+.doc-warn{background:rgba(255,30,30,0.06);border-left:2px solid rgba(255,30,30,0.5);padding:10px 14px;margin-top:10px;font-family:'Share Tech Mono',monospace;font-size:12px;line-height:1.55;color:#ff7070;letter-spacing:0.02em;}
 
 /* SVG LEGEND */
 .svg-legend{margin-top:10px;}
@@ -338,6 +369,43 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
     </div>
     <div class="zone-legend" id="zone-legend"></div>
   </div>
+
+  <!-- DOCTRINE & FIELD CAVEATS -->
+  <div class="doc-card">
+    <div class="doc-hdr-row" onclick="toggleDoctrine()">
+      <span>◆ DOCTRINE &amp; FIELD CAVEATS · LLPP ZONE THRESHOLD TABLE v1.0</span>
+      <span id="doc-toggle">▼</span>
+    </div>
+    <div id="doctrine-body" style="display:none;">
+      <div class="doc-section">
+        <div class="doc-section-hdr">METHODOLOGY</div>
+        <div class="doc-text">Estimated thresholds based on published kinetic impact projectile research, community testing documentation, and anecdotal empirical reference points. Real-world results vary significantly based on target body composition, clothing layers, adrenaline state, shot placement precision, and engagement distance. These values represent <strong>average build targets in standard street clothing</strong>. Not clinical data.</div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-section-hdr">ZONE THRESHOLD TABLE v1.0</div>
+        <table class="doc-table">
+          <thead><tr><th>Zone</th><th>Marginal</th><th>Moderate</th><th>Severe</th><th>Incapacitate</th></tr></thead>
+          <tbody>
+            <tr><td class="zn">Groin</td><td class="tm">18 J</td><td class="ty">28 J</td><td class="tov">38 J</td><td class="tr">52 J</td></tr>
+            <tr><td class="zn">Solar Plexus</td><td class="tm">22 J</td><td class="ty">32 J</td><td class="tov">42 J</td><td class="tr">55 J</td></tr>
+            <tr><td class="zn">Chest / Sternum</td><td class="tm">25 J</td><td class="ty">38 J</td><td class="tov">55 J</td><td class="tr">72 J</td></tr>
+            <tr><td class="zn">Abdomen</td><td class="tm">35 J</td><td class="ty">50 J</td><td class="tov">65 J</td><td class="tr">85 J</td></tr>
+            <tr><td class="zn">Knee</td><td class="tm">32 J</td><td class="ty">48 J</td><td class="tov">62 J</td><td class="tr">78 J</td></tr>
+            <tr><td class="zn">Shoulder</td><td class="tm">40 J</td><td class="ty">55 J</td><td class="tov">70 J</td><td class="tr">90 J</td></tr>
+            <tr><td class="zn">Thigh</td><td class="tm">45 J</td><td class="ty">60 J</td><td class="tov">75 J</td><td class="tr">95 J</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="doc-section">
+        <div class="doc-section-hdr">GLOBAL FIELD CAVEAT</div>
+        <div class="doc-warn">Thresholds are estimates for average build targets (160-185 lb, standard street clothing). Heavily muscled subjects require significantly higher energy across all zones — thigh zone unreliable for incapacitation at any achievable .68 cal energy level. High body fat reduces chest and solar plexus effectiveness. High adrenaline state can override pain compliance at any threshold. These values are planning references, not clinical guarantees. <strong>Always assume the threat can continue until they demonstrably cannot.</strong></div>
+      </div>
+      <div class="doc-section">
+        <div class="doc-section-hdr">PER-ZONE NOTES</div>
+        <div class="doc-text" style="font-size:12px;color:var(--muted);">Tap <span class="zone-info" style="cursor:default;">ⓘ INFO</span> on any zone in the legend above to expand its full anatomical description, body-composition caveats, and threshold breakdown.</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- SESSION LOG -->
@@ -487,52 +555,61 @@ const LAUNCHERS={
 };
 
 const ZONES=[
-  {id:'z-chest',tl:'tl-chest',label:'Chest / Sternum',type:'primary',mJ:30,yJ:45,oJ:60,rJ:80,
-   eff:j=>j>=80?'CHEST WALL DEVASTATION. Major rib fractures. Cardiac concussion risk. Complete incapacitation.'
-        :j>=60?'RIB FRACTURE probable. Diaphragm spasm. High incapacitation.'
-        :j>=45?'Deep bruising. Rib involvement possible. Significant pain compliance.'
-        :j>=30?'Surface bruising. Hematoma. Mild pain compliance.'
-        :'Surface trauma only.'},
-  {id:'z-solar',tl:'tl-solar',label:'Solar Plexus',type:'primary',mJ:25,yJ:35,oJ:45,rJ:60,
-   eff:j=>j>=60?'SEVERE diaphragm trauma. Vagal response possible. Prolonged incapacitation.'
-        :j>=45?'DIAPHRAGM SPASM. Involuntary breath expulsion. Wind knockout.'
-        :j>=35?'Significant wind disruption. High pain compliance.'
-        :j>=25?'Wind disruption. Pain compliance likely.'
-        :'Minor effect.'},
+  {id:'z-chest',tl:'tl-chest',label:'Chest / Sternum',type:'primary',mJ:25,yJ:38,oJ:55,rJ:72,
+   eff:j=>j>=72?'CHEST WALL DEVASTATION. Major rib fractures. Cardiac concussion risk. Complete incapacitation.'
+        :j>=55?'RIB FRACTURE probable. Diaphragm spasm. High incapacitation.'
+        :j>=38?'Deep bruising. Rib involvement probable. Significant pain compliance.'
+        :j>=25?'Surface bruising. Hematoma. Mild pain compliance.'
+        :'Surface trauma only.',
+   desc:'High value center mass target. Energy transfers directly to rib structure and underlying organs with minimal muscle absorption on average builds. Rib bruising probable above 38J, fracture possible above 55J. Diaphragm involvement likely on clean sternum hit above 42J. Effectiveness highly body-composition dependent — lean targets incapacitate at significantly lower thresholds, heavily muscled targets may require 80J+.'},
+  {id:'z-solar',tl:'tl-solar',label:'Solar Plexus',type:'primary',mJ:22,yJ:32,oJ:42,rJ:55,
+   eff:j=>j>=55?'SEVERE diaphragm trauma. Vagal response possible. Prolonged incapacitation.'
+        :j>=42?'DIAPHRAGM SPASM. Involuntary breath expulsion. Wind knockout.'
+        :j>=32?'Significant wind disruption. High pain compliance.'
+        :j>=22?'Wind disruption. Pain compliance likely.'
+        :'Minor effect.',
+   desc:'Primary fight-stopping zone. Diaphragm disruption causes involuntary breath expulsion and temporary inability to continue aggression. Empirically confirmed: 30-32J on a lean subject at 20 feet produced immediate knockdown, significant swelling, and days of soreness. Effectiveness reduced on high body fat targets due to adipose cushioning over the epigastric region. Most reliable incapacitation zone in the system after groin.'},
   {id:'z-abdom',tl:'tl-abdom',label:'Abdomen',type:'secondary',mJ:35,yJ:50,oJ:65,rJ:85,
    eff:j=>j>=85?'Organ damage risk. Possible internal bleeding. Major incapacitation.'
         :j>=65?'Deep organ proximity. High pain compliance. Mobility degraded.'
         :j>=50?'Deep muscle trauma. Significant pain compliance.'
         :j>=35?'Surface bruising. Mild pain compliance.'
-        :'Surface bruising.'},
+        :'Surface bruising.',
+   desc:'Effective pain compliance zone. Deep muscle and organ proximity above 50J. Less reliable than chest and solar plexus for immediate incapacitation — abdominal muscle wall absorbs significant energy on fit targets. Best used as follow-up zone or when center mass is obstructed.'},
   {id:'z-groin',tl:null,label:'Groin',type:'secondary',mJ:18,yJ:28,oJ:38,rJ:52,
    eff:j=>j>=52?'TESTICULAR TRAUMA. Vagal shock probable. Complete incapacitation.'
         :j>=38?'IMMEDIATE pain compliance. High incapacitation likely.'
         :j>=28?'Severe pain. Pain compliance highly likely.'
         :j>=18?'Significant pain.'
-        :'Minor effect.'},
+        :'Minor effect.',
+   desc:'Highest sensitivity zone. Lowest threshold for pain compliance and incapacitation due to nerve density. Marginal impact registers immediate pain response in most subjects. Incapacitation likely at 52J regardless of build. Least affected by body composition variables. Accuracy dependent — small target under stress.'},
   {id:'z-lsh',tl:'tl-lsh',label:'Shoulder (bilateral)',type:'secondary',mJ:40,yJ:55,oJ:70,rJ:90,
    eff:j=>j>=90?'Clavicle fracture probable. Joint disruption. Arm incapacitation.'
         :j>=70?'Joint / clavicle involvement. Arm function degraded.'
         :j>=55?'Deep bruising. Joint pain. Reduced arm function.'
         :j>=40?'Bruising. Mild pain compliance.'
-        :'Surface bruising only.'},
-  {id:'z-lth',tl:'tl-lth',label:'Thigh / Quad (bilateral)',type:'secondary',mJ:40,yJ:55,oJ:72,rJ:92,
-   eff:j=>j>=92?'MASSIVE HEMATOMA. Femoral involvement risk. Complete mobility loss.'
-        :j>=72?'MAJOR MUSCLE TRAUMA. Deep hematoma. Mobility elimination likely.'
-        :j>=55?'Deep bruising. Mobility degraded.'
-        :j>=40?'Surface bruising. Mild mobility impact.'
-        :'Surface bruising.'},
+        :'Surface bruising only.',
+   desc:'Pain compliance and arm incapacitation zone. Clavicle and acromioclavicular joint involvement above 55J. Arm function degraded, weapon retention compromised. Not a primary fight-stopper — use to degrade threat capability or as follow-up. Higher threshold required due to deltoid muscle mass in most subjects.'},
+  {id:'z-lth',tl:'tl-lth',label:'Thigh / Quad (bilateral)',type:'secondary',mJ:45,yJ:60,oJ:75,rJ:95,
+   eff:j=>j>=95?'MASSIVE HEMATOMA. Femoral involvement risk. Complete mobility loss.'
+        :j>=75?'MAJOR MUSCLE TRAUMA. Deep hematoma. Partial mobility loss.'
+        :j>=60?'Deep bruising. Mobility degraded.'
+        :j>=45?'Surface bruising. Mild mobility impact.'
+        :'Surface bruising.',
+   desc:'Least reliable incapacitation zone in the system. Largest muscle group in the body absorbs and distributes energy across a wide area. Empirical reference: 21 shots at estimated 35-42J impact energy to a heavily muscled quad produced severe trauma — open wounds, full-leg swelling, inability to walk for days — but zero immediate incapacitation during the engagement. On average builds expect deep hematoma and mobility degradation above 60J, partial mobility loss above 75J. Treat as harassment and mobility disruption target only. Do not rely on thigh hits for threat stopping. Effectiveness further reduced by heavy denim, cargo pants, or multiple clothing layers.'},
   {id:'z-lkn',tl:null,label:'Knee (bilateral)',type:'secondary',mJ:32,yJ:48,oJ:62,rJ:78,
    eff:j=>j>=78?'Joint destruction. Patella fracture probable. Complete mobility loss.'
         :j>=62?'Joint disruption. Immediate mobility loss.'
         :j>=48?'Joint pain. Temporary mobility reduction.'
         :j>=32?'Pain compliance. Reduced mobility.'
-        :'Pain compliance only.'},
+        :'Pain compliance only.',
+   desc:'Structural joint target. Energy transfers to joint capsule, ligaments, and surrounding bone with minimal muscle absorption. Immediate mobility disruption above 62J. Incapacitation via mobility elimination rather than pain — threat cannot pursue or maintain aggressive stance. Small target, precision required. Highly effective on all body types due to minimal tissue protection over the joint.'},
   {id:'z-head',tl:null,label:'Head / Skull / Orbital',type:'lethal',mJ:0,yJ:0,oJ:0,rJ:0,
-   eff:()=>'LETHAL. TBI / hemorrhage / orbital destruction at any energy level. NEVER target.'},
+   eff:()=>'LETHAL. TBI / hemorrhage / orbital destruction at any energy level. NEVER target.',
+   desc:'NEVER TARGET. Cranial impacts at any kinetic energy carry traumatic brain injury, intracranial hemorrhage, and orbital destruction risk. Less lethal launchers are not less lethal at the head — they are lethal weapons aimed at the head. No threshold tier applies. Excluded from doctrine entirely.'},
   {id:'z-throat',tl:null,label:'Throat / Trachea',type:'lethal',mJ:0,yJ:0,oJ:0,rJ:0,
-   eff:()=>'LETHAL. Airway collapse at any impact energy. NEVER target.'},
+   eff:()=>'LETHAL. Airway collapse at any impact energy. NEVER target.',
+   desc:'NEVER TARGET. Tracheal and laryngeal cartilage will collapse under kinetic projectile impact at any achievable .68 cal energy level, producing airway closure within minutes and likely death without immediate intervention. No threshold tier applies. Excluded from doctrine entirely.'},
 ];
 
 const PAIRS={'z-lsh':'z-rsh','z-lth':'z-rth','z-lkn':'z-rkn'};
@@ -653,17 +730,40 @@ function updatePlacement(impact,muzzle,dist){
   });
 
   let legend='';
-  ZONES.forEach(z=>{
+  ZONES.forEach((z,i)=>{
     const s=zStat(z,impact);
     const stStr=`<span class="zone-status-label" style="color:${s.col};text-shadow:0 0 8px ${s.glow};">${s.txt}</span>`;
+    const thr = z.type==='lethal'
+      ? '<div class="zone-thr">NO THRESHOLD APPLIES — NEVER TARGET</div>'
+      : `<div class="zone-thr"><span class="thr-m">M ${z.mJ}J</span> · <span class="thr-y">Y ${z.yJ}J</span> · <span class="thr-o">O ${z.oJ}J</span> · <span class="thr-r">R ${z.rJ}J</span></div>`;
+    const desc = z.desc
+      ? `<div class="zone-desc" id="zd-${i}" style="display:none;">${thr}<div class="zone-desc-body">${z.desc}</div></div>`
+      : '';
+    const infoBtn = z.desc
+      ? `<span class="zone-info" onclick="toggleZD(${i})">ⓘ INFO</span>`
+      : '';
     legend+=`<div class="zone-item">
-      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:3px;">
-        <div class="zone-name">${z.label}</div>${stStr}
+      <div class="zone-row">
+        <div class="zone-name">${z.label}</div>
+        <div class="zone-row-r">${stStr}${infoBtn}</div>
       </div>
       <div class="zone-eff">${z.eff(impact)}</div>
+      ${desc}
     </div>`;
   });
   document.getElementById('zone-legend').innerHTML=legend;
+}
+
+function toggleZD(i){
+  const el=document.getElementById('zd-'+i);
+  if(el)el.style.display = el.style.display==='none' ? 'block' : 'none';
+}
+function toggleDoctrine(){
+  const el=document.getElementById('doctrine-body');
+  const tg=document.getElementById('doc-toggle');
+  const open=el.style.display==='none';
+  el.style.display = open ? 'block' : 'none';
+  if(tg)tg.textContent = open ? '▲' : '▼';
 }
 
 function logShot(){
