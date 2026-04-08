@@ -104,24 +104,9 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;background:var(--pip)
 .dmg-text{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--text);line-height:1.6;letter-spacing:0.02em;}
 
 /* PLACEMENT */
-.pl-stack{display:flex;flex-direction:column;align-items:center;gap:14px;}
-.pl-svg-wrap{position:relative;width:100%;max-width:380px;}
-#body-svg path,#body-svg ellipse,#body-svg rect{transition:filter 0.12s;}
-#body-svg [id^="z-"]{cursor:crosshair;}
-#body-svg [id^="z-"]:hover{filter:brightness(1.45) drop-shadow(0 0 6px rgba(0,200,255,0.55));}
-.pl-info{width:100%;max-width:480px;background:#030508;border:1px solid var(--border);padding:14px 16px;min-height:120px;position:relative;}
-.pl-info::before{content:'';position:absolute;top:-1px;left:-1px;width:10px;height:10px;border-top:2px solid rgba(0,200,255,0.45);border-left:2px solid rgba(0,200,255,0.45);}
-.pl-info::after{content:'';position:absolute;bottom:-1px;right:-1px;width:10px;height:10px;border-bottom:2px solid rgba(0,200,255,0.45);border-right:2px solid rgba(0,200,255,0.45);}
-.pl-info-hdr{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px;}
-.pl-info-name{font-family:'Orbitron',monospace;font-size:13px;letter-spacing:0.12em;color:var(--bright);text-transform:uppercase;}
-.pl-info-stat{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:0.1em;}
-.pl-info-thr{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:0.05em;color:var(--muted);margin-bottom:8px;}
-.pl-info-eff{font-family:'Barlow Condensed',sans-serif;font-size:14px;line-height:1.55;color:var(--text);}
-.pl-info-empty{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.1em;text-align:center;padding:18px 0;}
-.pl-toggle-row{display:flex;justify-content:center;width:100%;max-width:480px;}
-.pl-zone-toggle{font-family:'Orbitron',monospace;font-size:9px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;background:transparent;border:1px solid rgba(197,255,0,0.2);color:var(--pip);padding:8px 14px;cursor:pointer;}
-.pl-zone-toggle:hover{background:rgba(197,255,0,0.06);border-color:rgba(197,255,0,0.4);}
-.zone-legend{overflow-y:auto;max-height:480px;width:100%;max-width:480px;display:none;}
+.pl-grid{display:grid;grid-template-columns:300px 1fr;gap:16px;align-items:start;}
+@media (max-width:720px){.pl-grid{grid-template-columns:1fr;}}
+.zone-legend{overflow-y:auto;max-height:640px;}
 .zone-item{padding:8px 0;border-bottom:1px solid rgba(197,255,0,0.05);}
 .zone-name{font-family:'Orbitron',monospace;font-size:12px;color:var(--bright);margin-bottom:3px;letter-spacing:0.08em;}
 .zone-eff{font-family:'Barlow Condensed',sans-serif;font-size:14px;color:var(--text);line-height:1.4;}
@@ -387,9 +372,9 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
     </div>
   </div>
 
-  <div class="pl-stack">
-    <div class="pl-svg-wrap">
-      <svg id="body-svg" viewBox="0 0 832 1248" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;background:#000;margin:0 auto;">
+  <div class="pl-grid">
+    <div>
+      <svg id="body-svg" viewBox="0 0 832 1248" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:340px;display:block;background:#000;">
         <defs>
           <radialGradient id="grad-r" cx="50%" cy="50%" r="65%">
             <stop offset="0%" stop-color="#ff2020" stop-opacity="0.85"/>
@@ -483,28 +468,13 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
         <text x="14" y="1232" font-family="Share Tech Mono" font-size="20" fill="rgba(0,200,255,0.45)" letter-spacing="2">TGT-ID:UNKNOWN · SCAN ACTIVE</text>
       </svg>
 
-      <div class="svg-legend" style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:10px;">
-        <div class="svg-legend-item"><div class="swatch" style="background:radial-gradient(circle,rgba(255,30,30,0.85),rgba(255,30,30,0.18) 60%,rgba(255,30,30,0) 100%);"></div>INCAPACITATE</div>
+      <div class="svg-legend">
+        <div class="svg-legend-item"><div class="swatch" style="background:radial-gradient(circle,rgba(255,30,30,0.85),rgba(255,30,30,0.18) 60%,rgba(255,30,30,0) 100%);"></div>INCAPACITATE / LETHAL</div>
         <div class="svg-legend-item"><div class="swatch" style="background:radial-gradient(circle,rgba(255,136,0,0.78),rgba(255,136,0,0.15) 60%,rgba(255,136,0,0) 100%);"></div>SEVERE</div>
         <div class="svg-legend-item"><div class="swatch" style="background:radial-gradient(circle,rgba(255,216,0,0.72),rgba(255,216,0,0.13) 60%,rgba(255,216,0,0) 100%);"></div>MODERATE</div>
         <div class="svg-legend-item"><div class="swatch" style="background:radial-gradient(circle,rgba(197,255,0,0.7),rgba(197,255,0,0.12) 60%,rgba(197,255,0,0) 100%);"></div>MARGINAL</div>
+        <div class="svg-legend-item"><div class="swatch" style="background:transparent;border:1px dashed rgba(0,200,255,0.25);"></div>INACTIVE — transparent</div>
       </div>
-    </div>
-
-    <div class="pl-info" id="pl-info">
-      <div class="pl-info-empty" id="pl-info-empty">◆ HOVER A ZONE ON THE BODY SCAN TO VIEW DAMAGE ASSESSMENT</div>
-      <div id="pl-info-content" style="display:none;">
-        <div class="pl-info-hdr">
-          <span class="pl-info-name" id="pl-info-name">—</span>
-          <span class="pl-info-stat" id="pl-info-stat">—</span>
-        </div>
-        <div class="pl-info-thr" id="pl-info-thr">—</div>
-        <div class="pl-info-eff" id="pl-info-eff">—</div>
-      </div>
-    </div>
-
-    <div class="pl-toggle-row">
-      <button class="pl-zone-toggle" onclick="toggleZoneLegend()" id="pl-zone-toggle-btn">▼ VIEW ALL ZONE REFERENCE</button>
     </div>
     <div class="zone-legend" id="zone-legend"></div>
   </div>
@@ -1021,7 +991,6 @@ function zStat(z,j){
 }
 
 function updatePlacement(impact,muzzle,dist){
-  _lastImpact=impact;
   document.getElementById('pl-j').textContent=impact.toFixed(1)+' J';
   const pdEl=document.getElementById('pl-dist');if(pdEl)pdEl.textContent=dist;
   let sc,st;
@@ -1032,8 +1001,6 @@ function updatePlacement(impact,muzzle,dist){
   document.getElementById('pl-sub').textContent='↑ '+muzzle.toFixed(0)+'J MUZZLE · ↓ '+impact.toFixed(1)+'J IMPACT @ '+dist+'FT';
 
   const azones=getActiveZones();
-  _activeZonesById={};
-  azones.forEach(z=>{_activeZonesById[z.id]=z;});
   azones.forEach(z=>{
     const el=document.getElementById(z.id);
     if(!el)return;
@@ -1041,17 +1008,29 @@ function updatePlacement(impact,muzzle,dist){
     el.setAttribute('fill',c.f);
     if(z.tl){const tl=document.getElementById(z.tl);if(tl)tl.setAttribute('fill',tCol(z,impact));}
     if(PAIRS[z.id]){const p=document.getElementById(PAIRS[z.id]);if(p)p.setAttribute('fill',c.f);}
-    bindZoneHover(el,z,impact);
-    if(PAIRS[z.id]){const p=document.getElementById(PAIRS[z.id]);if(p)bindZoneHover(p,z,impact);}
   });
-  // refresh hover info if a zone is currently focused
-  if(currentHoverZoneId){
-    const z=azones.find(x=>x.id===currentHoverZoneId);
-    if(z)showZoneInfo(z,impact);
+
+  // Sort zones by severity (highest first) so worst injuries are at the top
+  // Tier order: lethal > incapacitate > severe > moderate > marginal > inactive
+  function sevTier(z,j){
+    if(z.type==='lethal')return 5;
+    if(j>=z.rJ)return 4;
+    if(j>=z.oJ)return 3;
+    if(j>=z.yJ)return 2;
+    if(j>=z.mJ)return 1;
+    return 0;
   }
+  const sorted=[...azones].sort((a,b)=>{
+    const ta=sevTier(a,impact),tb=sevTier(b,impact);
+    if(ta!==tb)return tb-ta;
+    // within same tier, sort by how much current impact exceeds the tier threshold (more margin = more severe)
+    const aMargin=impact-(a.rJ||0);
+    const bMargin=impact-(b.rJ||0);
+    return bMargin-aMargin;
+  });
 
   let legend='';
-  azones.forEach((z,i)=>{
+  sorted.forEach((z,i)=>{
     const s=zStat(z,impact);
     const stStr=`<span class="zone-status-label" style="color:${s.col};text-shadow:0 0 8px ${s.glow};">${s.txt}</span>`;
     const thr = z.type==='lethal'
@@ -1078,59 +1057,6 @@ function updatePlacement(impact,muzzle,dist){
 function toggleZD(i){
   const el=document.getElementById('zd-'+i);
   if(el)el.style.display = el.style.display==='none' ? 'block' : 'none';
-}
-
-let currentHoverZoneId=null;
-let _lastImpact=0;
-let _activeZonesById={};
-function bindZoneHover(el,z,impact){
-  if(el._zhBound)return;
-  el._zhBound=true;
-  const zid=z.id;
-  el.addEventListener('mouseenter',()=>{
-    currentHoverZoneId=zid;
-    const cur=_activeZonesById[zid]||z;
-    showZoneInfo(cur,_lastImpact);
-  });
-  el.addEventListener('mouseleave',()=>{
-    if(currentHoverZoneId===zid)currentHoverZoneId=null;
-    hideZoneInfo();
-  });
-}
-function showZoneInfo(z,impact){
-  const empty=document.getElementById('pl-info-empty');
-  const content=document.getElementById('pl-info-content');
-  if(!empty||!content)return;
-  empty.style.display='none';
-  content.style.display='block';
-  document.getElementById('pl-info-name').textContent=z.label;
-  const s=zStat(z,impact);
-  const statEl=document.getElementById('pl-info-stat');
-  statEl.textContent=s.txt;
-  statEl.style.color=s.col;
-  statEl.style.textShadow='0 0 8px '+s.glow;
-  const thrEl=document.getElementById('pl-info-thr');
-  if(z.type==='lethal'){
-    thrEl.innerHTML='<span style="color:#ff4040;">NO THRESHOLD APPLIES — NEVER TARGET</span>';
-  } else {
-    thrEl.innerHTML=`<span class="thr-m">M ${z.mJ}</span> · <span class="thr-y">Y ${z.yJ}</span> · <span class="thr-o">O ${z.oJ}</span> · <span class="thr-r">R ${z.rJ}</span> impact J  ·  CURRENT ${impact.toFixed(1)} impact J`;
-  }
-  document.getElementById('pl-info-eff').textContent=z.eff(impact,z);
-}
-function hideZoneInfo(){
-  const empty=document.getElementById('pl-info-empty');
-  const content=document.getElementById('pl-info-content');
-  if(!empty||!content)return;
-  empty.style.display='block';
-  content.style.display='none';
-}
-function toggleZoneLegend(){
-  const el=document.getElementById('zone-legend');
-  const btn=document.getElementById('pl-zone-toggle-btn');
-  if(!el)return;
-  const open=el.style.display==='none'||el.style.display==='';
-  el.style.display = open ? 'block' : 'none';
-  if(btn)btn.textContent = open ? '▲ HIDE ZONE REFERENCE' : '▼ VIEW ALL ZONE REFERENCE';
 }
 function toggleDoctrine(){
   const el=document.getElementById('doctrine-body');
