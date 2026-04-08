@@ -195,6 +195,32 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 .stitle{font-family:'Orbitron',monospace;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin:14px 0 8px;}
 .empty{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--muted);text-align:center;padding:3rem 0;letter-spacing:0.08em;}
 
+/* DISTANCE ZONE BAR (Calculator slider) */
+.dist-zonebar{display:flex;width:100%;height:20px;margin-top:6px;border:1px solid rgba(197,255,0,0.08);overflow:hidden;}
+.dz{display:flex;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:0.04em;color:#000;text-shadow:none;overflow:hidden;white-space:nowrap;border-right:1px solid rgba(0,0,0,0.35);}
+.dz:last-child{border-right:none;}
+.dz span{padding:0 4px;}
+.dz-cq{background:linear-gradient(180deg,#7eff10,#5fcc00);color:#021400;}
+.dz-pe{background:linear-gradient(180deg,#c5ff00,#a8d800);color:#1a2400;}
+.dz-er{background:linear-gradient(180deg,#ffa800,#ff7a00);color:#1a0a00;}
+.dz-mr{background:linear-gradient(180deg,#ff3a3a,#cc0000);color:#fff;text-shadow:0 1px 0 rgba(0,0,0,0.4);}
+
+/* ENGAGEMENT DOCTRINE CARD */
+.doc-eng-card{background:linear-gradient(180deg,rgba(14,17,22,0.92),rgba(8,10,14,0.88));}
+.eng-row{display:grid;grid-template-columns:135px 65px 1fr;gap:10px;align-items:start;padding:9px 0;border-bottom:1px solid rgba(197,255,0,0.05);}
+.eng-row:last-child{border-bottom:none;}
+.eng-tag{font-family:'Share Tech Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:3px 6px;text-align:center;}
+.eng-cq{background:rgba(126,255,16,0.10);color:#7eff10;border:1px solid rgba(126,255,16,0.35);}
+.eng-pe{background:rgba(197,255,0,0.10);color:#c5ff00;border:1px solid rgba(197,255,0,0.35);}
+.eng-er{background:rgba(255,168,0,0.10);color:#ffa800;border:1px solid rgba(255,168,0,0.35);}
+.eng-mr{background:rgba(255,58,58,0.10);color:#ff5050;border:1px solid rgba(255,58,58,0.4);}
+.eng-dist{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--bright);letter-spacing:0.04em;padding-top:3px;}
+.eng-desc{font-family:'Barlow Condensed',sans-serif;font-size:14px;color:var(--text);line-height:1.45;}
+@media (max-width:560px){
+  .eng-row{grid-template-columns:1fr;gap:4px;}
+  .dz span{font-size:7px;}
+}
+
 /* COMPAT PILL */
 .compat-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
 .cpill{font-family:'Share Tech Mono',monospace;font-size:10px;padding:2px 8px;letter-spacing:0.05em;}
@@ -209,7 +235,10 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
     <div class="brand">LLPP</div>
     <div class="brand-sub">LESS LETHAL PERFORMANCE PLATFORM · FIELD PLATFORM v3.1</div>
   </div>
-  <div id="live-impact" style="font-family:'Orbitron',monospace;font-size:28px;font-weight:900;color:var(--pip);text-shadow:0 0 20px rgba(197,255,0,0.4);letter-spacing:0.05em;">— J</div>
+  <div style="text-align:right;">
+    <div id="live-readout" title="muzzle / impact" style="font-family:'Orbitron',monospace;font-size:22px;font-weight:900;color:var(--pip);text-shadow:0 0 18px rgba(197,255,0,0.4);letter-spacing:0.04em;line-height:1;">↑ — &nbsp; ↓ —</div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.12em;margin-top:4px;">MUZZLE / IMPACT</div>
+  </div>
 </div>
 
 <div class="tabs">
@@ -248,13 +277,15 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
     </div>
   </div>
 
+  <div id="c-round-note" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.04em;margin:-4px 0 12px 2px;display:none;"></div>
+
   <!-- FPS INPUT -->
   <div class="card" style="text-align:center;padding:24px 16px;">
     <div class="lbl" style="margin-bottom:14px;">Chronograph FPS</div>
     <div style="display:flex;align-items:center;justify-content:center;gap:12px;">
       <button class="fps-btn" onclick="adjFPS(-10)">−10</button>
       <button class="fps-btn" onclick="adjFPS(-1)">−1</button>
-      <input type="number" id="c-fps" value="300" min="50" max="800"
+      <input type="number" id="c-fps" value="" min="0" max="800" placeholder="—"
         oninput="calcUpdate()"
         style="font-family:'Orbitron',monospace;font-size:52px;font-weight:900;
                color:var(--pip);background:transparent;border:none;
@@ -266,42 +297,77 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
     <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);margin-top:6px;letter-spacing:0.1em;">FEET PER SECOND</div>
   </div>
 
-  <!-- MUZZLE JOULES — big result -->
-  <div class="card" style="text-align:center;padding:20px 16px;margin-bottom:12px;">
-    <div class="lbl">Muzzle Energy</div>
-    <div class="metric-val" id="c-muzzle" style="font-size:64px;letter-spacing:-0.02em;">—</div>
-    <div class="metric-unit" style="font-size:14px;letter-spacing:0.2em;">JOULES</div>
-    <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);margin-top:8px;" id="c-vel-line">— M/S · — G</div>
-  </div>
-
-  <!-- DISTANCE + ON TARGET -->
-  <div class="card">
-    <div class="lbl">Engagement Distance — <span id="c-dist-out" style="color:var(--pip);font-family:'Orbitron',monospace;font-size:14px;text-shadow:0 0 12px rgba(197,255,0,0.3);">15 ft</span></div>
-    <input type="range" id="c-dist" min="3" max="30" value="15" step="1" oninput="calcUpdate()" style="margin:10px 0 6px;">
-  </div>
-
-  <div id="c-status" style="margin-bottom:12px;"></div>
-
+  <!-- DUAL ENERGY DISPLAY -->
   <div class="r2">
-    <div class="metric">
-      <div class="lbl">On Target</div>
-      <div class="metric-val" id="c-impact">—</div>
-      <div class="metric-unit">JOULES</div>
+    <div class="card" style="text-align:center;padding:18px 12px;">
+      <div class="lbl">Muzzle</div>
+      <div class="metric-val" id="c-muzzle" style="font-size:54px;letter-spacing:-0.02em;">—</div>
+      <div class="metric-unit" style="font-size:13px;letter-spacing:0.2em;">JOULES</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:6px;letter-spacing:0.1em;">at barrel</div>
     </div>
-    <div class="metric">
-      <div class="lbl">Energy Lost</div>
-      <div class="metric-val" id="c-loss" style="font-size:28px;">—</div>
-      <div class="metric-unit">JOULES</div>
+    <div class="card" style="text-align:center;padding:18px 12px;">
+      <div class="lbl">On Target <span style="color:var(--pip);">@ <span id="c-on-dist">30</span>ft</span></div>
+      <div class="metric-val" id="c-impact" style="font-size:54px;letter-spacing:-0.02em;">—</div>
+      <div class="metric-unit" style="font-size:13px;letter-spacing:0.2em;">IMPACT JOULES</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:6px;letter-spacing:0.1em;">at <span id="c-on-dist2">30</span> feet</div>
     </div>
   </div>
 
   <div class="card" style="margin-bottom:10px;">
+    <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.05em;text-align:center;">
+      <span id="c-vel-line">— M/S · — G</span> &nbsp;·&nbsp; ENERGY LOST: <span id="c-loss" style="color:var(--bright);">—</span> impact J
+    </div>
+  </div>
+
+  <!-- DISTANCE SLIDER WITH SEGMENTED ZONE BAR -->
+  <div class="card">
+    <div class="lbl">Engagement Distance — <span id="c-dist-out" style="color:var(--pip);font-family:'Orbitron',monospace;font-size:14px;text-shadow:0 0 12px rgba(197,255,0,0.3);">30 ft</span></div>
+    <input type="range" id="c-dist" min="3" max="100" value="30" step="1" oninput="calcUpdate()" style="margin:10px 0 4px;">
+    <div class="dist-zonebar">
+      <div class="dz dz-cq" style="flex:22;"><span>3-25 CLOSE QUARTERS</span></div>
+      <div class="dz dz-pe" style="flex:25;"><span>25-50 PRIMARY ENVELOPE</span></div>
+      <div class="dz dz-er" style="flex:25;"><span>50-75 EXTENDED RANGE</span></div>
+      <div class="dz dz-mr" style="flex:25;"><span>75-100 MAXIMUM RANGE</span></div>
+    </div>
+    <div id="c-range-warn" style="display:none;margin-top:10px;padding:9px 12px;background:rgba(255,30,30,0.06);border:1px solid rgba(255,30,30,0.3);font-family:'Share Tech Mono',monospace;font-size:11px;color:#ff5050;letter-spacing:0.04em;line-height:1.5;">
+      ⚠ BEYOND RELIABLE ENGAGEMENT RANGE — Energy and accuracy degraded. Zone targeting unreliable. Deterrence effect only beyond this distance.
+    </div>
+  </div>
+
+  <div id="c-status" style="margin-bottom:12px;"></div>
+
+  <div class="card" style="margin-bottom:10px;">
     <div class="bar-bg"><div class="bar-fill" id="c-bar" style="width:0%"></div></div>
-    <div class="bar-labels"><span>0J</span><span>DOCTRINE FLOOR 50J</span><span>100J</span></div>
+    <div class="bar-labels"><span>0 impact J</span><span>DOCTRINE FLOOR 50 impact J</span><span>100 impact J</span></div>
   </div>
 
   <div class="card">
     <div class="dmg-text" id="c-dmg">—</div>
+  </div>
+
+  <!-- ENGAGEMENT DOCTRINE -->
+  <div class="card doc-eng-card">
+    <div class="lbl" style="margin-bottom:10px;">◆ ENGAGEMENT DOCTRINE</div>
+    <div class="eng-row">
+      <span class="eng-tag eng-cq">CLOSE QUARTERS</span>
+      <span class="eng-dist">3–25 ft</span>
+      <span class="eng-desc">Maximum effectiveness. Full energy delivery. Tight grouping.</span>
+    </div>
+    <div class="eng-row">
+      <span class="eng-tag eng-pe">PRIMARY ENVELOPE</span>
+      <span class="eng-dist">25–50 ft</span>
+      <span class="eng-desc">Empirically confirmed effective range. Documented KIP testing confirms severe to incapacitating effect at 35–40 ft on average builds. Accuracy remains reliable.</span>
+    </div>
+    <div class="eng-row">
+      <span class="eng-tag eng-er">EXTENDED RANGE</span>
+      <span class="eng-dist">50–75 ft</span>
+      <span class="eng-desc">Meaningful energy on high-joule platforms. Accuracy becomes primary limiting factor. Zone targeting less reliable.</span>
+    </div>
+    <div class="eng-row">
+      <span class="eng-tag eng-mr">MAXIMUM RANGE</span>
+      <span class="eng-dist">75–100 ft</span>
+      <span class="eng-desc">Deterrence and psychological effect. Energy insufficient for reliable incapacitation on most targets. Not a doctrine engagement distance.</span>
+    </div>
   </div>
 
 </div>
@@ -310,10 +376,13 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 <div id="placement" class="panel">
   <div class="card" style="margin-bottom:14px;">
     <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
-      <div id="pl-j" style="font-family:'Orbitron',monospace;font-size:44px;font-weight:900;color:var(--pip);text-shadow:0 0 25px rgba(197,255,0,0.4);line-height:1;">— J</div>
+      <div>
+        <div id="pl-j" style="font-family:'Orbitron',monospace;font-size:44px;font-weight:900;color:var(--pip);text-shadow:0 0 25px rgba(197,255,0,0.4);line-height:1;">— J</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.12em;margin-top:3px;">IMPACT JOULES @ <span id="pl-dist">—</span> FT</div>
+      </div>
       <div>
         <div id="pl-badge" style="margin-bottom:5px;"></div>
-        <div id="pl-sub" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.08em;">Set launcher in Calc tab</div>
+        <div id="pl-sub" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.08em;">Enter chronograph FPS in Calculator tab</div>
       </div>
     </div>
   </div>
@@ -454,7 +523,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
       <div class="doc-section">
         <div class="doc-section-hdr">ZONE THRESHOLD TABLE v1.0 — <span id="doc-cal-tag" style="color:var(--pip);">.68 CAL</span></div>
         <table class="doc-table">
-          <thead><tr><th>Zone</th><th>Marginal</th><th>Moderate</th><th>Severe</th><th>Incapacitate</th></tr></thead>
+          <thead><tr><th>Zone</th><th>Marginal</th><th>Moderate</th><th>Severe</th><th>Incapacitate</th></tr><tr><th></th><th colspan="4" style="color:var(--muted);font-size:9px;letter-spacing:0.08em;text-transform:none;border-bottom:none;">all values are impact joules at engagement distance</th></tr></thead>
           <tbody id="doc-tbody"></tbody>
         </table>
       </div>
@@ -745,8 +814,12 @@ function populateRounds(){
   const co=document.createElement('option');
   co.value='custom';co.textContent='Custom mass...';
   sel.appendChild(co);
-  // restore prior selection if compatible
-  if(prev && [...sel.options].some(o=>o.value===prev)) sel.value=prev;
+  // restore prior selection if compatible; otherwise prefer JUL V3 default for .68 cal
+  if(prev && [...sel.options].some(o=>o.value===prev)){
+    sel.value=prev;
+  } else if(cal==='68' && [...sel.options].some(o=>o.value==='7.70|0.687')){
+    sel.value='7.70|0.687';
+  }
   renderDoctrineTable();
   // update caliber badge
   const badge=document.getElementById('c-cal-badge');
@@ -782,7 +855,7 @@ function renderDoctrineTable(){
   let html='';
   order.forEach(id=>{
     const z=byId[id];if(!z)return;
-    html+=`<tr><td class="zn">${labels[id]}</td><td class="tm">${z.mJ} J</td><td class="ty">${z.yJ} J</td><td class="tov">${z.oJ} J</td><td class="tr">${z.rJ} J</td></tr>`;
+    html+=`<tr><td class="zn">${labels[id]}</td><td class="tm">${z.mJ}</td><td class="ty">${z.yJ}</td><td class="tov">${z.oJ}</td><td class="tr">${z.rJ}</td></tr>`;
   });
   tbody.innerHTML=html;
 }
@@ -800,19 +873,22 @@ function calcImpact(j,ft){return j*Math.exp(-0.012*ft*0.3048);}
 
 function adjFPS(delta){
   const el=document.getElementById('c-fps');
-  const val=Math.max(50,Math.min(800,(parseInt(el.value)||300)+delta));
+  const cur=parseInt(el.value);
+  // First nudge from blank seeds at 300 to give a sane starting point
+  const base=isNaN(cur)?300:cur;
+  const val=Math.max(0,Math.min(800,base+delta));
   el.value=val;
   calcUpdate();
 }
 
 function getDmg(j){
-  if(j<25)return'DETERRENCE ONLY — no reliable physical effect';
-  if(j<35)return'SURFACE BRUISING — pain compliance unlikely on determined threat';
-  if(j<45)return'HEMATOMA — no bone involvement. Backup close-range role only';
-  if(j<55)return'DOCTRINE FLOOR — rib bruising possible, diaphragm disruption probable';
-  if(j<65)return'HIGH INCAPACITATION — rib fracture possible, diaphragm spasm highly likely';
-  if(j<80)return'FIGHT STOPPER — rib fracture probable, major muscle trauma, mobility loss';
-  return'DEFINITIVE FIGHT-ENDER — max energy. LETHAL RISK elevated at head and throat';
+  if(j<25)return'DETERRENCE ONLY — no reliable physical effect (impact J)';
+  if(j<35)return'SURFACE BRUISING — pain compliance unlikely on determined threat (impact J)';
+  if(j<45)return'HEMATOMA — no bone involvement. Backup close-range role only (impact J)';
+  if(j<55)return'DOCTRINE FLOOR — rib bruising possible, diaphragm disruption probable (impact J)';
+  if(j<65)return'HIGH INCAPACITATION — rib fracture possible, diaphragm spasm highly likely (impact J)';
+  if(j<80)return'FIGHT STOPPER — rib fracture probable, major muscle trauma, mobility loss (impact J)';
+  return'DEFINITIVE FIGHT-ENDER — max energy. LETHAL RISK elevated at head and throat (impact J)';
 }
 
 function calcUpdate(){
@@ -824,41 +900,95 @@ function calcUpdate(){
     const rv=sel.value.split('|');
     mass=parseFloat(rv[0]);
   }
-  const fps=parseInt(document.getElementById('c-fps').value)||0;
+  const rawFps=document.getElementById('c-fps').value;
+  const fps=rawFps===''||rawFps==null?0:(parseInt(rawFps)||0);
   const dist=parseInt(document.getElementById('c-dist').value);
   const muzzle=fps>0?fpsToJoules(fps,mass):0;
-  const impact=calcImpact(muzzle,dist);
+  const impact=fps>0?calcImpact(muzzle,dist):0;
   const loss=muzzle-impact;
   const ms=(fps*0.3048);
 
   document.getElementById('c-dist-out').textContent=dist+' ft';
+  document.getElementById('c-on-dist').textContent=dist;
+  document.getElementById('c-on-dist2').textContent=dist;
   document.getElementById('c-muzzle').textContent=fps>0?muzzle.toFixed(1):'—';
   document.getElementById('c-impact').textContent=fps>0?impact.toFixed(1):'—';
   document.getElementById('c-loss').textContent=fps>0?loss.toFixed(1):'—';
   document.getElementById('c-vel-line').textContent=fps>0?(ms.toFixed(1)+' M/S · '+mass+'G'):'— M/S · '+mass+'G';
 
   const impEl=document.getElementById('c-impact');
-  impEl.className='metric-val'+(impact>=50?'':impact>=45?' warn':' danger');
-  document.getElementById('live-impact').textContent=fps>0?impact.toFixed(1)+' J':'— J';
+  impEl.className='metric-val'+(fps===0?'':impact>=50?'':impact>=45?' warn':' danger');
 
-  const pct=Math.min(100,impact);
+  // Topbar dual readout
+  const lr=document.getElementById('live-readout');
+  if(lr){
+    if(fps>0){
+      lr.innerHTML='↑ '+muzzle.toFixed(0)+'J &nbsp; ↓ '+impact.toFixed(0)+'J';
+    } else {
+      lr.innerHTML='— / —';
+    }
+  }
+
+  const pct=fps>0?Math.min(100,impact):0;
   const fill=document.getElementById('c-bar');
   fill.style.width=pct+'%';
-  fill.style.background=impact>=50?'linear-gradient(90deg,rgba(80,180,0,0.6),rgba(197,255,0,0.9))':impact>=45?'rgba(255,100,0,0.7)':'rgba(255,30,30,0.7)';
-  fill.style.boxShadow=impact>=50?'0 0 10px rgba(197,255,0,0.3)':'none';
+  if(fps===0){
+    fill.style.background='rgba(80,80,80,0.2)';
+    fill.style.boxShadow='none';
+  } else {
+    fill.style.background=impact>=50?'linear-gradient(90deg,rgba(80,180,0,0.6),rgba(197,255,0,0.9))':impact>=45?'rgba(255,100,0,0.7)':'rgba(255,30,30,0.7)';
+    fill.style.boxShadow=impact>=50?'0 0 10px rgba(197,255,0,0.3)':'none';
+  }
 
-  if(fps>0){
+  // Status strip
+  if(fps===0){
+    document.getElementById('c-status').innerHTML='<div class="status-strip" style="background:rgba(136,160,96,0.04);color:var(--muted);border:1px solid rgba(136,160,96,0.18);">ENTER CHRONOGRAPH FPS TO BEGIN — Use your measured muzzle velocity for accurate impact calculations</div>';
+    document.getElementById('c-dmg').textContent='—';
+  } else {
     let sc,st;
-    if(impact>=50){sc='s-good';st='DOCTRINE FLOOR MET — BONE INVOLVEMENT PROBABLE';}
-    else if(impact>=45){sc='s-warn';st='CAUTION — BELOW DOCTRINE FLOOR';}
-    else{sc='s-bad';st='BELOW MINIMUM — UNRELIABLE INCAPACITATION';}
+    if(impact>=50){sc='s-good';st='DOCTRINE FLOOR MET — BONE INVOLVEMENT PROBABLE (impact J)';}
+    else if(impact>=45){sc='s-warn';st='CAUTION — BELOW DOCTRINE FLOOR (impact J)';}
+    else{sc='s-bad';st='BELOW MINIMUM — UNRELIABLE INCAPACITATION (impact J)';}
     document.getElementById('c-status').innerHTML='<div class="status-strip '+sc+'">'+st+'</div>';
     document.getElementById('c-dmg').textContent=getDmg(impact);
-  } else {
-    document.getElementById('c-status').innerHTML='';
-    document.getElementById('c-dmg').textContent='—';
   }
+
+  // Range warning past 60 ft
+  const rw=document.getElementById('c-range-warn');
+  if(rw)rw.style.display=dist>60?'block':'none';
+
+  // Round-specific note
+  updateRoundNote();
+
   if(fps>0) updatePlacement(impact,muzzle,dist);
+  else clearPlacement();
+}
+
+function updateRoundNote(){
+  const sel=document.getElementById('c-round');
+  const note=document.getElementById('c-round-note');
+  if(!note)return;
+  const txt=note.dataset[sel.value]||'';
+  if(sel.value==='7.70|0.687'){
+    note.textContent='Round weight based on empirical scale measurement. V3 shows variance of 7.65–7.74g across samples.';
+    note.style.display='block';
+  } else {
+    note.textContent='';
+    note.style.display='none';
+  }
+}
+
+function clearPlacement(){
+  const j=document.getElementById('pl-j');if(j)j.textContent='— J';
+  const sub=document.getElementById('pl-sub');if(sub)sub.textContent='Enter chronograph FPS in Calculator tab';
+  const badge=document.getElementById('pl-badge');if(badge)badge.innerHTML='';
+  // Clear all zone fills
+  ZONES.forEach(z=>{
+    const el=document.getElementById(z.id);if(el)el.setAttribute('fill','rgba(0,0,0,0)');
+    if(PAIRS[z.id]){const p=document.getElementById(PAIRS[z.id]);if(p)p.setAttribute('fill','rgba(0,0,0,0)');}
+    if(z.tl){const tl=document.getElementById(z.tl);if(tl)tl.setAttribute('fill','rgba(0,0,0,0)');}
+  });
+  const legend=document.getElementById('zone-legend');if(legend)legend.innerHTML='';
 }
 
 function onLauncherChange(){populateRounds();}
@@ -893,12 +1023,13 @@ function zStat(z,j){
 function updatePlacement(impact,muzzle,dist){
   _lastImpact=impact;
   document.getElementById('pl-j').textContent=impact.toFixed(1)+' J';
+  const pdEl=document.getElementById('pl-dist');if(pdEl)pdEl.textContent=dist;
   let sc,st;
-  if(impact>=50){sc='s-good';st='BONE INVOLVEMENT PROBABLE';}
-  else if(impact>=45){sc='s-warn';st='MARGINAL — SOFT TISSUE ONLY';}
-  else{sc='s-bad';st='BELOW DOCTRINE FLOOR';}
+  if(impact>=50){sc='s-good';st='BONE INVOLVEMENT PROBABLE (impact J)';}
+  else if(impact>=45){sc='s-warn';st='MARGINAL — SOFT TISSUE ONLY (impact J)';}
+  else{sc='s-bad';st='BELOW DOCTRINE FLOOR (impact J)';}
   document.getElementById('pl-badge').innerHTML='<div class="status-strip '+sc+'" style="padding:5px 12px;font-size:10px;margin:0;">'+st+'</div>';
-  document.getElementById('pl-sub').textContent=muzzle.toFixed(0)+'J MUZZLE · '+dist+'FT · '+impact.toFixed(1)+'J IMPACT';
+  document.getElementById('pl-sub').textContent='↑ '+muzzle.toFixed(0)+'J MUZZLE · ↓ '+impact.toFixed(1)+'J IMPACT @ '+dist+'FT';
 
   const azones=getActiveZones();
   _activeZonesById={};
@@ -925,7 +1056,7 @@ function updatePlacement(impact,muzzle,dist){
     const stStr=`<span class="zone-status-label" style="color:${s.col};text-shadow:0 0 8px ${s.glow};">${s.txt}</span>`;
     const thr = z.type==='lethal'
       ? '<div class="zone-thr">NO THRESHOLD APPLIES — NEVER TARGET</div>'
-      : `<div class="zone-thr"><span class="thr-m">M ${z.mJ}J</span> · <span class="thr-y">Y ${z.yJ}J</span> · <span class="thr-o">O ${z.oJ}J</span> · <span class="thr-r">R ${z.rJ}J</span></div>`;
+      : `<div class="zone-thr"><span class="thr-m">M ${z.mJ}</span> · <span class="thr-y">Y ${z.yJ}</span> · <span class="thr-o">O ${z.oJ}</span> · <span class="thr-r">R ${z.rJ}</span> impact J</div>`;
     const desc = z.desc
       ? `<div class="zone-desc" id="zd-${i}" style="display:none;">${thr}<div class="zone-desc-body">${z.desc}</div></div>`
       : '';
@@ -982,7 +1113,7 @@ function showZoneInfo(z,impact){
   if(z.type==='lethal'){
     thrEl.innerHTML='<span style="color:#ff4040;">NO THRESHOLD APPLIES — NEVER TARGET</span>';
   } else {
-    thrEl.innerHTML=`<span class="thr-m">M ${z.mJ}J</span> · <span class="thr-y">Y ${z.yJ}J</span> · <span class="thr-o">O ${z.oJ}J</span> · <span class="thr-r">R ${z.rJ}J</span>  ·  IMPACT ${impact.toFixed(1)}J`;
+    thrEl.innerHTML=`<span class="thr-m">M ${z.mJ}</span> · <span class="thr-y">Y ${z.yJ}</span> · <span class="thr-o">O ${z.oJ}</span> · <span class="thr-r">R ${z.rJ}</span> impact J  ·  CURRENT ${impact.toFixed(1)} impact J`;
   }
   document.getElementById('pl-info-eff').textContent=z.eff(impact,z);
 }
