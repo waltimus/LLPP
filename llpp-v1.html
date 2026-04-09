@@ -377,58 +377,64 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
       <svg id="body-svg" viewBox="0 0 832 1248" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:340px;display:block;background:#000;">
         <defs>
           <radialGradient id="grad-r" cx="50%" cy="50%" r="65%">
-            <stop offset="0%" stop-color="#ff2020" stop-opacity="0.98"/>
-            <stop offset="45%" stop-color="#ff3030" stop-opacity="0.90"/>
-            <stop offset="80%" stop-color="#ff2020" stop-opacity="0.45"/>
+            <stop offset="0%" stop-color="#ff2020" stop-opacity="0.72"/>
+            <stop offset="45%" stop-color="#ff3030" stop-opacity="0.50"/>
+            <stop offset="80%" stop-color="#ff2020" stop-opacity="0.22"/>
+            <stop offset="100%" stop-color="#ff2020" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="grad-r-leth" cx="50%" cy="50%" r="65%">
+            <stop offset="0%" stop-color="#ff2020" stop-opacity="0.42"/>
+            <stop offset="45%" stop-color="#ff3030" stop-opacity="0.26"/>
+            <stop offset="80%" stop-color="#ff2020" stop-opacity="0.10"/>
             <stop offset="100%" stop-color="#ff2020" stop-opacity="0"/>
           </radialGradient>
           <radialGradient id="grad-o" cx="50%" cy="50%" r="65%">
-            <stop offset="0%" stop-color="#ff8800" stop-opacity="0.92"/>
-            <stop offset="45%" stop-color="#ff9020" stop-opacity="0.75"/>
-            <stop offset="80%" stop-color="#ff8800" stop-opacity="0.32"/>
+            <stop offset="0%" stop-color="#ff8800" stop-opacity="0.62"/>
+            <stop offset="45%" stop-color="#ff9020" stop-opacity="0.42"/>
+            <stop offset="80%" stop-color="#ff8800" stop-opacity="0.18"/>
             <stop offset="100%" stop-color="#ff8800" stop-opacity="0"/>
           </radialGradient>
           <radialGradient id="grad-y" cx="50%" cy="50%" r="65%">
-            <stop offset="0%" stop-color="#ffe000" stop-opacity="0.85"/>
-            <stop offset="45%" stop-color="#ffd800" stop-opacity="0.60"/>
-            <stop offset="80%" stop-color="#ffd800" stop-opacity="0.24"/>
+            <stop offset="0%" stop-color="#ffe000" stop-opacity="0.52"/>
+            <stop offset="45%" stop-color="#ffd800" stop-opacity="0.34"/>
+            <stop offset="80%" stop-color="#ffd800" stop-opacity="0.13"/>
             <stop offset="100%" stop-color="#ffd800" stop-opacity="0"/>
           </radialGradient>
           <radialGradient id="grad-g" cx="50%" cy="50%" r="65%">
-            <stop offset="0%" stop-color="#c5ff00" stop-opacity="0.72"/>
-            <stop offset="45%" stop-color="#a8ff20" stop-opacity="0.45"/>
-            <stop offset="80%" stop-color="#c5ff00" stop-opacity="0.18"/>
+            <stop offset="0%" stop-color="#c5ff00" stop-opacity="0.45"/>
+            <stop offset="45%" stop-color="#a8ff20" stop-opacity="0.28"/>
+            <stop offset="80%" stop-color="#c5ff00" stop-opacity="0.10"/>
             <stop offset="100%" stop-color="#c5ff00" stop-opacity="0"/>
           </radialGradient>
 
           <!-- GLOW FILTERS -->
           <filter id="glow-marg" x="-80%" y="-80%" width="260%" height="260%">
             <feGaussianBlur stdDeviation="4" result="b"/>
-            <feColorMatrix in="b" type="matrix" values="0 0 0 0 1  0 0 0 0 0.72  0 0 0 0 0.10  0 0 0 0.55 0"/>
+            <feColorMatrix in="b" type="matrix" values="0 0 0 0 1  0 0 0 0 0.72  0 0 0 0 0.10  0 0 0 0.40 0"/>
             <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
           <filter id="glow-mod" x="-80%" y="-80%" width="260%" height="260%">
-            <feGaussianBlur stdDeviation="6" result="b"/>
-            <feColorMatrix in="b" type="matrix" values="0 0 0 0 1  0 0 0 0 0.66  0 0 0 0 0.05  0 0 0 0.85 0"/>
+            <feGaussianBlur stdDeviation="5" result="b"/>
+            <feColorMatrix in="b" type="matrix" values="0 0 0 0 1  0 0 0 0 0.66  0 0 0 0 0.05  0 0 0 0.60 0"/>
             <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
           <filter id="glow-sev" x="-100%" y="-100%" width="300%" height="300%">
-            <feGaussianBlur stdDeviation="8" result="b"/>
-            <feColorMatrix in="b" type="matrix" values="0 0 0 0 1  0 0 0 0 0.48  0 0 0 0 0  0 0 0 1.05 0"/>
+            <feGaussianBlur stdDeviation="7" result="b"/>
+            <feColorMatrix in="b" type="matrix" values="0 0 0 0 1  0 0 0 0 0.48  0 0 0 0 0  0 0 0 0.80 0"/>
             <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
           <filter id="glow-inc" x="-120%" y="-120%" width="340%" height="340%">
             <feGaussianBlur stdDeviation="7" result="b">
-              <animate attributeName="stdDeviation" values="6;13;6" dur="1.4s" repeatCount="indefinite"/>
+              <animate attributeName="stdDeviation" values="5;11;5" dur="1.4s" repeatCount="indefinite"/>
             </feGaussianBlur>
-            <feColorMatrix in="b" type="matrix" values="0 0 0 0 0.77  0 0 0 0 1  0 0 0 0 0  0 0 0 1.3 0">
-              <animate attributeName="values" values="0 0 0 0 0.77  0 0 0 0 1  0 0 0 0 0  0 0 0 1.0 0;0 0 0 0 0.77  0 0 0 0 1  0 0 0 0 0  0 0 0 1.6 0;0 0 0 0 0.77  0 0 0 0 1  0 0 0 0 0  0 0 0 1.0 0" dur="1.4s" repeatCount="indefinite"/>
+            <feColorMatrix in="b" type="matrix" values="0 0 0 0 0.77  0 0 0 0 1  0 0 0 0 0  0 0 0 0.90 0">
+              <animate attributeName="values" values="0 0 0 0 0.77  0 0 0 0 1  0 0 0 0 0  0 0 0 0.70 0;0 0 0 0 0.77  0 0 0 0 1  0 0 0 0 0  0 0 0 1.15 0;0 0 0 0 0.77  0 0 0 0 1  0 0 0 0 0  0 0 0 0.70 0" dur="1.4s" repeatCount="indefinite"/>
             </feColorMatrix>
             <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
           <filter id="glow-leth" x="-80%" y="-80%" width="260%" height="260%">
-            <feGaussianBlur stdDeviation="6" result="b"/>
-            <feColorMatrix in="b" type="matrix" values="0 0 0 0 1  0 0 0 0 0.12  0 0 0 0 0.12  0 0 0 1.1 0"/>
+            <feGaussianBlur stdDeviation="5" result="b"/>
+            <feColorMatrix in="b" type="matrix" values="0 0 0 0 1  0 0 0 0 0.12  0 0 0 0 0.12  0 0 0 0.55 0"/>
             <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
         </defs>
@@ -444,13 +450,13 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
         <!-- THROAT — always lethal -->
         <rect id="z-throat" x="386" y="252" width="62" height="40" rx="8" fill="rgba(0,0,0,0)"/>
 
-        <!-- CHEST / Pectoralis Major (butterfly) -->
-        <path id="z-chest" d="M 308 290 C 318 278 348 274 380 286 C 398 294 410 298 416 298 C 422 298 434 294 452 286 C 484 274 514 278 524 290 C 536 320 540 362 528 408 C 506 444 466 460 428 442 C 422 436 418 432 416 432 C 414 432 410 436 404 442 C 366 460 326 444 304 408 C 292 362 296 320 308 290 Z" fill="rgba(0,0,0,0)"/>
-        <text id="tl-chest" x="416" y="370" text-anchor="middle" font-family="Share Tech Mono" font-size="22" fill="rgba(0,0,0,0)" letter-spacing="2">CHEST</text>
+        <!-- CHEST / Pectoralis Major (butterfly) — migrated down for body alignment -->
+        <path id="z-chest" d="M 308 320 C 318 308 348 304 380 316 C 398 324 410 328 416 328 C 422 328 434 324 452 316 C 484 304 514 308 524 320 C 536 350 540 392 528 438 C 506 474 466 490 428 472 C 422 466 418 462 416 462 C 414 462 410 466 404 472 C 366 490 326 474 304 438 C 292 392 296 350 308 320 Z" fill="rgba(0,0,0,0)"/>
+        <text id="tl-chest" x="416" y="400" text-anchor="middle" font-family="Share Tech Mono" font-size="22" fill="rgba(0,0,0,0)" letter-spacing="2">CHEST</text>
 
-        <!-- SOLAR PLEXUS / Epigastric -->
-        <path id="z-solar" d="M 364 458 C 356 466 354 482 360 498 C 368 510 392 516 416 516 C 440 516 464 510 472 498 C 478 482 476 466 468 458 C 458 450 438 448 416 448 C 394 448 374 450 364 458 Z" fill="rgba(0,0,0,0)"/>
-        <text id="tl-solar" x="416" y="488" text-anchor="middle" font-family="Share Tech Mono" font-size="18" fill="rgba(0,0,0,0)" letter-spacing="2">SOLAR</text>
+        <!-- SOLAR PLEXUS / Epigastric — migrated down for body alignment -->
+        <path id="z-solar" d="M 364 488 C 356 496 354 512 360 528 C 368 540 392 546 416 546 C 440 546 464 540 472 528 C 478 512 476 496 468 488 C 458 480 438 478 416 478 C 394 478 374 480 364 488 Z" fill="rgba(0,0,0,0)"/>
+        <text id="tl-solar" x="416" y="518" text-anchor="middle" font-family="Share Tech Mono" font-size="18" fill="rgba(0,0,0,0)" letter-spacing="2">SOLAR</text>
 
         <!-- SERRATUS — description retained in legend only; no figure overlay -->
 
@@ -461,12 +467,12 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
         <!-- GROIN / Pubic shield -->
         <path id="z-groin" d="M 376 678 C 366 690 364 706 370 724 C 378 742 396 752 416 752 C 436 752 454 742 462 724 C 468 706 466 690 456 678 C 444 668 430 666 416 666 C 402 666 388 668 376 678 Z" fill="rgba(0,0,0,0)"/>
 
-        <!-- L SHOULDER CAP (viewer left = subject right) — tight cap over the joint only -->
-        <ellipse id="z-lsh" cx="276" cy="300" rx="28" ry="22" fill="rgba(0,0,0,0)"/>
-        <text id="tl-lsh" x="276" y="305" text-anchor="middle" font-family="Share Tech Mono" font-size="10" fill="rgba(0,0,0,0)" letter-spacing="1">SH</text>
+        <!-- L SHOULDER CAP (viewer left = subject right) — tight cap over the joint only, migrated down -->
+        <ellipse id="z-lsh" cx="276" cy="330" rx="28" ry="22" fill="rgba(0,0,0,0)"/>
+        <text id="tl-lsh" x="276" y="335" text-anchor="middle" font-family="Share Tech Mono" font-size="10" fill="rgba(0,0,0,0)" letter-spacing="1">SH</text>
         <!-- R SHOULDER CAP -->
-        <ellipse id="z-rsh" cx="556" cy="300" rx="28" ry="22" fill="rgba(0,0,0,0)"/>
-        <text x="556" y="305" text-anchor="middle" font-family="Share Tech Mono" font-size="10" fill="rgba(0,0,0,0)" letter-spacing="1">SH</text>
+        <ellipse id="z-rsh" cx="556" cy="330" rx="28" ry="22" fill="rgba(0,0,0,0)"/>
+        <text x="556" y="335" text-anchor="middle" font-family="Share Tech Mono" font-size="10" fill="rgba(0,0,0,0)" letter-spacing="1">SH</text>
 
         <!-- L THIGH / Full quadriceps — shifted outward for anatomical alignment -->
         <path id="z-lth" d="M 382 740 C 358 736 324 740 302 754 C 282 770 272 800 270 838 C 270 878 278 918 292 952 C 306 980 330 992 356 990 C 374 988 384 978 385 958 C 386 918 386 878 384 838 C 382 802 382 770 382 740 Z" fill="rgba(0,0,0,0)"/>
@@ -992,7 +998,7 @@ function renderMods(){}
 function toggleMod(){}
 
 function zCol(z,j){
-  if(z.type==='lethal')return{f:'url(#grad-r)',fl:'url(#glow-leth)'};
+  if(z.type==='lethal')return{f:'url(#grad-r-leth)',fl:'url(#glow-leth)'};
   if(j>=z.rJ)return{f:'url(#grad-r)',fl:'url(#glow-inc)'};
   if(j>=z.oJ)return{f:'url(#grad-o)',fl:'url(#glow-sev)'};
   if(j>=z.yJ)return{f:'url(#grad-y)',fl:'url(#glow-mod)'};
