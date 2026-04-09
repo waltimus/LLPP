@@ -283,6 +283,123 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 .cpill{font-family:'Share Tech Mono',monospace;font-size:10px;padding:2px 8px;letter-spacing:0.05em;}
 .cok{background:rgba(197,255,0,0.06);color:var(--pip);border:1px solid rgba(197,255,0,0.2);}
 .cno{background:rgba(255,30,30,0.06);color:#ff3333;border:1px solid rgba(255,30,30,0.2);}
+
+/* ============================================================
+   PIP-BOY / MASS EFFECT STYLE HERO + MODAL SYSTEM
+   ============================================================ */
+
+/* SESSION BAR (top of calculator) */
+.session-bar{background:linear-gradient(90deg,rgba(197,255,0,0.05),rgba(197,255,0,0.01));border:1px solid var(--border-hi);padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:relative;}
+.session-bar::before{content:'';position:absolute;left:0;top:0;width:3px;height:100%;background:var(--pip);box-shadow:0 0 18px rgba(197,255,0,0.55);}
+.session-bar-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.12em;}
+.session-bar-active{font-family:'Orbitron',sans-serif;font-size:13px;color:var(--pip);font-weight:700;letter-spacing:0.1em;text-shadow:0 0 12px rgba(197,255,0,0.35);}
+.btn-session{font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;color:var(--pip);background:rgba(197,255,0,0.08);border:1px solid var(--border-hi);padding:9px 18px;letter-spacing:0.14em;cursor:pointer;transition:all 0.15s;text-transform:uppercase;}
+.btn-session:hover{background:rgba(197,255,0,0.18);box-shadow:0 0 18px rgba(197,255,0,0.35);}
+
+/* HERO PANEL — main FPS display with stat bars */
+.hero-panel{background:linear-gradient(180deg,rgba(197,255,0,0.03),rgba(0,0,0,0.3));border:1px solid var(--border-hi);padding:18px;margin-bottom:14px;position:relative;overflow:hidden;}
+.hero-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--pip),transparent);opacity:0.6;}
+.hero-panel::after{content:'';position:absolute;inset:6px;border:1px solid rgba(197,255,0,0.06);pointer-events:none;}
+.hero-weapon-name{font-family:'Orbitron',sans-serif;font-size:13px;color:var(--pip);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:2px;text-shadow:0 0 12px rgba(197,255,0,0.35);}
+.hero-weapon-sub{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.12em;margin-bottom:14px;}
+.hero-fps-section{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:18px;}
+.hero-fps-section .fps-btn{width:44px;height:44px;font-size:16px;}
+.hero-fps-input{font-family:'Orbitron',monospace;font-size:68px;font-weight:900;color:var(--pip);background:transparent;border:none;text-align:center;width:220px;text-shadow:0 0 35px rgba(197,255,0,0.6),0 0 12px rgba(197,255,0,0.8);-moz-appearance:textfield;outline:none;}
+.hero-fps-input::-webkit-inner-spin-button,.hero-fps-input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+.hero-fps-label{text-align:center;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.2em;margin-bottom:16px;}
+
+/* STAT BARS (damage, accuracy, capacity, reliability, range) */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 22px;margin-bottom:16px;padding-top:14px;border-top:1px solid var(--border);}
+.stat-row{display:flex;flex-direction:column;gap:4px;}
+.stat-row-hdr{display:flex;justify-content:space-between;align-items:baseline;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;}
+.stat-row-val{color:var(--pip);font-weight:700;font-size:11px;letter-spacing:0.04em;}
+.stat-bar-track{height:8px;background:rgba(197,255,0,0.04);border:1px solid rgba(197,255,0,0.15);position:relative;overflow:hidden;}
+.stat-bar-fill{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--pip),#d9ff4a);box-shadow:0 0 10px rgba(197,255,0,0.55);transition:width 0.3s cubic-bezier(.4,0,.2,1);}
+.stat-bar-fill.lo{background:linear-gradient(90deg,#ff4040,#ff6a30);box-shadow:0 0 10px rgba(255,80,40,0.5);}
+.stat-bar-fill.mid{background:linear-gradient(90deg,#ffa800,#ffd040);box-shadow:0 0 10px rgba(255,168,0,0.5);}
+.stat-bar-fill.hi{background:linear-gradient(90deg,var(--pip),#d9ff4a);box-shadow:0 0 10px rgba(197,255,0,0.55);}
+.stat-bar-segs{position:absolute;inset:0;display:flex;pointer-events:none;}
+.stat-bar-segs div{flex:1;border-right:1px solid rgba(0,0,0,0.55);}
+.stat-bar-segs div:last-child{border-right:none;}
+
+/* HERO ACTION BUTTONS (open modals) */
+.hero-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:4px;}
+.btn-hero{font-family:'Orbitron',sans-serif;font-size:9px;font-weight:700;color:var(--bright);background:rgba(197,255,0,0.04);border:1px solid var(--border-hi);padding:14px 6px 10px;letter-spacing:0.1em;cursor:pointer;transition:all 0.15s;text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;}
+.btn-hero:hover{background:rgba(197,255,0,0.12);color:var(--pip);box-shadow:0 0 16px rgba(197,255,0,0.25);border-color:var(--pip);}
+.btn-hero .bh-icon{font-family:'Orbitron',sans-serif;font-size:13px;color:var(--pip);font-weight:900;margin-bottom:2px;}
+.btn-hero .bh-val{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.06em;text-transform:none;margin-top:2px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+@media (max-width:560px){
+  .hero-actions{grid-template-columns:repeat(2,1fr);}
+  .stat-grid{grid-template-columns:1fr;}
+  .hero-fps-input{font-size:54px;width:160px;}
+}
+
+/* MODAL SYSTEM */
+.modal-backdrop{position:fixed;inset:0;background:rgba(2,4,8,0.82);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:10000;display:none;align-items:flex-start;justify-content:center;padding:40px 18px;overflow-y:auto;}
+.modal-backdrop.open{display:flex;animation:mbIn 0.18s ease-out;}
+@keyframes mbIn{from{opacity:0;} to{opacity:1;}}
+.modal-panel{background:linear-gradient(180deg,#05080c,#030405);border:1px solid var(--pip);box-shadow:0 0 50px rgba(197,255,0,0.25),inset 0 0 30px rgba(197,255,0,0.03);width:100%;max-width:640px;position:relative;animation:mpIn 0.22s cubic-bezier(.2,.8,.2,1);}
+@keyframes mpIn{from{opacity:0;transform:translateY(-14px) scale(0.98);} to{opacity:1;transform:translateY(0) scale(1);}}
+.modal-panel::before{content:'';position:absolute;top:-1px;left:-1px;right:-1px;height:2px;background:linear-gradient(90deg,transparent,var(--pip),transparent);box-shadow:0 0 20px rgba(197,255,0,0.6);}
+.modal-panel::after{content:'';position:absolute;inset:5px;border:1px solid rgba(197,255,0,0.08);pointer-events:none;}
+.modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border-hi);background:linear-gradient(90deg,rgba(197,255,0,0.04),transparent);}
+.modal-title{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:900;color:var(--pip);letter-spacing:0.2em;text-transform:uppercase;text-shadow:0 0 15px rgba(197,255,0,0.4);}
+.modal-sub{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.12em;margin-top:2px;}
+.modal-close{background:transparent;border:1px solid var(--border-hi);color:var(--pip);width:30px;height:30px;font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.15s;}
+.modal-close:hover{background:rgba(197,255,0,0.12);box-shadow:0 0 15px rgba(197,255,0,0.4);}
+.modal-body{padding:18px;max-height:70vh;overflow-y:auto;}
+.modal-body::-webkit-scrollbar{width:6px;}
+.modal-body::-webkit-scrollbar-thumb{background:rgba(197,255,0,0.2);}
+.modal-body::-webkit-scrollbar-track{background:rgba(197,255,0,0.02);}
+.modal-footer{padding:12px 18px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;background:rgba(0,0,0,0.2);}
+
+/* RADIO LIST (used in modals for mod selection, bottle sizes, versions) */
+.radio-list{display:flex;flex-direction:column;gap:6px;}
+.radio-list label{display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(197,255,0,0.02);border:1px solid var(--border);cursor:pointer;transition:all 0.12s;}
+.radio-list label:hover{background:rgba(197,255,0,0.06);border-color:var(--border-hi);}
+.radio-list label.sel{background:rgba(197,255,0,0.1);border-color:var(--pip);box-shadow:inset 0 0 12px rgba(197,255,0,0.08);}
+.radio-list input[type=radio],.radio-list input[type=checkbox]{accent-color:var(--pip);}
+.radio-list .r-title{font-family:'Orbitron',sans-serif;font-size:11px;color:var(--bright);letter-spacing:0.08em;flex:1;}
+.radio-list .r-meta{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.04em;}
+.radio-list label.sel .r-title{color:var(--pip);text-shadow:0 0 10px rgba(197,255,0,0.35);}
+
+/* CARD GRID (used for platform selection tiles) */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;}
+.plat-tile{background:rgba(197,255,0,0.02);border:1px solid var(--border);padding:12px;cursor:pointer;transition:all 0.15s;position:relative;}
+.plat-tile:hover{background:rgba(197,255,0,0.08);border-color:var(--border-hi);}
+.plat-tile.sel{background:rgba(197,255,0,0.12);border-color:var(--pip);box-shadow:0 0 18px rgba(197,255,0,0.25),inset 0 0 16px rgba(197,255,0,0.05);}
+.plat-tile .pt-name{font-family:'Orbitron',sans-serif;font-size:11px;color:var(--pip);font-weight:700;letter-spacing:0.08em;margin-bottom:2px;text-transform:uppercase;}
+.plat-tile .pt-caliber{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.08em;margin-bottom:6px;}
+.plat-tile .pt-stat{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--bright);letter-spacing:0.04em;}
+
+/* MODAL SECTIONS divider */
+.modal-section{margin-bottom:14px;}
+.modal-section:last-child{margin-bottom:0;}
+.modal-section-hdr{font-family:'Orbitron',sans-serif;font-size:10px;color:var(--pip);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;border-bottom:1px solid var(--border);padding-bottom:4px;}
+
+/* PLATFORM PREVIEW inside modal (stat bars) */
+.preview-card{background:rgba(197,255,0,0.03);border:1px solid var(--border-hi);padding:12px;margin-top:12px;}
+.preview-hdr{font-family:'Orbitron',sans-serif;font-size:10px;color:var(--pip);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:8px;}
+
+/* BOTTLE SIZE GRID (gas modal) */
+.bottle-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;}
+.bottle-tile{background:rgba(197,255,0,0.02);border:1px solid var(--border);padding:12px 8px;text-align:center;cursor:pointer;transition:all 0.12s;}
+.bottle-tile:hover{background:rgba(197,255,0,0.08);border-color:var(--border-hi);}
+.bottle-tile.sel{background:rgba(197,255,0,0.12);border-color:var(--pip);box-shadow:0 0 14px rgba(197,255,0,0.3),inset 0 0 12px rgba(197,255,0,0.05);}
+.bottle-tile .bt-size{font-family:'Orbitron',sans-serif;font-size:14px;color:var(--pip);font-weight:900;letter-spacing:0.05em;}
+.bottle-tile .bt-shots{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.04em;margin-top:4px;}
+.bottle-tile.sel .bt-shots{color:var(--bright);}
+
+/* ACTIVE SESSION LIST */
+.session-list{display:flex;flex-direction:column;gap:6px;}
+.session-item{background:rgba(197,255,0,0.02);border:1px solid var(--border);padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;transition:all 0.12s;}
+.session-item:hover{background:rgba(197,255,0,0.07);border-color:var(--border-hi);}
+.session-item.active{background:rgba(197,255,0,0.12);border-color:var(--pip);}
+.session-item-info{flex:1;min-width:0;}
+.session-item-name{font-family:'Orbitron',sans-serif;font-size:11px;color:var(--pip);font-weight:700;letter-spacing:0.05em;}
+.session-item-meta{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.04em;margin-top:2px;}
+.session-item-del{background:rgba(255,40,40,0.08);border:1px solid rgba(255,40,40,0.3);color:#ff5a5a;font-family:'Share Tech Mono',monospace;font-size:10px;padding:4px 8px;cursor:pointer;letter-spacing:0.06em;}
+.session-item-del:hover{background:rgba(255,40,40,0.2);}
 </style>
 </head>
 <body>
@@ -308,133 +425,78 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 <!-- CALCULATOR -->
 <div id="calc" class="panel active">
 
-  <!-- LAUNCHER / WEAPON PLATFORM -->
-  <div class="card">
-    <div class="lbl">Launcher / Platform</div>
-    <select id="c-launcher" onchange="onPlatformChange()"></select>
-
-    <!-- HDS / HDX version sub-selector (appears conditionally) -->
-    <div id="c-version-wrap" style="display:none;margin-top:10px;">
-      <div class="lbl" style="font-size:10px;margin-bottom:6px;">Platform Version</div>
-      <div style="display:flex;gap:12px;">
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
-          <input type="radio" name="c-version" value="std" onchange="onVersionChange()" style="accent-color:var(--pip);">
-          <span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--bright);letter-spacing:0.06em;">Standard — 11J</span>
-        </label>
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
-          <input type="radio" name="c-version" value="perf" onchange="onVersionChange()" style="accent-color:var(--pip);">
-          <span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--bright);letter-spacing:0.06em;">Performance — 40J</span>
-        </label>
-      </div>
+  <!-- ============================================================
+       SESSION BAR — Add session / switch active weapon preset
+       ============================================================ -->
+  <div class="session-bar">
+    <div>
+      <div class="session-bar-label">ACTIVE SESSION</div>
+      <div class="session-bar-active" id="active-session-name">NO WEAPON LOADED</div>
     </div>
-
-    <!-- Custom baseline input (appears for custom platform) -->
-    <div id="c-custom-base-wrap" style="display:none;margin-top:10px;">
-      <div class="lbl" style="font-size:10px;margin-bottom:6px;">Custom Stock Baseline (J)</div>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <input type="number" id="c-custom-base-low"  min="0" max="200" step="1" value="20" oninput="onCustomBaseChange()" style="width:80px;">
-        <span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);">to</span>
-        <input type="number" id="c-custom-base-high" min="0" max="200" step="1" value="30" oninput="onCustomBaseChange()" style="width:80px;">
-        <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.08em;">JOULES</span>
-      </div>
-    </div>
-
-    <div id="c-stock-line" class="stock-line">—</div>
-    <div id="c-platform-warn" style="display:none;margin-top:10px;padding:9px 12px;background:rgba(255,30,30,0.06);border:1px solid rgba(255,30,30,0.3);font-family:'Share Tech Mono',monospace;font-size:11px;color:#ff6a6a;letter-spacing:0.04em;line-height:1.5;"></div>
+    <button class="btn-session" onclick="openModal('modal-sessions')">+ ADD / SWITCH SESSION</button>
   </div>
 
-  <!-- GAS SOURCE -->
-  <div class="card">
-    <div class="lbl">Gas Source</div>
-    <div class="gas-tabs">
-      <div class="gas-tab" id="gas-tab-co2" onclick="onGasChange('co2')">12g CO2</div>
-      <div class="gas-tab" id="gas-tab-hpa" onclick="onGasChange('hpa')">HPA</div>
-    </div>
+  <!-- ============================================================
+       HERO PANEL — Weapon FPS + live stat bars + action buttons
+       ============================================================ -->
+  <div class="hero-panel">
+    <div class="hero-weapon-name" id="hero-weapon">SELECT A PLATFORM</div>
+    <div class="hero-weapon-sub" id="hero-weapon-sub">— · — · —</div>
 
-    <!-- CO2 temperature input -->
-    <div id="gas-co2-wrap" style="display:none;">
-      <div class="gas-row">
-        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.08em;">TEMPERATURE</div>
-        <input type="range" id="c-temp" min="20" max="100" value="70" step="1" oninput="onTempChange()">
-        <div class="gas-val"><span id="c-temp-out">70</span>°F</div>
-      </div>
-      <div class="gas-meta" id="c-co2-meta">—</div>
-      <div id="c-co2-cold-warn" class="sub-note warn" style="display:none;">⚠ CO2 pressure significantly reduced at this temperature. Expect meaningful joule loss.</div>
-      <div class="sub-note" style="margin-top:10px;">12g CO2 pressure is temperature dependent. Cold environments significantly reduce output. Consider HPA for consistent performance in variable temperature conditions.</div>
-    </div>
-
-    <!-- HPA PSI input -->
-    <div id="gas-hpa-wrap" style="display:none;">
-      <div class="gas-row">
-        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.08em;">OUTPUT PSI</div>
-        <input type="range" id="c-psi" min="600" max="1200" value="800" step="10" oninput="onPsiChange()">
-        <div class="gas-val"><span id="c-psi-out">800</span> PSI</div>
-      </div>
-      <div class="gas-meta" id="c-hpa-meta">Baseline — 0J delta vs 800 PSI reference.</div>
-      <div id="c-hpa-warn" class="sub-note danger" style="display:none;"></div>
-    </div>
-  </div>
-
-  <!-- MODIFICATIONS -->
-  <div class="card">
-    <div class="lbl">Modifications</div>
-    <div id="c-mods-container"></div>
-  </div>
-
-  <!-- LIVE MOD STACK CALCULATOR -->
-  <div class="card stack-card">
-    <div class="stack-hdr">◆ Mod Stack</div>
-    <div class="stack-rows" id="c-stack-rows"></div>
-    <div class="stack-div"></div>
-    <div class="stack-total">
-      <div>Estimated Muzzle</div>
-      <div class="val"><span id="c-stack-mid">—</span> J</div>
-    </div>
-    <div class="stack-range">Range <span id="c-stack-range">—</span> J</div>
-    <div class="stack-note">Estimated output. Chronograph your platform for accurate FPS input below — chrono data overrides this estimate for impact calculations.</div>
-  </div>
-
-  <!-- PRESETS -->
-  <div class="card">
-    <div class="lbl">Weapon Presets</div>
-    <div class="preset-controls">
-      <input type="text" id="c-preset-name" class="preset-name-inp" placeholder="Preset name (e.g. My X-68 Beast)">
-      <button class="btn" onclick="savePresetFromInput()">+ SAVE CURRENT</button>
-    </div>
-    <div class="preset-list" id="c-preset-list"></div>
-    <div class="sub-note" style="margin-top:8px;">Each preset is a persistent weapon profile. Logged shots attach to the active preset and build its performance history in the Analytics tab.</div>
-  </div>
-
-  <!-- ROUND -->
-  <div class="card">
-    <div class="lbl">Round <span id="c-cal-badge" style="font-family:'Orbitron',monospace;font-size:9px;color:var(--pip);background:rgba(197,255,0,0.08);border:1px solid rgba(197,255,0,0.25);padding:1px 6px;margin-left:6px;letter-spacing:0.08em;">.68 CAL</span></div>
-    <select id="c-round" onchange="onRoundChange()"></select>
-    <div id="c-custom-wrap" style="display:none;margin-top:10px;">
-      <div class="lbl" style="margin-bottom:5px;">Custom Projectile Mass (g)</div>
-      <input type="number" id="c-custom-mass" min="0.5" max="30" step="0.01" value="8.0"
-        oninput="calcUpdate()"
-        style="font-family:'Orbitron',monospace;font-size:18px;font-weight:700;color:var(--pip);background:#03050a;border:1px solid rgba(197,255,0,0.25);padding:8px 12px;width:120px;text-align:center;text-shadow:0 0 10px rgba(197,255,0,0.3);">
-      <span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);margin-left:8px;letter-spacing:0.08em;">GRAMS</span>
-    </div>
-    <div id="c-round-note" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.04em;margin-top:8px;display:none;"></div>
-  </div>
-
-  <!-- FPS INPUT -->
-  <div class="card" style="text-align:center;padding:24px 16px;">
-    <div class="lbl" style="margin-bottom:14px;">Chronograph FPS</div>
-    <div style="display:flex;align-items:center;justify-content:center;gap:12px;">
+    <div class="hero-fps-label">CHRONOGRAPH · FEET PER SECOND</div>
+    <div class="hero-fps-section">
       <button class="fps-btn" onclick="adjFPS(-10)">−10</button>
       <button class="fps-btn" onclick="adjFPS(-1)">−1</button>
-      <input type="number" id="c-fps" value="" min="0" max="800" placeholder="—"
-        oninput="calcUpdate()"
-        style="font-family:'Orbitron',monospace;font-size:52px;font-weight:900;
-               color:var(--pip);background:transparent;border:none;
-               text-align:center;width:200px;text-shadow:0 0 25px rgba(197,255,0,0.5);
-               -moz-appearance:textfield;">
+      <input type="number" id="c-fps" class="hero-fps-input" value="" min="0" max="800" placeholder="—" oninput="calcUpdate()">
       <button class="fps-btn" onclick="adjFPS(1)">+1</button>
       <button class="fps-btn" onclick="adjFPS(10)">+10</button>
     </div>
-    <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);margin-top:6px;letter-spacing:0.1em;">FEET PER SECOND</div>
+
+    <div class="stat-grid">
+      <div class="stat-row">
+        <div class="stat-row-hdr"><span>DAMAGE</span><span class="stat-row-val" id="stat-damage-val">—</span></div>
+        <div class="stat-bar-track"><div class="stat-bar-fill" id="stat-damage-fill" style="width:0%"></div><div class="stat-bar-segs"><div></div><div></div><div></div><div></div><div></div></div></div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-row-hdr"><span>ACCURACY</span><span class="stat-row-val" id="stat-accuracy-val">—</span></div>
+        <div class="stat-bar-track"><div class="stat-bar-fill" id="stat-accuracy-fill" style="width:0%"></div><div class="stat-bar-segs"><div></div><div></div><div></div><div></div><div></div></div></div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-row-hdr"><span>CAPACITY</span><span class="stat-row-val" id="stat-capacity-val">—</span></div>
+        <div class="stat-bar-track"><div class="stat-bar-fill" id="stat-capacity-fill" style="width:0%"></div><div class="stat-bar-segs"><div></div><div></div><div></div><div></div><div></div></div></div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-row-hdr"><span>RELIABILITY</span><span class="stat-row-val" id="stat-reliability-val">—</span></div>
+        <div class="stat-bar-track"><div class="stat-bar-fill" id="stat-reliability-fill" style="width:0%"></div><div class="stat-bar-segs"><div></div><div></div><div></div><div></div><div></div></div></div>
+      </div>
+      <div class="stat-row" style="grid-column:1/-1;">
+        <div class="stat-row-hdr"><span>EFFECTIVE RANGE</span><span class="stat-row-val" id="stat-range-val">—</span></div>
+        <div class="stat-bar-track"><div class="stat-bar-fill" id="stat-range-fill" style="width:0%"></div><div class="stat-bar-segs"><div></div><div></div><div></div><div></div><div></div></div></div>
+      </div>
+    </div>
+
+    <div class="hero-actions">
+      <button class="btn-hero" onclick="openModal('modal-platform')">
+        <div class="bh-icon">◆</div>
+        <div>PLATFORM</div>
+        <div class="bh-val" id="bh-platform-val">—</div>
+      </button>
+      <button class="btn-hero" onclick="openModal('modal-mods')">
+        <div class="bh-icon">⚙</div>
+        <div>MODS</div>
+        <div class="bh-val" id="bh-mods-val">STOCK</div>
+      </button>
+      <button class="btn-hero" onclick="openModal('modal-gas')">
+        <div class="bh-icon">☉</div>
+        <div>GAS SOURCE</div>
+        <div class="bh-val" id="bh-gas-val">12g CO2</div>
+      </button>
+      <button class="btn-hero" onclick="openModal('modal-round')">
+        <div class="bh-icon">●</div>
+        <div>ROUND</div>
+        <div class="bh-val" id="bh-round-val">.68 CAL</div>
+      </button>
+    </div>
   </div>
 
   <!-- DISTANCE SLIDER WITH SEGMENTED ZONE BAR -->
@@ -537,6 +599,221 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
     </div>
     <button class="btn" style="width:100%;padding:14px;font-size:12px;" onclick="quickLogShot()">+ LOG SHOT</button>
     <div class="ql-flash" id="c-ql-flash">✓ SHOT LOGGED</div>
+  </div>
+
+  <!-- ============================================================
+       MODAL · SESSIONS — Save / load weapon presets
+       ============================================================ -->
+  <div class="modal-backdrop" id="modal-sessions">
+    <div class="modal-panel">
+      <div class="modal-hdr">
+        <div>
+          <div class="modal-title">WEAPON SESSIONS</div>
+          <div class="modal-sub">Persistent weapon profiles · Logged shots attach to the active session</div>
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-sessions')">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-section">
+          <div class="modal-section-hdr">SAVED SESSIONS</div>
+          <div class="preset-list" id="c-preset-list"></div>
+          <div class="sub-note" style="margin-top:8px;">Click a session to load it as the active weapon. Logged shots will attach to its performance history.</div>
+        </div>
+        <div class="modal-section">
+          <div class="modal-section-hdr">SAVE CURRENT CONFIGURATION</div>
+          <div class="preset-controls">
+            <input type="text" id="c-preset-name" class="preset-name-inp" placeholder="Preset name (e.g. My X-68 Beast)">
+            <button class="btn" onclick="savePresetFromInput()">+ SAVE CURRENT</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" onclick="closeModal('modal-sessions')">DONE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL · PLATFORM — Select launcher + version + baseline
+       ============================================================ -->
+  <div class="modal-backdrop" id="modal-platform">
+    <div class="modal-panel">
+      <div class="modal-hdr">
+        <div>
+          <div class="modal-title">PLATFORM SELECTION</div>
+          <div class="modal-sub">Choose base weapon · Stock baseline updates live</div>
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-platform')">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-section">
+          <div class="modal-section-hdr">LAUNCHER / PLATFORM</div>
+          <select id="c-launcher" onchange="onPlatformChange()"></select>
+
+          <!-- HDS / HDX version sub-selector (appears conditionally) -->
+          <div id="c-version-wrap" style="display:none;margin-top:14px;">
+            <div class="lbl" style="font-size:10px;margin-bottom:6px;">Platform Version</div>
+            <div style="display:flex;gap:12px;">
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                <input type="radio" name="c-version" value="std" onchange="onVersionChange()" style="accent-color:var(--pip);">
+                <span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--bright);letter-spacing:0.06em;">Standard — 11J</span>
+              </label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                <input type="radio" name="c-version" value="perf" onchange="onVersionChange()" style="accent-color:var(--pip);">
+                <span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--bright);letter-spacing:0.06em;">Performance — 40J</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Custom baseline input (appears for custom platform) -->
+          <div id="c-custom-base-wrap" style="display:none;margin-top:14px;">
+            <div class="lbl" style="font-size:10px;margin-bottom:6px;">Custom Stock Baseline (J)</div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input type="number" id="c-custom-base-low"  min="0" max="200" step="1" value="20" oninput="onCustomBaseChange()" style="width:80px;">
+              <span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);">to</span>
+              <input type="number" id="c-custom-base-high" min="0" max="200" step="1" value="30" oninput="onCustomBaseChange()" style="width:80px;">
+              <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.08em;">JOULES</span>
+            </div>
+          </div>
+
+          <div id="c-stock-line" class="stock-line" style="margin-top:14px;">—</div>
+          <div id="c-platform-warn" style="display:none;margin-top:10px;padding:9px 12px;background:rgba(255,30,30,0.06);border:1px solid rgba(255,30,30,0.3);font-family:'Share Tech Mono',monospace;font-size:11px;color:#ff6a6a;letter-spacing:0.04em;line-height:1.5;"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" onclick="closeModal('modal-platform')">DONE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL · MODIFICATIONS — Power / Reliability / Tactical
+       ============================================================ -->
+  <div class="modal-backdrop" id="modal-mods">
+    <div class="modal-panel" style="max-width:720px;">
+      <div class="modal-hdr">
+        <div>
+          <div class="modal-title">MODIFICATIONS</div>
+          <div class="modal-sub">Power · Reliability · Tactical — stats update live</div>
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-mods')">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-section">
+          <div id="c-mods-container"></div>
+        </div>
+        <div class="modal-section">
+          <div class="card stack-card" style="margin:0;">
+            <div class="stack-hdr">◆ Mod Stack</div>
+            <div class="stack-rows" id="c-stack-rows"></div>
+            <div class="stack-div"></div>
+            <div class="stack-total">
+              <div>Estimated Muzzle</div>
+              <div class="val"><span id="c-stack-mid">—</span> J</div>
+            </div>
+            <div class="stack-range">Range <span id="c-stack-range">—</span> J</div>
+            <div class="stack-note">Estimated output. Chronograph your platform for accurate FPS input — chrono data overrides this estimate for impact calculations.</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" onclick="closeModal('modal-mods')">DONE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL · GAS SOURCE — CO2/HPA + bottle size + temp/PSI
+       ============================================================ -->
+  <div class="modal-backdrop" id="modal-gas">
+    <div class="modal-panel">
+      <div class="modal-hdr">
+        <div>
+          <div class="modal-title">GAS SOURCE</div>
+          <div class="modal-sub">Select propellant, bottle size, and delivery conditions</div>
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-gas')">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-section">
+          <div class="modal-section-hdr">PROPELLANT TYPE</div>
+          <div class="gas-tabs">
+            <div class="gas-tab" id="gas-tab-co2" onclick="onGasChange('co2')">CO2</div>
+            <div class="gas-tab" id="gas-tab-hpa" onclick="onGasChange('hpa')">HPA</div>
+          </div>
+        </div>
+
+        <!-- CO2 wrap: bottle size grid + temp slider -->
+        <div id="gas-co2-wrap" style="display:none;">
+          <div class="modal-section">
+            <div class="modal-section-hdr">CO2 BOTTLE SIZE</div>
+            <div class="bottle-grid" id="co2-bottle-grid"></div>
+          </div>
+          <div class="modal-section">
+            <div class="modal-section-hdr">TEMPERATURE</div>
+            <div class="gas-row">
+              <input type="range" id="c-temp" min="20" max="100" value="70" step="1" oninput="onTempChange()">
+              <div class="gas-val"><span id="c-temp-out">70</span>°F</div>
+            </div>
+            <div class="gas-meta" id="c-co2-meta">—</div>
+            <div id="c-co2-cold-warn" class="sub-note warn" style="display:none;">⚠ CO2 pressure significantly reduced at this temperature. Expect meaningful joule loss.</div>
+            <div class="sub-note" style="margin-top:10px;">CO2 vapor pressure is temperature dependent. Cold environments significantly reduce output. Consider HPA for consistent performance in variable temperature conditions.</div>
+          </div>
+        </div>
+
+        <!-- HPA wrap: bottle size grid + PSI slider -->
+        <div id="gas-hpa-wrap" style="display:none;">
+          <div class="modal-section">
+            <div class="modal-section-hdr">HPA BOTTLE SIZE</div>
+            <div class="bottle-grid" id="hpa-bottle-grid"></div>
+          </div>
+          <div class="modal-section">
+            <div class="modal-section-hdr">OUTPUT PRESSURE</div>
+            <div class="gas-row">
+              <input type="range" id="c-psi" min="600" max="1200" value="800" step="10" oninput="onPsiChange()">
+              <div class="gas-val"><span id="c-psi-out">800</span> PSI</div>
+            </div>
+            <div class="gas-meta" id="c-hpa-meta">Baseline — 0J delta vs 800 PSI reference.</div>
+            <div id="c-hpa-warn" class="sub-note danger" style="display:none;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" onclick="closeModal('modal-gas')">DONE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL · ROUND — Projectile selection
+       ============================================================ -->
+  <div class="modal-backdrop" id="modal-round">
+    <div class="modal-panel">
+      <div class="modal-hdr">
+        <div>
+          <div class="modal-title">ROUND SELECTION <span id="c-cal-badge" style="font-family:'Orbitron',monospace;font-size:9px;color:var(--pip);background:rgba(197,255,0,0.08);border:1px solid rgba(197,255,0,0.25);padding:1px 6px;margin-left:6px;letter-spacing:0.08em;">.68 CAL</span></div>
+          <div class="modal-sub">Projectile mass drives muzzle joule calculation</div>
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-round')">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-section">
+          <div class="modal-section-hdr">PROJECTILE</div>
+          <select id="c-round" onchange="onRoundChange()"></select>
+          <div id="c-custom-wrap" style="display:none;margin-top:10px;">
+            <div class="lbl" style="margin-bottom:5px;">Custom Projectile Mass (g)</div>
+            <input type="number" id="c-custom-mass" min="0.5" max="30" step="0.01" value="8.0"
+              oninput="calcUpdate()"
+              style="font-family:'Orbitron',monospace;font-size:18px;font-weight:700;color:var(--pip);background:#03050a;border:1px solid rgba(197,255,0,0.25);padding:8px 12px;width:120px;text-align:center;text-shadow:0 0 10px rgba(197,255,0,0.3);">
+            <span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);margin-left:8px;letter-spacing:0.08em;">GRAMS</span>
+          </div>
+          <div id="c-round-note" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.04em;margin-top:8px;display:none;"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" onclick="closeModal('modal-round')">DONE</button>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -652,11 +929,11 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
         <path id="z-groin" d="M 376 678 C 366 690 364 706 370 724 C 378 742 396 752 416 752 C 436 752 454 742 462 724 C 468 706 466 690 456 678 C 444 668 430 666 416 666 C 402 666 388 668 376 678 Z" fill="rgba(0,0,0,0)"/>
 
         <!-- L SHOULDER CAP (viewer left = subject right) — tight cap over the joint only, migrated down -->
-        <ellipse id="z-lsh" cx="276" cy="358" rx="28" ry="22" fill="rgba(0,0,0,0)"/>
-        <text id="tl-lsh" x="276" y="363" text-anchor="middle" font-family="Share Tech Mono" font-size="10" fill="rgba(0,0,0,0)" letter-spacing="1">SH</text>
+        <ellipse id="z-lsh" cx="276" cy="372" rx="34" ry="26" fill="rgba(0,0,0,0)"/>
+        <text id="tl-lsh" x="276" y="377" text-anchor="middle" font-family="Share Tech Mono" font-size="10" fill="rgba(0,0,0,0)" letter-spacing="1">SH</text>
         <!-- R SHOULDER CAP -->
-        <ellipse id="z-rsh" cx="556" cy="358" rx="28" ry="22" fill="rgba(0,0,0,0)"/>
-        <text x="556" y="335" text-anchor="middle" font-family="Share Tech Mono" font-size="10" fill="rgba(0,0,0,0)" letter-spacing="1">SH</text>
+        <ellipse id="z-rsh" cx="556" cy="372" rx="34" ry="26" fill="rgba(0,0,0,0)"/>
+        <text x="556" y="377" text-anchor="middle" font-family="Share Tech Mono" font-size="10" fill="rgba(0,0,0,0)" letter-spacing="1">SH</text>
 
         <!-- L THIGH / Full quadriceps — shifted outward for anatomical alignment -->
         <path id="z-lth" d="M 382 740 C 358 736 324 740 302 754 C 282 770 272 800 270 838 C 270 878 278 918 292 952 C 306 980 330 992 356 990 C 374 988 384 978 385 958 C 386 918 386 878 384 838 C 382 802 382 770 382 740 Z" fill="rgba(0,0,0,0)"/>
@@ -859,6 +1136,89 @@ const HDR68_MODS=[
   {id:'hdr_tune', name:'Tuning Barrel (HDR 68)',      desc:'Polished / tuning barrel. Significant velocity gain.',                                                                        dLow:10, dHigh:10, platformOnly:'hdr68'},
   {id:'hdr_hpa',  name:'HPA Conversion (HDR 68)',     desc:'Converts CO2-only HDR to HPA supply. Enables HPA as a valid gas source. Gas behavior changes — select HPA above once enabled.', dLow:0,  dHigh:0,  platformOnly:'hdr68', meta:'ENABLES HPA', unlocksGas:'hpa'}
 ];
+
+// CO2 bottle sizes — gram capacity, approximate shots per fill on a typical .68 cal platform.
+// shotsRef is a nominal full-power baseline at ~30J/shot on a mid-output platform; scale by platform output in shotsPerFill.
+const CO2_SIZES=[
+  {id:'12g', label:'12g',  grams:12,  shotsRef:16,  desc:'Disposable powerlet. Fast cooldown, low shot count.'},
+  {id:'16g', label:'16g',  grams:16,  shotsRef:22,  desc:'Common threaded cartridge. Slightly better shot count than 12g.'},
+  {id:'20g', label:'20g',  grams:20,  shotsRef:28,  desc:'Extended capacity threaded. Good value per shot.'},
+  {id:'88g', label:'88g',  grams:88,  shotsRef:120, desc:'High-capacity refillable. Long sessions, warmup-friendly.'}
+];
+
+// HPA bottle sizes — cubic inch capacity, nominal shot counts at 800 PSI output.
+const HPA_BOTTLES=[
+  {id:'5ci',  label:'5ci',  ci:5,  shotsRef:40,  desc:'Compact regulated bottle. Ultra low profile, lowest capacity.'},
+  {id:'7ci',  label:'7ci',  ci:7,  shotsRef:60,  desc:'Small regulated bottle. Pistol / CQB friendly.'},
+  {id:'9ci',  label:'9ci',  ci:9,  shotsRef:85,  desc:'Medium regulated bottle. Balanced size and shot count.'},
+  {id:'13ci', label:'13ci', ci:13, shotsRef:125, desc:'Larger regulated bottle. Good range day capacity.'},
+  {id:'48ci', label:'48ci', ci:48, shotsRef:450, desc:'Full-size tank. Heavy; long-range sessions or rifle setups.'}
+];
+
+// ============================================================
+// STAT MODEL — Pip-Boy / Mass Effect style live stat bars
+// ============================================================
+// Returns {damage, accuracy, capacity, reliability, effRange} each 0–100.
+// Inputs implicit from current state: platformKey, selMods, gasType, gasSize, psi, tempF, modCfg.
+function computeStats(){
+  const stack=computeModStack();
+  const midJ=stack?stack.mid:0;
+  // DAMAGE — impact joule output scaled 0–100. 100J is full bar.
+  const damage=Math.max(0,Math.min(100,Math.round(midJ*1.05)));
+  // ACCURACY — starts at 45 baseline. Bore match +18, barrel length near 12" +12, stock upgrade +4, HDR tune +6, suppressor +4, rail +2.
+  let acc=45;
+  const p=getCurrentPlatform();
+  if(selMods&&selMods.has('barrel')){
+    // Bore match vs platform bore
+    if(p&&Math.abs((modCfg.bore||0)-(p.bore||0.688))<0.003) acc+=18;
+    // Length: peak near 12–14 inches
+    const len=modCfg.barrelLen||11;
+    const lenScore=Math.max(0,Math.min(14,len-8));
+    acc+=lenScore;
+  }
+  if(selMods&&selMods.has('stockup'))acc+=4;
+  if(selMods&&selMods.has('hdr_tune'))acc+=6;
+  if(selMods&&selMods.has('suppressor'))acc+=4;
+  if(selMods&&selMods.has('rail'))acc+=2;
+  // Penalty for very low output — can't hit what you can't deliver
+  if(midJ>0&&midJ<25)acc-=8;
+  const accuracy=Math.max(0,Math.min(100,Math.round(acc)));
+  // CAPACITY — shots per fill from current gas source/bottle, scaled 0–100 (450 shots = 100).
+  const capacity=Math.max(0,Math.min(100,Math.round(shotsPerFill()*0.22)));
+  // RELIABILITY — 40 baseline + 15/reli mod + 5 each stability-relevant power mod; HDR68 stock -10.
+  let rel=40;
+  if(selMods){
+    ['oring','detent','boltspring','heatcore'].forEach(id=>{if(selMods.has(id))rel+=15;});
+    if(selMods.has('regup'))rel+=5;
+    if(selMods.has('regbyp'))rel+=3;
+  }
+  if(platformKey==='hdr68'&&!(selMods&&selMods.has('hdr_hpa')))rel-=10;
+  if(gasType==='hpa')rel+=8; // HPA is more consistent than CO2
+  const reliability=Math.max(0,Math.min(100,Math.round(rel)));
+  // EFFECTIVE RANGE — derived from muzzle joules, roughly log-scaled. 100J ≈ 95ft field performance.
+  const range=midJ<=0?0:Math.max(0,Math.min(100,Math.round(Math.sqrt(midJ)*10)));
+  return {damage,accuracy,capacity,reliability,effRange:range,midJ};
+}
+
+// Gas state: currently selected bottle size (id within CO2_SIZES or HPA_BOTTLES).
+let gasSize='12g';      // default CO2 cartridge
+let gasSizeHPA='9ci';   // default HPA bottle
+
+function getCurrentGasSize(){
+  if(gasType==='co2')return CO2_SIZES.find(x=>x.id===gasSize)||CO2_SIZES[0];
+  return HPA_BOTTLES.find(x=>x.id===gasSizeHPA)||HPA_BOTTLES[2];
+}
+
+// Shots per fill estimate — scales bottle's shotsRef by output efficiency.
+function shotsPerFill(){
+  const gs=getCurrentGasSize();
+  if(!gs)return 0;
+  const stack=computeModStack();
+  const midJ=stack?stack.mid:30;
+  // Higher output = fewer shots per fill. Reference is ~30J/shot.
+  const efficiencyFactor=midJ>0?(30/Math.max(15,midJ)):1;
+  return Math.round(gs.shotsRef*efficiencyFactor);
+}
 
 // CO2 temperature → joule delta vs 70°F baseline (low / high).
 function co2DeltaRange(tempF){
@@ -1168,6 +1528,9 @@ function calcUpdate(){
 
   // Refresh quick log auto summary when core calc inputs change
   if(typeof renderQuickLogAuto==='function') renderQuickLogAuto();
+
+  // Refresh hero panel stat bars + action button labels
+  if(typeof updateHeroPanel==='function') updateHeroPanel();
 }
 
 function updateRoundNote(){
@@ -1535,6 +1898,9 @@ function renderModStack(){
   }).join('');
   document.getElementById('c-stack-mid').textContent=Math.round(s.mid);
   document.getElementById('c-stack-range').textContent=Math.round(s.lo)+'–'+Math.round(s.hi);
+  // Output changed → refresh hero stats + live bottle shot estimates
+  if(typeof updateHeroPanel==='function')updateHeroPanel();
+  if(typeof renderGasBottles==='function')renderGasBottles();
 }
 
 // -------------------- PRESETS --------------------
@@ -1563,7 +1929,7 @@ function saveSessionLog(){
 function capturePresetState(){
   return {
     platformKey,platformVersion,customBaseline:{...customBaseline},
-    gasType,tempF,psi,
+    gasType,gasSize,gasSizeHPA,tempF,psi,
     modCfg:{...modCfg},
     mods:[...selMods],
     fps:parseInt(document.getElementById('c-fps').value)||0,
@@ -1575,6 +1941,8 @@ function applyPresetState(p){
   platformVersion=p.platformVersion||'perf';
   customBaseline={...(p.customBaseline||{low:20,high:30})};
   gasType=p.gasType||'co2';
+  gasSize=p.gasSize||'12g';
+  gasSizeHPA=p.gasSizeHPA||'9ci';
   tempF=p.tempF||70;
   psi=p.psi||800;
   modCfg={...(p.modCfg||{bore:0.688,barrelLen:11,customName:'',customDelta:0})};
@@ -1589,6 +1957,7 @@ function applyPresetState(p){
   document.getElementById('c-psi-out').textContent=psi;
   if(p.fps)document.getElementById('c-fps').value=p.fps;
   onPlatformChange();
+  if(typeof renderGasBottles==='function')renderGasBottles();
 }
 
 function savePresetFromInput(){
@@ -1610,6 +1979,7 @@ function savePresetFromInput(){
   inp.value='';
   renderPresetList();
   renderQuickLogAuto();
+  if(typeof updateHeroPanel==='function')updateHeroPanel();
 }
 
 function loadPreset(id){
@@ -2045,6 +2415,139 @@ function showTab(id){
 }
 
 // ============================================================
+// MODAL / HERO PANEL · Pip-Boy / Mass Effect style
+// ============================================================
+function openModal(id){
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.classList.add('open');
+  // Refresh dynamic content on open
+  if(id==='modal-gas')renderGasBottles();
+  if(id==='modal-sessions')renderPresetList();
+  if(id==='modal-mods'){renderMods();renderModStack();}
+}
+function closeModal(id){
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.classList.remove('open');
+}
+// Close modal on backdrop click (but not on panel click)
+document.addEventListener('click',function(e){
+  if(e.target.classList&&e.target.classList.contains('modal-backdrop')&&e.target.classList.contains('open')){
+    e.target.classList.remove('open');
+  }
+});
+// ESC to close any open modal
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    document.querySelectorAll('.modal-backdrop.open').forEach(m=>m.classList.remove('open'));
+  }
+});
+
+// -------------------- Gas bottle grid rendering --------------------
+function renderGasBottles(){
+  const co2Grid=document.getElementById('co2-bottle-grid');
+  if(co2Grid){
+    co2Grid.innerHTML='';
+    CO2_SIZES.forEach(b=>{
+      const sel=(gasType==='co2'&&gasSize===b.id)?' sel':'';
+      const estShots=Math.round(b.shotsRef*(computeModStack().mid>0?(30/Math.max(15,computeModStack().mid)):1));
+      const d=document.createElement('div');
+      d.className='bottle-tile'+sel;
+      d.onclick=()=>selectCo2Size(b.id);
+      d.innerHTML='<div class="bt-size">'+b.label+'</div><div class="bt-shots">~'+estShots+' shots</div>';
+      d.title=b.desc;
+      co2Grid.appendChild(d);
+    });
+  }
+  const hpaGrid=document.getElementById('hpa-bottle-grid');
+  if(hpaGrid){
+    hpaGrid.innerHTML='';
+    HPA_BOTTLES.forEach(b=>{
+      const sel=(gasType==='hpa'&&gasSizeHPA===b.id)?' sel':'';
+      const estShots=Math.round(b.shotsRef*(computeModStack().mid>0?(30/Math.max(15,computeModStack().mid)):1));
+      const d=document.createElement('div');
+      d.className='bottle-tile'+sel;
+      d.onclick=()=>selectHpaSize(b.id);
+      d.innerHTML='<div class="bt-size">'+b.label+'</div><div class="bt-shots">~'+estShots+' shots</div>';
+      d.title=b.desc;
+      hpaGrid.appendChild(d);
+    });
+  }
+}
+function selectCo2Size(id){
+  gasSize=id;
+  renderGasBottles();
+  updateHeroPanel();
+  renderModStack();
+  calcUpdate();
+}
+function selectHpaSize(id){
+  gasSizeHPA=id;
+  renderGasBottles();
+  updateHeroPanel();
+  renderModStack();
+  calcUpdate();
+}
+
+// -------------------- Hero panel live updates --------------------
+function setStatBar(fillId,valId,pct){
+  const fill=document.getElementById(fillId);
+  const val =document.getElementById(valId);
+  if(fill){
+    fill.style.width=Math.max(0,Math.min(100,pct))+'%';
+    fill.classList.remove('lo','mid','hi');
+    if(pct<34)fill.classList.add('lo');
+    else if(pct<67)fill.classList.add('mid');
+    else fill.classList.add('hi');
+  }
+  if(val)val.textContent=pct>0?pct+'/100':'—';
+}
+function updateHeroPanel(){
+  const p=getCurrentPlatform();
+  const stats=computeStats();
+  // Weapon name + sub
+  const nameEl=document.getElementById('hero-weapon');
+  const subEl =document.getElementById('hero-weapon-sub');
+  if(nameEl){
+    const activeP=presets.find(x=>x.id===activePresetId);
+    nameEl.textContent=(activeP?activeP.name:(p?p.name:'SELECT A PLATFORM')).toUpperCase();
+  }
+  if(subEl&&p){
+    const [lo,hi]=getCurrentStockRange();
+    const gasLbl=(gasType==='co2')?(gasSize.toUpperCase()+' CO2'):('HPA '+gasSizeHPA.toUpperCase());
+    subEl.textContent='STOCK '+lo+'–'+hi+'J · '+gasLbl+' · EST '+(stats.midJ||'—')+'J';
+  }
+  // Stat bars
+  setStatBar('stat-damage-fill','stat-damage-val',stats.damage);
+  setStatBar('stat-accuracy-fill','stat-accuracy-val',stats.accuracy);
+  setStatBar('stat-capacity-fill','stat-capacity-val',stats.capacity);
+  setStatBar('stat-reliability-fill','stat-reliability-val',stats.reliability);
+  setStatBar('stat-range-fill','stat-range-val',stats.effRange);
+  // Action button labels
+  const bhP=document.getElementById('bh-platform-val');
+  if(bhP)bhP.textContent=p?p.name.replace(/^(Umarex|Valken|NKWerks|DI|Mercury Rise|Milsig)\s*/i,''):'—';
+  const bhM=document.getElementById('bh-mods-val');
+  if(bhM){
+    const n=selMods.size;
+    bhM.textContent=n===0?'STOCK':(n+' INSTALLED');
+  }
+  const bhG=document.getElementById('bh-gas-val');
+  if(bhG)bhG.textContent=(gasType==='co2')?(gasSize+' CO2'):('HPA '+gasSizeHPA);
+  const bhR=document.getElementById('bh-round-val');
+  if(bhR){
+    const rSel=document.getElementById('c-round');
+    bhR.textContent=rSel&&rSel.selectedOptions[0]?rSel.selectedOptions[0].textContent.split(' ')[0]:'.68 CAL';
+  }
+  // Active session label (top bar)
+  const actLbl=document.getElementById('active-session-name');
+  if(actLbl){
+    const activeP=presets.find(x=>x.id===activePresetId);
+    actLbl.textContent=activeP?activeP.name.toUpperCase():'NO WEAPON LOADED';
+  }
+}
+
+// ============================================================
 // INIT
 // ============================================================
 function initApp(){
@@ -2067,9 +2570,11 @@ function initApp(){
     onPlatformChange();
   }
   renderPresetList();
+  renderGasBottles();
   renderLog();
   updateCharts();
   calcUpdate();
+  updateHeroPanel();
 }
 initApp();
 </script>
