@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>LLPP — Field Platform</title>
+<title>LLBC — Less Lethal Ballistics Calculator</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -190,6 +190,78 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 .dz-er{background:linear-gradient(180deg,#ffa800,#ff7a00);color:#1a0a00;}
 .dz-mr{background:linear-gradient(180deg,#ff3a3a,#cc0000);color:#fff;text-shadow:0 1px 0 rgba(0,0,0,0.4);}
 
+/* WEAPON / GAS / MODS / PRESETS / QUICKLOG */
+.sub-note{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.08em;color:var(--muted);margin-top:6px;}
+.sub-note.warn{color:#ff8800;}
+.sub-note.danger{color:#ff4040;}
+.stock-line{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:0.06em;color:var(--muted);margin-top:8px;}
+.stock-line strong{color:var(--bright);font-weight:500;}
+.stock-line .flag-below{color:#ff6a6a;text-shadow:0 0 8px rgba(255,60,60,0.25);}
+
+.gas-tabs{display:flex;gap:6px;margin-bottom:10px;}
+.gas-tab{flex:1;font-family:'Orbitron',monospace;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:9px 10px;background:rgba(197,255,0,0.03);border:1px solid rgba(197,255,0,0.12);color:var(--muted);cursor:pointer;text-align:center;transition:all 0.15s;}
+.gas-tab.active{background:rgba(197,255,0,0.08);border-color:rgba(197,255,0,0.4);color:var(--pip);text-shadow:0 0 10px rgba(197,255,0,0.3);}
+.gas-tab:hover:not(.active){color:var(--text);}
+.gas-tab.disabled{opacity:0.35;cursor:not-allowed;}
+
+.gas-row{display:grid;grid-template-columns:120px 1fr 100px;gap:12px;align-items:center;}
+.gas-val{font-family:'Orbitron',monospace;font-size:20px;font-weight:700;color:var(--pip);text-align:right;text-shadow:0 0 12px rgba(197,255,0,0.25);}
+.gas-meta{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5;letter-spacing:0.04em;}
+
+.mod-cat-hdr.reliability{color:rgba(0,220,120,0.65);}
+.mod-cat-hdr.tac{color:rgba(0,200,255,0.55);}
+.mod-desc{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--muted);line-height:1.4;margin-top:2px;}
+.mod-meta{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.08em;color:rgba(0,200,255,0.6);margin-left:6px;}
+.mod-row-inner{flex:1;display:flex;flex-direction:column;}
+.mod-barrel-cfg{margin-top:8px;padding:10px 12px;background:rgba(0,200,255,0.03);border-left:2px solid rgba(0,200,255,0.3);display:none;}
+.mod-barrel-cfg.show{display:block;}
+.mod-barrel-cfg .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px;}
+.mod-barrel-cfg label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;}
+.mod-barrel-cfg select,.mod-barrel-cfg input{width:auto;min-width:90px;padding:5px 8px;font-size:13px;}
+.mod-barrel-cfg .result{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--bright);letter-spacing:0.04em;margin-top:4px;}
+.mod-barrel-cfg .result .warn{color:#ff6a6a;}
+.mod-custom-cfg{margin-top:8px;padding:10px 12px;background:rgba(0,200,255,0.03);border-left:2px solid rgba(0,200,255,0.3);display:none;}
+.mod-custom-cfg.show{display:block;}
+.mod-custom-cfg .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.mod-custom-cfg input{padding:5px 8px;font-size:13px;}
+.mod-custom-cfg input.name{flex:1;min-width:140px;}
+.mod-custom-cfg input.delta{width:90px;}
+
+.stack-card{background:#030508;border:1px solid rgba(197,255,0,0.2);padding:14px 16px;}
+.stack-hdr{font-family:'Orbitron',monospace;font-size:11px;font-weight:700;letter-spacing:0.18em;color:var(--pip);text-transform:uppercase;margin-bottom:10px;text-shadow:0 0 10px rgba(197,255,0,0.25);}
+.stack-rows{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text);line-height:1.7;letter-spacing:0.02em;}
+.stack-row{display:flex;justify-content:space-between;gap:10px;}
+.stack-row .delta{color:var(--bright);}
+.stack-row .delta.rel{color:rgba(0,220,120,0.7);}
+.stack-row .delta.warn{color:#ff8800;}
+.stack-div{height:1px;background:rgba(197,255,0,0.12);margin:8px 0;}
+.stack-total{display:flex;justify-content:space-between;align-items:baseline;font-family:'Orbitron',monospace;font-size:13px;font-weight:700;letter-spacing:0.1em;color:var(--pip);text-transform:uppercase;}
+.stack-total .val{font-size:22px;text-shadow:0 0 12px rgba(197,255,0,0.3);}
+.stack-range{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.06em;margin-top:4px;text-align:right;}
+.stack-note{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.04em;margin-top:10px;line-height:1.5;padding-top:8px;border-top:1px dashed rgba(197,255,0,0.08);}
+
+.preset-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px;}
+.preset-controls input.preset-name-inp{flex:1;min-width:160px;padding:7px 10px;font-size:13px;}
+.preset-list{display:flex;flex-direction:column;gap:6px;}
+.preset-row{display:grid;grid-template-columns:1fr 1fr 100px auto auto;gap:10px;align-items:center;padding:8px 10px;background:rgba(14,17,22,0.6);border:1px solid rgba(197,255,0,0.08);}
+.preset-row:hover{border-color:rgba(197,255,0,0.25);}
+.preset-row.active{border-color:rgba(197,255,0,0.5);background:rgba(197,255,0,0.03);}
+.preset-row .pname{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--bright);letter-spacing:0.04em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.preset-row .pplat{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.04em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.preset-row .pest{font-family:'Orbitron',monospace;font-size:12px;color:var(--pip);text-align:right;text-shadow:0 0 8px rgba(197,255,0,0.25);}
+.preset-row .pcount{font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(0,200,255,0.6);letter-spacing:0.05em;margin-top:2px;}
+.btn-mini{font-family:'Orbitron',monospace;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:5px 9px;background:transparent;border:1px solid rgba(197,255,0,0.25);color:var(--pip);cursor:pointer;transition:all 0.1s;}
+.btn-mini:hover{background:rgba(197,255,0,0.08);}
+.btn-mini.danger{color:#ff4040;border-color:rgba(255,30,30,0.3);}
+.btn-mini.danger:hover{background:rgba(255,30,30,0.06);}
+.preset-empty{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);text-align:center;padding:16px 0;letter-spacing:0.08em;}
+
+.quicklog-auto{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);line-height:1.6;letter-spacing:0.04em;margin-bottom:10px;padding:10px 12px;background:rgba(0,200,255,0.03);border-left:2px solid rgba(0,200,255,0.25);}
+.quicklog-auto strong{color:var(--bright);font-weight:500;}
+.ql-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.ql-full{grid-column:1 / -1;}
+.ql-flash{font-family:'Orbitron',monospace;font-size:11px;font-weight:700;letter-spacing:0.2em;color:var(--pip);text-align:center;padding:10px;background:rgba(197,255,0,0.1);border:1px solid rgba(197,255,0,0.5);text-shadow:0 0 14px rgba(197,255,0,0.5);margin-top:10px;display:none;}
+
 /* ENGAGEMENT DOCTRINE CARD */
 .doc-eng-card{background:linear-gradient(180deg,rgba(14,17,22,0.92),rgba(8,10,14,0.88));}
 .eng-row{display:grid;grid-template-columns:135px 65px 1fr;gap:10px;align-items:start;padding:9px 0;border-bottom:1px solid rgba(197,255,0,0.05);}
@@ -217,8 +289,8 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 
 <div class="topbar">
   <div>
-    <div class="brand">LLPP</div>
-    <div class="brand-sub">LESS LETHAL PERFORMANCE PLATFORM · FIELD PLATFORM v3.1</div>
+    <div class="brand">LLBC</div>
+    <div class="brand-sub">LESS LETHAL BALLISTICS CALCULATOR · FIELD PLATFORM v3.1</div>
   </div>
   <div style="text-align:right;">
     <div id="live-readout" title="muzzle / impact" style="font-family:'Orbitron',monospace;font-size:22px;font-weight:900;color:var(--pip);text-shadow:0 0 18px rgba(197,255,0,0.4);letter-spacing:0.04em;line-height:1;">↑ — &nbsp; ↓ —</div>
@@ -236,33 +308,116 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 <!-- CALCULATOR -->
 <div id="calc" class="panel active">
 
-  <div class="r2">
-    <div class="card">
-      <div class="lbl">Launcher</div>
-      <select id="c-launcher" onchange="onLauncherChange()">
-        <option value="x68">NKWerks Pistelle X-68</option>
-        <option value="introbuster">Mercury Rise Intrubuster Gen2</option>
-        <option value="m17">Valken M17 / M17 CQMF</option>
-        <option value="hdr68">Umarex T4E HDR68</option>
-        <option value="hdr50">Umarex T4E HDR50</option>
-        <option value="fsc">FSC .68 Pistol</option>
-        <option value="custom">Custom</option>
-      </select>
-    </div>
-    <div class="card">
-      <div class="lbl">Round <span id="c-cal-badge" style="font-family:'Orbitron',monospace;font-size:9px;color:var(--pip);background:rgba(197,255,0,0.08);border:1px solid rgba(197,255,0,0.25);padding:1px 6px;margin-left:6px;letter-spacing:0.08em;">.68 CAL</span></div>
-      <select id="c-round" onchange="onRoundChange()"></select>
-      <div id="c-custom-wrap" style="display:none;margin-top:10px;">
-        <div class="lbl" style="margin-bottom:5px;">Custom Projectile Mass (g)</div>
-        <input type="number" id="c-custom-mass" min="0.5" max="30" step="0.01" value="8.0"
-          oninput="calcUpdate()"
-          style="font-family:'Orbitron',monospace;font-size:18px;font-weight:700;color:var(--pip);background:#03050a;border:1px solid rgba(197,255,0,0.25);padding:8px 12px;width:120px;text-align:center;text-shadow:0 0 10px rgba(197,255,0,0.3);">
-        <span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);margin-left:8px;letter-spacing:0.08em;">GRAMS</span>
+  <!-- LAUNCHER / WEAPON PLATFORM -->
+  <div class="card">
+    <div class="lbl">Launcher / Platform</div>
+    <select id="c-launcher" onchange="onPlatformChange()"></select>
+
+    <!-- HDS / HDX version sub-selector (appears conditionally) -->
+    <div id="c-version-wrap" style="display:none;margin-top:10px;">
+      <div class="lbl" style="font-size:10px;margin-bottom:6px;">Platform Version</div>
+      <div style="display:flex;gap:12px;">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+          <input type="radio" name="c-version" value="std" onchange="onVersionChange()" style="accent-color:var(--pip);">
+          <span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--bright);letter-spacing:0.06em;">Standard — 11J</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+          <input type="radio" name="c-version" value="perf" onchange="onVersionChange()" style="accent-color:var(--pip);">
+          <span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--bright);letter-spacing:0.06em;">Performance — 40J</span>
+        </label>
       </div>
+    </div>
+
+    <!-- Custom baseline input (appears for custom platform) -->
+    <div id="c-custom-base-wrap" style="display:none;margin-top:10px;">
+      <div class="lbl" style="font-size:10px;margin-bottom:6px;">Custom Stock Baseline (J)</div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input type="number" id="c-custom-base-low"  min="0" max="200" step="1" value="20" oninput="onCustomBaseChange()" style="width:80px;">
+        <span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);">to</span>
+        <input type="number" id="c-custom-base-high" min="0" max="200" step="1" value="30" oninput="onCustomBaseChange()" style="width:80px;">
+        <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.08em;">JOULES</span>
+      </div>
+    </div>
+
+    <div id="c-stock-line" class="stock-line">—</div>
+    <div id="c-platform-warn" style="display:none;margin-top:10px;padding:9px 12px;background:rgba(255,30,30,0.06);border:1px solid rgba(255,30,30,0.3);font-family:'Share Tech Mono',monospace;font-size:11px;color:#ff6a6a;letter-spacing:0.04em;line-height:1.5;"></div>
+  </div>
+
+  <!-- GAS SOURCE -->
+  <div class="card">
+    <div class="lbl">Gas Source</div>
+    <div class="gas-tabs">
+      <div class="gas-tab" id="gas-tab-co2" onclick="onGasChange('co2')">12g CO2</div>
+      <div class="gas-tab" id="gas-tab-hpa" onclick="onGasChange('hpa')">HPA</div>
+    </div>
+
+    <!-- CO2 temperature input -->
+    <div id="gas-co2-wrap" style="display:none;">
+      <div class="gas-row">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.08em;">TEMPERATURE</div>
+        <input type="range" id="c-temp" min="20" max="100" value="70" step="1" oninput="onTempChange()">
+        <div class="gas-val"><span id="c-temp-out">70</span>°F</div>
+      </div>
+      <div class="gas-meta" id="c-co2-meta">—</div>
+      <div id="c-co2-cold-warn" class="sub-note warn" style="display:none;">⚠ CO2 pressure significantly reduced at this temperature. Expect meaningful joule loss.</div>
+      <div class="sub-note" style="margin-top:10px;">12g CO2 pressure is temperature dependent. Cold environments significantly reduce output. Consider HPA for consistent performance in variable temperature conditions.</div>
+    </div>
+
+    <!-- HPA PSI input -->
+    <div id="gas-hpa-wrap" style="display:none;">
+      <div class="gas-row">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.08em;">OUTPUT PSI</div>
+        <input type="range" id="c-psi" min="600" max="1200" value="800" step="10" oninput="onPsiChange()">
+        <div class="gas-val"><span id="c-psi-out">800</span> PSI</div>
+      </div>
+      <div class="gas-meta" id="c-hpa-meta">Baseline — 0J delta vs 800 PSI reference.</div>
+      <div id="c-hpa-warn" class="sub-note danger" style="display:none;"></div>
     </div>
   </div>
 
-  <div id="c-round-note" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.04em;margin:-4px 0 12px 2px;display:none;"></div>
+  <!-- MODIFICATIONS -->
+  <div class="card">
+    <div class="lbl">Modifications</div>
+    <div id="c-mods-container"></div>
+  </div>
+
+  <!-- LIVE MOD STACK CALCULATOR -->
+  <div class="card stack-card">
+    <div class="stack-hdr">◆ Mod Stack</div>
+    <div class="stack-rows" id="c-stack-rows"></div>
+    <div class="stack-div"></div>
+    <div class="stack-total">
+      <div>Estimated Muzzle</div>
+      <div class="val"><span id="c-stack-mid">—</span> J</div>
+    </div>
+    <div class="stack-range">Range <span id="c-stack-range">—</span> J</div>
+    <div class="stack-note">Estimated output. Chronograph your platform for accurate FPS input below — chrono data overrides this estimate for impact calculations.</div>
+  </div>
+
+  <!-- PRESETS -->
+  <div class="card">
+    <div class="lbl">Weapon Presets</div>
+    <div class="preset-controls">
+      <input type="text" id="c-preset-name" class="preset-name-inp" placeholder="Preset name (e.g. My X-68 Beast)">
+      <button class="btn" onclick="savePresetFromInput()">+ SAVE CURRENT</button>
+    </div>
+    <div class="preset-list" id="c-preset-list"></div>
+    <div class="sub-note" style="margin-top:8px;">Each preset is a persistent weapon profile. Logged shots attach to the active preset and build its performance history in the Analytics tab.</div>
+  </div>
+
+  <!-- ROUND -->
+  <div class="card">
+    <div class="lbl">Round <span id="c-cal-badge" style="font-family:'Orbitron',monospace;font-size:9px;color:var(--pip);background:rgba(197,255,0,0.08);border:1px solid rgba(197,255,0,0.25);padding:1px 6px;margin-left:6px;letter-spacing:0.08em;">.68 CAL</span></div>
+    <select id="c-round" onchange="onRoundChange()"></select>
+    <div id="c-custom-wrap" style="display:none;margin-top:10px;">
+      <div class="lbl" style="margin-bottom:5px;">Custom Projectile Mass (g)</div>
+      <input type="number" id="c-custom-mass" min="0.5" max="30" step="0.01" value="8.0"
+        oninput="calcUpdate()"
+        style="font-family:'Orbitron',monospace;font-size:18px;font-weight:700;color:var(--pip);background:#03050a;border:1px solid rgba(197,255,0,0.25);padding:8px 12px;width:120px;text-align:center;text-shadow:0 0 10px rgba(197,255,0,0.3);">
+      <span style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);margin-left:8px;letter-spacing:0.08em;">GRAMS</span>
+    </div>
+    <div id="c-round-note" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.04em;margin-top:8px;display:none;"></div>
+  </div>
 
   <!-- FPS INPUT -->
   <div class="card" style="text-align:center;padding:24px 16px;">
@@ -280,6 +435,21 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
       <button class="fps-btn" onclick="adjFPS(10)">+10</button>
     </div>
     <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);margin-top:6px;letter-spacing:0.1em;">FEET PER SECOND</div>
+  </div>
+
+  <!-- DISTANCE SLIDER WITH SEGMENTED ZONE BAR -->
+  <div class="card">
+    <div class="lbl">Engagement Distance — <span id="c-dist-out" style="color:var(--pip);font-family:'Orbitron',monospace;font-size:14px;text-shadow:0 0 12px rgba(197,255,0,0.3);">30 ft</span></div>
+    <input type="range" id="c-dist" min="3" max="100" value="30" step="1" oninput="calcUpdate()" style="margin:10px 0 4px;">
+    <div class="dist-zonebar">
+      <div class="dz dz-cq" style="flex:22;"><span>3-25 CLOSE QUARTERS</span></div>
+      <div class="dz dz-pe" style="flex:25;"><span>25-50 PRIMARY ENVELOPE</span></div>
+      <div class="dz dz-er" style="flex:25;"><span>50-75 EXTENDED RANGE</span></div>
+      <div class="dz dz-mr" style="flex:25;"><span>75-100 MAXIMUM RANGE</span></div>
+    </div>
+    <div id="c-range-warn" style="display:none;margin-top:10px;padding:9px 12px;background:rgba(255,30,30,0.06);border:1px solid rgba(255,30,30,0.3);font-family:'Share Tech Mono',monospace;font-size:11px;color:#ff5050;letter-spacing:0.04em;line-height:1.5;">
+      ⚠ BEYOND RELIABLE ENGAGEMENT RANGE — Energy and accuracy degraded. Zone targeting unreliable. Deterrence effect only beyond this distance.
+    </div>
   </div>
 
   <!-- DUAL ENERGY DISPLAY -->
@@ -301,21 +471,6 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
   <div class="card" style="margin-bottom:10px;">
     <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.05em;text-align:center;">
       <span id="c-vel-line">— M/S · — G</span> &nbsp;·&nbsp; ENERGY LOST: <span id="c-loss" style="color:var(--bright);">—</span> impact J
-    </div>
-  </div>
-
-  <!-- DISTANCE SLIDER WITH SEGMENTED ZONE BAR -->
-  <div class="card">
-    <div class="lbl">Engagement Distance — <span id="c-dist-out" style="color:var(--pip);font-family:'Orbitron',monospace;font-size:14px;text-shadow:0 0 12px rgba(197,255,0,0.3);">30 ft</span></div>
-    <input type="range" id="c-dist" min="3" max="100" value="30" step="1" oninput="calcUpdate()" style="margin:10px 0 4px;">
-    <div class="dist-zonebar">
-      <div class="dz dz-cq" style="flex:22;"><span>3-25 CLOSE QUARTERS</span></div>
-      <div class="dz dz-pe" style="flex:25;"><span>25-50 PRIMARY ENVELOPE</span></div>
-      <div class="dz dz-er" style="flex:25;"><span>50-75 EXTENDED RANGE</span></div>
-      <div class="dz dz-mr" style="flex:25;"><span>75-100 MAXIMUM RANGE</span></div>
-    </div>
-    <div id="c-range-warn" style="display:none;margin-top:10px;padding:9px 12px;background:rgba(255,30,30,0.06);border:1px solid rgba(255,30,30,0.3);font-family:'Share Tech Mono',monospace;font-size:11px;color:#ff5050;letter-spacing:0.04em;line-height:1.5;">
-      ⚠ BEYOND RELIABLE ENGAGEMENT RANGE — Energy and accuracy degraded. Zone targeting unreliable. Deterrence effect only beyond this distance.
     </div>
   </div>
 
@@ -355,6 +510,35 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
     </div>
   </div>
 
+  <!-- QUICK LOG SHOT -->
+  <div class="card">
+    <div class="lbl">◆ Quick Log Shot</div>
+    <div class="quicklog-auto" id="c-ql-auto">No weapon preset loaded. Select or save a preset above to enable shot logging.</div>
+    <div class="ql-row">
+      <div>
+        <div class="lbl" style="font-size:10px;margin-bottom:5px;">Target Medium</div>
+        <input type="text" id="c-ql-medium" placeholder="composite, sheet pan, silicone, gel...">
+      </div>
+      <div>
+        <div class="lbl" style="font-size:10px;margin-bottom:5px;">Result</div>
+        <select id="c-ql-result">
+          <option value="Unknown">Unknown</option>
+          <option value="Miss">Miss</option>
+          <option value="Marginal">Marginal</option>
+          <option value="Moderate">Moderate</option>
+          <option value="Severe">Severe</option>
+          <option value="Incapacitate">Incapacitate</option>
+        </select>
+      </div>
+      <div class="ql-full">
+        <div class="lbl" style="font-size:10px;margin-bottom:5px;">Observations</div>
+        <textarea id="c-ql-notes" placeholder="Penetration depth, round behavior, deformation, hematoma, skin break, round recovery condition..."></textarea>
+      </div>
+    </div>
+    <button class="btn" style="width:100%;padding:14px;font-size:12px;" onclick="quickLogShot()">+ LOG SHOT</button>
+    <div class="ql-flash" id="c-ql-flash">✓ SHOT LOGGED</div>
+  </div>
+
 </div>
 
 <!-- PLACEMENT -->
@@ -377,10 +561,10 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
       <svg id="body-svg" viewBox="0 0 832 1248" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:340px;display:block;background:#000;">
         <defs>
           <radialGradient id="grad-r" cx="50%" cy="50%" r="65%">
-            <stop offset="0%" stop-color="#ff2020" stop-opacity="0.72"/>
-            <stop offset="45%" stop-color="#ff3030" stop-opacity="0.50"/>
-            <stop offset="80%" stop-color="#ff2020" stop-opacity="0.22"/>
-            <stop offset="100%" stop-color="#ff2020" stop-opacity="0"/>
+            <stop offset="0%" stop-color="#ff1010" stop-opacity="0.95"/>
+            <stop offset="40%" stop-color="#ff2020" stop-opacity="0.78"/>
+            <stop offset="75%" stop-color="#ff1010" stop-opacity="0.40"/>
+            <stop offset="100%" stop-color="#ff0000" stop-opacity="0"/>
           </radialGradient>
           <radialGradient id="grad-r-leth" cx="50%" cy="50%" r="65%">
             <stop offset="0%" stop-color="#ff2020" stop-opacity="0.42"/>
@@ -389,15 +573,15 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
             <stop offset="100%" stop-color="#ff2020" stop-opacity="0"/>
           </radialGradient>
           <radialGradient id="grad-o" cx="50%" cy="50%" r="65%">
-            <stop offset="0%" stop-color="#ff8800" stop-opacity="0.62"/>
-            <stop offset="45%" stop-color="#ff9020" stop-opacity="0.42"/>
-            <stop offset="80%" stop-color="#ff8800" stop-opacity="0.18"/>
+            <stop offset="0%" stop-color="#ff8800" stop-opacity="0.75"/>
+            <stop offset="45%" stop-color="#ff9020" stop-opacity="0.52"/>
+            <stop offset="80%" stop-color="#ff8800" stop-opacity="0.22"/>
             <stop offset="100%" stop-color="#ff8800" stop-opacity="0"/>
           </radialGradient>
           <radialGradient id="grad-y" cx="50%" cy="50%" r="65%">
-            <stop offset="0%" stop-color="#ffe000" stop-opacity="0.52"/>
-            <stop offset="45%" stop-color="#ffd800" stop-opacity="0.34"/>
-            <stop offset="80%" stop-color="#ffd800" stop-opacity="0.13"/>
+            <stop offset="0%" stop-color="#ffe000" stop-opacity="0.62"/>
+            <stop offset="45%" stop-color="#ffd800" stop-opacity="0.42"/>
+            <stop offset="80%" stop-color="#ffd800" stop-opacity="0.16"/>
             <stop offset="100%" stop-color="#ffd800" stop-opacity="0"/>
           </radialGradient>
           <radialGradient id="grad-g" cx="50%" cy="50%" r="65%">
@@ -424,11 +608,11 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
             <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
           <filter id="glow-inc" x="-120%" y="-120%" width="340%" height="340%">
-            <feGaussianBlur stdDeviation="7" result="b">
-              <animate attributeName="stdDeviation" values="5;11;5" dur="1.4s" repeatCount="indefinite"/>
+            <feGaussianBlur stdDeviation="8" result="b">
+              <animate attributeName="stdDeviation" values="6;13;6" dur="1.4s" repeatCount="indefinite"/>
             </feGaussianBlur>
-            <feColorMatrix in="b" type="matrix" values="0 0 0 0 0.77  0 0 0 0 1  0 0 0 0 0  0 0 0 0.90 0">
-              <animate attributeName="values" values="0 0 0 0 0.77  0 0 0 0 1  0 0 0 0 0  0 0 0 0.70 0;0 0 0 0 0.77  0 0 0 0 1  0 0 0 0 0  0 0 0 1.15 0;0 0 0 0 0.77  0 0 0 0 1  0 0 0 0 0  0 0 0 0.70 0" dur="1.4s" repeatCount="indefinite"/>
+            <feColorMatrix in="b" type="matrix" values="0 0 0 0 1  0 0 0 0 0.08  0 0 0 0 0.08  0 0 0 1.05 0">
+              <animate attributeName="values" values="0 0 0 0 1  0 0 0 0 0.08  0 0 0 0 0.08  0 0 0 0.85 0;0 0 0 0 1  0 0 0 0 0.08  0 0 0 0 0.08  0 0 0 1.35 0;0 0 0 0 1  0 0 0 0 0.08  0 0 0 0 0.08  0 0 0 0.85 0" dur="1.4s" repeatCount="indefinite"/>
             </feColorMatrix>
             <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
@@ -445,14 +629,14 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
         <!-- TARGETING ZONES — anatomical shapes, gradient fills, no outlines -->
 
         <!-- HEAD — always lethal -->
-        <ellipse id="z-head" cx="416" cy="172" rx="68" ry="86" fill="rgba(0,0,0,0)"/>
+        <ellipse id="z-head" cx="416" cy="200" rx="68" ry="86" fill="rgba(0,0,0,0)"/>
 
         <!-- THROAT — always lethal -->
-        <rect id="z-throat" x="386" y="252" width="62" height="40" rx="8" fill="rgba(0,0,0,0)"/>
+        <rect id="z-throat" x="386" y="282" width="62" height="40" rx="8" fill="rgba(0,0,0,0)"/>
 
         <!-- CHEST / Pectoralis Major (butterfly) — migrated down for body alignment -->
-        <path id="z-chest" d="M 308 320 C 318 308 348 304 380 316 C 398 324 410 328 416 328 C 422 328 434 324 452 316 C 484 304 514 308 524 320 C 536 350 540 392 528 438 C 506 474 466 490 428 472 C 422 466 418 462 416 462 C 414 462 410 466 404 472 C 366 490 326 474 304 438 C 292 392 296 350 308 320 Z" fill="rgba(0,0,0,0)"/>
-        <text id="tl-chest" x="416" y="400" text-anchor="middle" font-family="Share Tech Mono" font-size="22" fill="rgba(0,0,0,0)" letter-spacing="2">CHEST</text>
+        <path id="z-chest" d="M 308 348 C 318 336 348 332 380 344 C 398 352 410 356 416 356 C 422 356 434 352 452 344 C 484 332 514 336 524 348 C 536 378 540 420 528 466 C 506 502 466 518 428 500 C 422 494 418 490 416 490 C 414 490 410 494 404 500 C 366 518 326 502 304 466 C 292 420 296 378 308 348 Z" fill="rgba(0,0,0,0)"/>
+        <text id="tl-chest" x="416" y="428" text-anchor="middle" font-family="Share Tech Mono" font-size="22" fill="rgba(0,0,0,0)" letter-spacing="2">CHEST</text>
 
         <!-- SOLAR PLEXUS / Epigastric — migrated down for body alignment -->
         <path id="z-solar" d="M 364 488 C 356 496 354 512 360 528 C 368 540 392 546 416 546 C 440 546 464 540 472 528 C 478 512 476 496 468 488 C 458 480 438 478 416 478 C 394 478 374 480 364 488 Z" fill="rgba(0,0,0,0)"/>
@@ -461,17 +645,17 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
         <!-- SERRATUS — description retained in legend only; no figure overlay -->
 
         <!-- ABDOMEN / Rectus Abdominis -->
-        <path id="z-abdom" d="M 354 522 C 348 532 346 548 348 568 C 350 592 354 614 360 632 C 368 644 386 648 416 648 C 446 648 464 644 472 632 C 478 614 482 592 484 568 C 486 548 484 532 478 522 C 468 514 442 512 416 512 C 390 512 364 514 354 522 Z" fill="rgba(0,0,0,0)"/>
+        <path id="z-abdom" d="M 326 516 C 316 530 312 550 314 572 C 316 598 322 620 330 638 C 342 652 368 658 416 658 C 464 658 490 652 502 638 C 510 620 516 598 518 572 C 520 550 516 530 506 516 C 494 506 462 502 416 502 C 370 502 338 506 326 516 Z" fill="rgba(0,0,0,0)"/>
         <text id="tl-abdom" x="416" y="588" text-anchor="middle" font-family="Share Tech Mono" font-size="18" fill="rgba(0,0,0,0)" letter-spacing="2">ABD</text>
 
         <!-- GROIN / Pubic shield -->
         <path id="z-groin" d="M 376 678 C 366 690 364 706 370 724 C 378 742 396 752 416 752 C 436 752 454 742 462 724 C 468 706 466 690 456 678 C 444 668 430 666 416 666 C 402 666 388 668 376 678 Z" fill="rgba(0,0,0,0)"/>
 
         <!-- L SHOULDER CAP (viewer left = subject right) — tight cap over the joint only, migrated down -->
-        <ellipse id="z-lsh" cx="276" cy="330" rx="28" ry="22" fill="rgba(0,0,0,0)"/>
-        <text id="tl-lsh" x="276" y="335" text-anchor="middle" font-family="Share Tech Mono" font-size="10" fill="rgba(0,0,0,0)" letter-spacing="1">SH</text>
+        <ellipse id="z-lsh" cx="276" cy="358" rx="28" ry="22" fill="rgba(0,0,0,0)"/>
+        <text id="tl-lsh" x="276" y="363" text-anchor="middle" font-family="Share Tech Mono" font-size="10" fill="rgba(0,0,0,0)" letter-spacing="1">SH</text>
         <!-- R SHOULDER CAP -->
-        <ellipse id="z-rsh" cx="556" cy="330" rx="28" ry="22" fill="rgba(0,0,0,0)"/>
+        <ellipse id="z-rsh" cx="556" cy="358" rx="28" ry="22" fill="rgba(0,0,0,0)"/>
         <text x="556" y="335" text-anchor="middle" font-family="Share Tech Mono" font-size="10" fill="rgba(0,0,0,0)" letter-spacing="1">SH</text>
 
         <!-- L THIGH / Full quadriceps — shifted outward for anatomical alignment -->
@@ -514,7 +698,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
   <!-- DOCTRINE & FIELD CAVEATS -->
   <div class="doc-card">
     <div class="doc-hdr-row" onclick="toggleDoctrine()">
-      <span>◆ DOCTRINE &amp; FIELD CAVEATS · LLPP ZONE THRESHOLD TABLE v1.0</span>
+      <span>◆ DOCTRINE &amp; FIELD CAVEATS · LLBC ZONE THRESHOLD TABLE v1.0</span>
       <span id="doc-toggle">▼</span>
     </div>
     <div id="doctrine-body" style="display:none;">
@@ -546,15 +730,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
   <div class="r2">
     <div class="card" style="margin-bottom:0">
       <div class="lbl">Launcher</div>
-      <select id="l-launcher">
-        <option>NKWerks Pistelle X-68</option>
-        <option>Mercury Rise Intrubuster Gen2</option>
-        <option>Valken M17 / M17 CQMF</option>
-        <option>Umarex T4E HDR68</option>
-        <option>Umarex T4E HDR50</option>
-        <option>FSC .68 Pistol</option>
-        <option>Custom</option>
-      </select>
+      <select id="l-launcher"></select>
     </div>
     <div class="card" style="margin-bottom:0">
       <div class="lbl">Round</div>
@@ -604,14 +780,25 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 <div id="analytics" class="panel">
   <div id="ana-empty" style="padding:3rem 0;text-align:center;font-family:'Orbitron',monospace;font-size:11px;color:var(--muted);letter-spacing:0.15em;">LOG SHOTS TO GENERATE ANALYTICS</div>
   <div id="ana-content" style="display:none;">
+    <div class="card" style="margin-bottom:12px;">
+      <div class="lbl">Weapon Filter</div>
+      <select id="ana-weapon-filter" onchange="updateCharts()">
+        <option value="__all__">All weapons (session aggregate)</option>
+      </select>
+      <div class="sub-note" style="margin-top:8px;">Select a weapon preset to view its cumulative performance history. Analytics persist across sessions so long as the preset is not deleted.</div>
+    </div>
     <div class="stitle">Impact J vs Distance</div>
     <div class="chart-wrap"><canvas id="chart-scatter"></canvas></div>
-    <div class="stitle">Session Timeline</div>
+    <div class="stitle">FPS / Muzzle J Trend Over Time</div>
     <div class="chart-wrap"><canvas id="chart-timeline"></canvas></div>
     <div class="stitle">Performance Summary</div>
     <div id="ana-stats"></div>
     <div class="stitle">Round Comparison — Avg Impact J</div>
     <div class="chart-wrap" style="height:190px;"><canvas id="chart-rounds"></canvas></div>
+    <div class="stitle">Temperature Correlation (CO2 only)</div>
+    <div class="chart-wrap" style="height:200px;"><canvas id="chart-temp"></canvas></div>
+    <div class="stitle">Analysis Notes</div>
+    <div id="ana-notes" class="card" style="font-family:'Share Tech Mono',monospace;font-size:11px;line-height:1.7;color:var(--text);letter-spacing:0.04em;"></div>
   </div>
 </div>
 
@@ -619,73 +806,87 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 Chart.defaults.color='#334428';
 Chart.defaults.borderColor='rgba(197,255,0,0.06)';
 
-const LAUNCHERS={
-  x68:{name:'NKWerks Pistelle X-68',bore:0.688,baseJ:42,
-    mods:[
-      {id:'x68_bbl',name:'Max Power 11.5" .686 Bore Barrel + Suppressor Kit',cat:'power',dJ:18},
-      {id:'x68_exp',name:'12-Chamber Expansion Chamber / HPA Volumizer',cat:'power',dJ:20},
-      {id:'x68_oring',name:'Gen2 Upgraded Seal — O-ring Kit + Grease',cat:'performance',dJ:3},
-      {id:'x68_magh',name:'PDW Magazine Holder w/ Side Rails',cat:'tactical',dJ:0},
-      {id:'x68_magext',name:'8-Round Magazine Extension',cat:'tactical',dJ:0},
-      {id:'x68_ops',name:'OPS Suppressor — Universal 22mm/7/8"',cat:'tactical',dJ:0},
-      {id:'x68_pbody',name:'PDW Carbine Body Kit',cat:'tactical',dJ:0},
-    ]},
-  introbuster:{name:'Mercury Rise Intrubuster Gen2',bore:0.688,baseJ:40,
-    mods:[
-      {id:'ib_bbl',name:'Bore-matched barrel',cat:'power',dJ:12},
-      {id:'ib_exp',name:'Expansion chamber',cat:'power',dJ:10},
-      {id:'ib_spring',name:'Hammer spring upgrade',cat:'power',dJ:5},
-      {id:'ib_oring',name:'O-ring seal upgrade',cat:'performance',dJ:4},
-      {id:'ib_bolt',name:'Performance tuning bolt spring',cat:'performance',dJ:2},
-    ]},
-  m17:{name:'Valken M17 / M17 CQMF',bore:0.688,baseJ:18,
-    mods:[
-      {id:'m17_bbl',name:'8" Hammerhead .686 Barrel',cat:'power',dJ:12},
-      {id:'m17_hpa',name:'9ci 1000psi HPA Tank',cat:'power',dJ:10},
-      {id:'m17_prv',name:'PRV Delete',cat:'power',dJ:5},
-      {id:'m17_ll4d',name:'LL4D Reg Bypass v2',cat:'power',dJ:8},
-      {id:'m17_spring',name:'Performance Tuning Bolt Spring',cat:'performance',dJ:2},
-      {id:'m17_hcore',name:'Grimburg Heatcore O-ring',cat:'performance',dJ:2},
-      {id:'m17_detent',name:'Wixon Detents',cat:'performance',dJ:0},
-      {id:'m17_pad',name:'MCS Butt Stock Pad',cat:'tactical',dJ:0},
-      {id:'m17_rail',name:'MCS Swordfish Rail',cat:'tactical',dJ:0},
-      {id:'m17_shroud',name:'Hammerhead Shroud (MCSUS)',cat:'tactical',dJ:0},
-    ]},
-  hdr68:{name:'Umarex T4E HDR68',bore:0.688,baseJ:23,
-    mods:[
-      {id:'h68_fp',name:'Firing pin upgrade',cat:'power',dJ:8},
-      {id:'h68_spring',name:'Hammer spring upgrade',cat:'power',dJ:5},
-      {id:'h68_bbl',name:'Extended barrel',cat:'power',dJ:10},
-      {id:'h68_ram',name:'RAM upgrade',cat:'power',dJ:6},
-      {id:'h68_oring',name:'O-ring seal kit',cat:'performance',dJ:4},
-    ]},
-  hdr50:{name:'Umarex T4E HDR50',bore:0.500,baseJ:18,
-    mods:[
-      {id:'h50_fp',name:'Firing pin upgrade',cat:'power',dJ:8},
-      {id:'h50_spring',name:'Hammer spring upgrade',cat:'power',dJ:6},
-      {id:'h50_bbl',name:'Extended barrel',cat:'power',dJ:8},
-      {id:'h50_ram',name:'RAM upgrade',cat:'power',dJ:5},
-      {id:'h50_oring',name:'O-ring seal kit',cat:'performance',dJ:5},
-    ]},
-  fsc:{name:'FSC .68 Pistol',bore:0.686,baseJ:25,
-    mods:[
-      {id:'fsc_fp',name:'Firing pin upgrade',cat:'power',dJ:5},
-      {id:'fsc_bbl',name:'Bore-matched barrel',cat:'power',dJ:8},
-      {id:'fsc_oring',name:'O-ring upgrade',cat:'performance',dJ:4},
-    ]},
-  custom:{name:'Custom',bore:0.688,baseJ:40,
-    mods:[
-      {id:'cu_bbl',name:'Bore-matched barrel',cat:'power',dJ:15},
-      {id:'cu_exp',name:'Expansion chamber',cat:'power',dJ:15},
-      {id:'cu_hpa',name:'HPA tank conversion',cat:'power',dJ:12},
-      {id:'cu_prv',name:'PRV delete',cat:'power',dJ:5},
-      {id:'cu_bypass',name:'Regulator bypass',cat:'power',dJ:8},
-      {id:'cu_fp',name:'Firing pin upgrade',cat:'power',dJ:8},
-      {id:'cu_spring',name:'Hammer spring upgrade',cat:'power',dJ:6},
-      {id:'cu_oring',name:'O-ring upgrade',cat:'performance',dJ:4},
-      {id:'cu_bolt',name:'Performance bolt spring',cat:'performance',dJ:2},
-    ]}
+// PLATFORM CATALOG — stock baseline joules, gas compatibility, and optional version sub-selector.
+// stockLow/stockHigh define the baseline range shown in the mod stack.
+const PLATFORMS={
+  m17:    {name:'Valken M17',                    bore:0.688, stockLow:10, stockHigh:20, gas:['co2','hpa'], note:'Temp dependent'},
+  cqmf:   {name:'Valken CQMF',                   bore:0.688, stockLow:10, stockHigh:20, gas:['co2','hpa'], note:'Same platform as M17, shorter barrel'},
+  hdr68:  {name:'Umarex HDR 68',                 bore:0.688, stockLow:7,  stockHigh:16, gas:['co2'], belowFloor:true, note:'Wide variance, temp sensitive. HPA conversion available via platform-specific mod.'},
+  hds68:  {name:'Umarex HDS 68',                 bore:0.688, versions:true, gas:['co2'], note:'Select version below'},
+  hdx68:  {name:'Umarex HDX 68',                 bore:0.688, versions:true, gas:['co2'], note:'Shotgun config — select version below'},
+  x68:    {name:'NKWerks Pistelle X-68',         bore:0.688, stockLow:42, stockHigh:45, gas:['co2','hpa']},
+  x68g2:  {name:'DI Pistelle X-68 Gen 2',        bore:0.688, stockLow:42, stockHigh:45, gas:['co2','hpa']},
+  fsc:    {name:'FSC .68 Pistol',                bore:0.686, stockLow:20, stockHigh:22, gas:['co2','hpa']},
+  di68:   {name:'DI 68',                         bore:0.688, stockLow:35, stockHigh:45, gas:['co2','hpa']},
+  intru:  {name:'Mercury Rise Intrubuster Gen 2',bore:0.688, stockLow:40, stockHigh:45, gas:['co2','hpa']},
+  milsig: {name:'Milsig M17 / T17 G3',           bore:0.688, stockLow:10, stockHigh:20, gas:['co2','hpa'], note:'Same range as stock M17'},
+  custom: {name:'Custom / Other',                bore:0.688, stockLow:20, stockHigh:30, gas:['co2','hpa'], customBaseline:true}
 };
+
+// HDS 68 / HDX 68 share a Standard / Performance version selector.
+const HDS_VERSIONS={
+  std: {label:'Standard',    stockLow:11, stockHigh:11},
+  perf:{label:'Performance', stockLow:40, stockHigh:40}
+};
+
+// MOD CATALOG — general, platform-agnostic. Low/high deltas feed the stack range estimate.
+const MODS_POWER=[
+  {id:'prv',      name:'PRV Delete',                 desc:'Removes pressure relief valve. Prerequisite for regulation tuning. No direct joule gain — enables all other power mods.',                 dLow:0,  dHigh:0,  meta:'PREREQUISITE'},
+  {id:'regbyp',   name:'Regulator Bypass',           desc:'Bypasses stock regulator for cleaner direct gas delivery. Requires PRV delete first.',                                                     dLow:5,  dHigh:10, req:'prv'},
+  {id:'regup',    name:'Regulator Upgrade',          desc:'Higher flow valve regulator. Improved pressure consistency and delivery.',                                                                 dLow:4,  dHigh:8},
+  {id:'expchamb', name:'Expansion Chamber',          desc:'Increases CO2 / HPA gas volume per shot. Major power upgrade on CO2 platforms. Synergistic with barrel length.',                           dLow:10, dHigh:20},
+  {id:'hamspring',name:'Hammer Spring Upgrade',      desc:'Stronger hammer strike on valve. More gas released per cycle.',                                                                            dLow:3,  dHigh:6},
+  {id:'valveup',  name:'Valve Upgrade',              desc:'Higher flow rate valve. More gas delivery per shot.',                                                                                      dLow:4,  dHigh:8},
+  {id:'barrel',   name:'Barrel — bore match + length',desc:'Bore match (+3-5J) compounds with length over stock (+1.5-2J per inch, diminishing past 12"). Configure bore and length when checked.', dLow:3,  dHigh:5, barrel:true}
+];
+
+const MODS_RELI=[
+  {id:'oring',     name:'O-ring Upgrade / Seal Kit',  desc:'High-durometer seals. Reduces gas blowby. Improves consistency and seal life. No power gain.', dLow:0, dHigh:0, meta:'RELIABILITY'},
+  {id:'detent',    name:'Detent Upgrade',             desc:'Improved ball retention in breach. Prevents double feeds and misfires.',                       dLow:0, dHigh:0, meta:'RELIABILITY'},
+  {id:'boltspring',name:'Bolt Spring Upgrade',        desc:'Improved cycling consistency. Better gas seal on bolt face.',                                  dLow:0, dHigh:0, meta:'RELIABILITY'},
+  {id:'heatcore',  name:'Heatcore O-ring (Grimburg)', desc:'Premium O-ring for improved gas seal and temperature consistency.',                            dLow:0, dHigh:0, meta:'RELIABILITY'}
+];
+
+const MODS_TAC=[
+  {id:'suppressor',name:'Suppressor / Shroud',       desc:'Aesthetic barrel extension. No power effect.', dLow:0, dHigh:0},
+  {id:'rail',      name:'Rail System',               desc:'Accessory mounting. No power effect.',        dLow:0, dHigh:0},
+  {id:'stockup',   name:'Stock Upgrade / Butt Pad',  desc:'Ergonomic improvement. No power effect.',     dLow:0, dHigh:0}
+];
+
+// HDR 68 platform-specific power mods — appended to the power list only when HDR 68 is selected.
+const HDR68_MODS=[
+  {id:'hdr_fp',   name:'Firing Pin Upgrade (HDR 68)', desc:'Stronger pin strike on CO2 valve. Major power gain on an otherwise low-output stock platform.',                              dLow:15, dHigh:15, platformOnly:'hdr68'},
+  {id:'hdr_tune', name:'Tuning Barrel (HDR 68)',      desc:'Polished / tuning barrel. Significant velocity gain.',                                                                        dLow:10, dHigh:10, platformOnly:'hdr68'},
+  {id:'hdr_hpa',  name:'HPA Conversion (HDR 68)',     desc:'Converts CO2-only HDR to HPA supply. Enables HPA as a valid gas source. Gas behavior changes — select HPA above once enabled.', dLow:0,  dHigh:0,  platformOnly:'hdr68', meta:'ENABLES HPA', unlocksGas:'hpa'}
+];
+
+// CO2 temperature → joule delta vs 70°F baseline (low / high).
+function co2DeltaRange(tempF){
+  if(tempF>=88) return [3,6];
+  if(tempF>=78) return [1,4];
+  if(tempF>=62) return [0,0];
+  if(tempF>=52) return [-8,-5];
+  if(tempF>=42) return [-14,-9];
+  return [-20,-15];
+}
+function co2PressurePSI(tempF){
+  if(tempF>=88) return 950;
+  if(tempF>=68) return 850;
+  if(tempF>=50) return 750;
+  if(tempF>=40) return 680;
+  return 600;
+}
+// HPA PSI → joule delta vs 800 PSI baseline (low / high).
+function hpaDeltaRange(psi){
+  if(psi>=1200) return [12,20];
+  if(psi>=1100) return [9,15];
+  if(psi>=1050) return [8,12];
+  if(psi>=1000) return [6,10];
+  if(psi>=900)  return [3,5];
+  if(psi>=800)  return [0,0];
+  if(psi>=700)  return [-8,-5];
+  return [-15,-10];
+}
 
 const ZONES=[
   {id:'z-chest',tl:'tl-chest',label:'Chest / Sternum',type:'primary',mJ:25,yJ:38,oJ:55,rJ:72,
@@ -784,7 +985,7 @@ const ROUNDS_50=[
 const CAL_FACTOR={'68':1.0,'50':0.85};
 
 function caliberOf(launcherKey){
-  const l=LAUNCHERS[launcherKey];
+  const l=PLATFORMS[launcherKey];
   if(!l)return'68';
   return l.bore<0.6?'50':'68';
 }
@@ -964,6 +1165,9 @@ function calcUpdate(){
 
   if(fps>0) updatePlacement(impact,muzzle,dist);
   else clearPlacement();
+
+  // Refresh quick log auto summary when core calc inputs change
+  if(typeof renderQuickLogAuto==='function') renderQuickLogAuto();
 }
 
 function updateRoundNote(){
@@ -993,9 +1197,547 @@ function clearPlacement(){
   const legend=document.getElementById('zone-legend');if(legend)legend.innerHTML='';
 }
 
+// ============================================================
+// PROMPT 2 — Platform / Gas / Mods / Presets / Quick Log state
+// ============================================================
+const LS_PRESETS='llbc_presets_v1';
+const LS_ACTIVE='llbc_active_preset_v1';
+
+// Runtime state
+let platformKey='x68';
+let platformVersion='perf';          // only used when platform has versions
+let customBaseline={low:20,high:30}; // only used when platform.customBaseline
+let gasType='co2';                   // 'co2' | 'hpa'
+let tempF=70;
+let psi=800;
+let modCfg={bore:0.688,barrelLen:11,customName:'',customDelta:0};
+let presets=[];
+let activePresetId=null;
+
+// -------------------- INIT PLATFORMS --------------------
+function initPlatformOptions(){
+  const sel=document.getElementById('c-launcher');
+  sel.innerHTML='';
+  Object.keys(PLATFORMS).forEach(k=>{
+    const p=PLATFORMS[k];
+    const o=document.createElement('option');
+    o.value=k;o.textContent=p.name;
+    sel.appendChild(o);
+  });
+  sel.value=platformKey;
+}
+
+function getCurrentPlatform(){return PLATFORMS[platformKey];}
+
+function getCurrentStockRange(){
+  const p=getCurrentPlatform();
+  if(!p)return [0,0];
+  if(p.versions){
+    const v=HDS_VERSIONS[platformVersion]||HDS_VERSIONS.perf;
+    return [v.stockLow,v.stockHigh];
+  }
+  if(p.customBaseline){
+    return [customBaseline.low,customBaseline.high];
+  }
+  return [p.stockLow||0,p.stockHigh||0];
+}
+
+function onPlatformChange(){
+  platformKey=document.getElementById('c-launcher').value;
+  const p=getCurrentPlatform();
+  // Clear selected power mods since bore/barrel may differ; keep reliability + tactical
+  const keep=new Set();
+  [...selMods].forEach(id=>{
+    const all=[...MODS_RELI,...MODS_TAC].find(m=>m.id===id);
+    if(all)keep.add(id);
+  });
+  selMods=keep;
+  // Version selector visibility
+  document.getElementById('c-version-wrap').style.display=p.versions?'block':'none';
+  if(p.versions){
+    const radios=document.querySelectorAll('input[name="c-version"]');
+    radios.forEach(r=>{r.checked=(r.value===platformVersion);});
+  }
+  // Custom baseline
+  document.getElementById('c-custom-base-wrap').style.display=p.customBaseline?'block':'none';
+  // Gas availability
+  const co2Ok=p.gas.includes('co2');
+  const hpaOk=p.gas.includes('hpa')||(platformKey==='hdr68'&&selMods.has('hdr_hpa'));
+  const co2Tab=document.getElementById('gas-tab-co2');
+  const hpaTab=document.getElementById('gas-tab-hpa');
+  co2Tab.classList.toggle('disabled',!co2Ok);
+  hpaTab.classList.toggle('disabled',!hpaOk);
+  // Auto-pick a valid gas
+  if(gasType==='co2'&&!co2Ok)gasType='hpa';
+  if(gasType==='hpa'&&!hpaOk)gasType='co2';
+  // Platform bore → mod bore default
+  modCfg.bore=p.bore||0.688;
+  // Platform warning
+  const warn=document.getElementById('c-platform-warn');
+  if(p.belowFloor){
+    warn.style.display='block';
+    warn.innerHTML='⚠ STOCK OUTPUT BELOW DOCTRINE FLOOR — This platform ships below 25J average. Unmodified, it is not a reliable incapacitation tool. Power mods and/or HPA conversion strongly recommended before field use.';
+  } else {
+    warn.style.display='none';
+  }
+  // Round list may change if caliber differs
+  populateRounds();
+  applyGasTabs();
+  renderMods();
+  updateStockLine();
+  renderModStack();
+  renderQuickLogAuto();
+  calcUpdate();
+}
+
+function onVersionChange(){
+  const r=document.querySelector('input[name="c-version"]:checked');
+  if(r)platformVersion=r.value;
+  updateStockLine();
+  renderModStack();
+  calcUpdate();
+}
+
+function onCustomBaseChange(){
+  customBaseline.low =parseFloat(document.getElementById('c-custom-base-low').value)||0;
+  customBaseline.high=parseFloat(document.getElementById('c-custom-base-high').value)||0;
+  updateStockLine();
+  renderModStack();
+  calcUpdate();
+}
+
+function updateStockLine(){
+  const [lo,hi]=getCurrentStockRange();
+  const p=getCurrentPlatform();
+  const el=document.getElementById('c-stock-line');
+  let txt='STOCK BASELINE <strong>'+lo+'–'+hi+'J</strong>';
+  if(p.note)txt+=' · '+p.note;
+  if(p.belowFloor)txt+=' · <span class="flag-below">BELOW DOCTRINE FLOOR</span>';
+  el.innerHTML=txt;
+}
+
+// -------------------- GAS --------------------
+function applyGasTabs(){
+  document.getElementById('gas-tab-co2').classList.toggle('active',gasType==='co2');
+  document.getElementById('gas-tab-hpa').classList.toggle('active',gasType==='hpa');
+  document.getElementById('gas-co2-wrap').style.display=gasType==='co2'?'block':'none';
+  document.getElementById('gas-hpa-wrap').style.display=gasType==='hpa'?'block':'none';
+  updateGasMeta();
+}
+
+function onGasChange(type){
+  const p=getCurrentPlatform();
+  if(type==='co2'&&!p.gas.includes('co2'))return;
+  if(type==='hpa'&&!(p.gas.includes('hpa')||(platformKey==='hdr68'&&selMods.has('hdr_hpa'))))return;
+  gasType=type;
+  applyGasTabs();
+  renderModStack();
+  calcUpdate();
+}
+
+function onTempChange(){
+  tempF=parseInt(document.getElementById('c-temp').value)||70;
+  document.getElementById('c-temp-out').textContent=tempF;
+  updateGasMeta();
+  renderModStack();
+}
+
+function onPsiChange(){
+  psi=parseInt(document.getElementById('c-psi').value)||800;
+  document.getElementById('c-psi-out').textContent=psi;
+  updateGasMeta();
+  renderModStack();
+}
+
+function updateGasMeta(){
+  if(gasType==='co2'){
+    const [dl,dh]=co2DeltaRange(tempF);
+    const pr=co2PressurePSI(tempF);
+    const meta=document.getElementById('c-co2-meta');
+    const deltaStr=dl===0&&dh===0?'0J (baseline)':(dl>0?'+'+dl+' to +'+dh+'J':(dl)+' to '+(dh)+'J');
+    meta.innerHTML='Effective vapor pressure ~<strong>'+pr+' PSI</strong> · Δ vs 70°F baseline: <strong>'+deltaStr+'</strong>';
+    document.getElementById('c-co2-cold-warn').style.display=tempF<62?'block':'none';
+  } else {
+    const [dl,dh]=hpaDeltaRange(psi);
+    const meta=document.getElementById('c-hpa-meta');
+    const deltaStr=dl===0&&dh===0?'0J (baseline @ 800 PSI)':(dl>0?'+'+dl+' to +'+dh+'J':(dl)+' to '+(dh)+'J');
+    meta.innerHTML='Δ vs 800 PSI baseline: <strong>'+deltaStr+'</strong>';
+    const warn=document.getElementById('c-hpa-warn');
+    if(psi>1150){warn.style.display='block';warn.textContent='⚠ HIGH PRESSURE — verify platform and regulator ratings before sustained use above 1150 PSI.';}
+    else if(psi<700){warn.style.display='block';warn.textContent='⚠ LOW PRESSURE — output well below doctrine floor. Increase regulator PSI.';}
+    else warn.style.display='none';
+  }
+}
+
+function getCurrentGasDelta(){
+  if(gasType==='co2')return co2DeltaRange(tempF);
+  return hpaDeltaRange(psi);
+}
+
+// -------------------- MODS --------------------
+function getModCatalog(){
+  const power=[...MODS_POWER];
+  if(platformKey==='hdr68'){
+    HDR68_MODS.forEach(m=>power.push(m));
+  }
+  return {power,reli:MODS_RELI,tac:MODS_TAC};
+}
+
+function renderMods(){
+  const container=document.getElementById('c-mods-container');
+  if(!container)return;
+  const cat=getModCatalog();
+  const sections=[
+    {key:'power',label:'POWER',cls:'power',list:cat.power},
+    {key:'reli', label:'RELIABILITY',cls:'reliability',list:cat.reli},
+    {key:'tac',  label:'TACTICAL',cls:'tac',list:cat.tac},
+  ];
+  let html='';
+  sections.forEach(s=>{
+    html+='<div class="mod-cat-hdr '+s.cls+'">◆ '+s.label+'</div>';
+    s.list.forEach(m=>{
+      const checked=selMods.has(m.id)?'checked':'';
+      const disabled=(m.req&&!selMods.has(m.req))?'disabled':'';
+      const rangeStr=(m.dLow===0&&m.dHigh===0)?'':(m.dLow===m.dHigh?('+'+m.dLow+'J'):('+'+m.dLow+'–'+m.dHigh+'J'));
+      const metaTag=m.meta?('<span class="mod-meta">'+m.meta+'</span>'):'';
+      const deltaTag=rangeStr?('<span class="mod-meta" style="color:rgba(255,140,0,0.75);">'+rangeStr+'</span>'):'';
+      const reqNote=m.req?('<span class="mod-meta" style="color:rgba(255,100,0,0.6);">REQUIRES '+m.req.toUpperCase()+'</span>'):'';
+      html+='<div class="mod-item">'+
+        '<input type="checkbox" id="mod-'+m.id+'" '+checked+' '+disabled+' onchange="toggleMod(\''+m.id+'\')">'+
+        '<div style="flex:1;">'+
+          '<div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;"><strong style="font-family:\'Share Tech Mono\',monospace;font-size:12px;letter-spacing:0.04em;color:var(--bright);">'+m.name+'</strong>'+metaTag+deltaTag+reqNote+'</div>'+
+          '<div class="mod-desc">'+m.desc+'</div>';
+      if(m.barrel){
+        const show=selMods.has(m.id)?' show':'';
+        html+='<div class="mod-barrel-cfg'+show+'" id="mod-barrel-cfg">'+
+          '<div class="row">'+
+            '<label>BORE</label>'+
+            '<select onchange="onBarrelCfgChange()" id="mod-bore">'+
+              '<option value="0.684">0.684"</option>'+
+              '<option value="0.686">0.686"</option>'+
+              '<option value="0.688">0.688"</option>'+
+              '<option value="0.690">0.690"</option>'+
+            '</select>'+
+            '<label>LENGTH</label>'+
+            '<input type="number" id="mod-barrel-len" min="4" max="20" step="0.5" value="'+modCfg.barrelLen+'" onchange="onBarrelCfgChange()" style="width:70px;">'+
+            '<span style="font-family:\'Share Tech Mono\',monospace;font-size:10px;color:var(--muted);">INCHES</span>'+
+          '</div>'+
+          '<div class="result" id="mod-barrel-result">—</div>'+
+        '</div>';
+      }
+      html+='</div></div>';
+    });
+  });
+  container.innerHTML=html;
+  // Restore barrel select value
+  const boreSel=document.getElementById('mod-bore');
+  if(boreSel)boreSel.value=modCfg.bore.toFixed(3);
+  updateBarrelResult();
+}
+
+function toggleMod(id){
+  const cb=document.getElementById('mod-'+id);
+  if(!cb)return;
+  if(cb.checked){
+    // Prereq check
+    const all=[...MODS_POWER,...MODS_RELI,...MODS_TAC,...HDR68_MODS];
+    const mod=all.find(m=>m.id===id);
+    if(mod&&mod.req&&!selMods.has(mod.req)){
+      cb.checked=false;
+      return;
+    }
+    selMods.add(id);
+    if(mod&&mod.unlocksGas){
+      // HDR HPA conversion enables HPA tab
+      const hpaTab=document.getElementById('gas-tab-hpa');
+      hpaTab.classList.remove('disabled');
+    }
+  } else {
+    selMods.delete(id);
+    // If disabling a prereq, cascade remove dependents
+    const all=[...MODS_POWER,...MODS_RELI,...MODS_TAC,...HDR68_MODS];
+    all.forEach(m=>{if(m.req===id)selMods.delete(m.id);});
+    // If disabling HDR HPA conversion, force gas back to co2
+    if(id==='hdr_hpa'){
+      gasType='co2';
+      applyGasTabs();
+    }
+  }
+  renderMods();
+  renderModStack();
+  calcUpdate();
+}
+
+function onBarrelCfgChange(){
+  const b=document.getElementById('mod-bore');
+  const l=document.getElementById('mod-barrel-len');
+  if(b)modCfg.bore=parseFloat(b.value)||0.688;
+  if(l)modCfg.barrelLen=parseFloat(l.value)||11;
+  updateBarrelResult();
+  renderModStack();
+}
+
+function updateBarrelResult(){
+  const el=document.getElementById('mod-barrel-result');
+  if(!el)return;
+  const p=getCurrentPlatform();
+  const boreMatch=Math.abs(modCfg.bore-(p.bore||0.688))<0.002;
+  const baseInches=11;
+  const extra=Math.max(0,modCfg.barrelLen-baseInches);
+  const lenLow =extra*1.5;
+  const lenHigh=extra*2.0;
+  const bmLow =boreMatch?3:0;
+  const bmHigh=boreMatch?5:0;
+  const tot=(bmLow+lenLow).toFixed(1)+'–'+(bmHigh+lenHigh).toFixed(1)+'J';
+  el.innerHTML='Bore match: <strong>'+(boreMatch?'+3–5J':'0J (mismatched)')+'</strong> · Length over stock: <strong>+'+lenLow.toFixed(1)+'–'+lenHigh.toFixed(1)+'J</strong> · Total: <strong>+'+tot+'</strong>'+(modCfg.barrelLen>14?' <span class="warn">(diminishing returns past 14")</span>':'');
+}
+
+// -------------------- MOD STACK --------------------
+function computeModStack(){
+  const rows=[];
+  const [stockLo,stockHi]=getCurrentStockRange();
+  rows.push({label:'Stock ('+getCurrentPlatform().name+')',lo:stockLo,hi:stockHi,type:'stock'});
+  // Gas delta
+  const [gLo,gHi]=getCurrentGasDelta();
+  if(gLo!==0||gHi!==0){
+    rows.push({label:gasType==='co2'?('CO2 @ '+tempF+'°F'):('HPA @ '+psi+' PSI'),lo:gLo,hi:gHi,type:'gas'});
+  }
+  // Mods
+  const allMods=[...MODS_POWER,...MODS_RELI,...MODS_TAC,...HDR68_MODS];
+  selMods.forEach(id=>{
+    const m=allMods.find(x=>x.id===id);
+    if(!m)return;
+    if(m.barrel){
+      const p=getCurrentPlatform();
+      const boreMatch=Math.abs(modCfg.bore-(p.bore||0.688))<0.002;
+      const extra=Math.max(0,modCfg.barrelLen-11);
+      const lo=(boreMatch?3:0)+extra*1.5;
+      const hi=(boreMatch?5:0)+extra*2.0;
+      rows.push({label:m.name+' ('+modCfg.bore.toFixed(3)+'" / '+modCfg.barrelLen+'")',lo:+lo.toFixed(1),hi:+hi.toFixed(1),type:'mod'});
+    } else {
+      rows.push({label:m.name,lo:m.dLow,hi:m.dHigh,type:'mod'});
+    }
+  });
+  const lo=rows.reduce((a,r)=>a+r.lo,0);
+  const hi=rows.reduce((a,r)=>a+r.hi,0);
+  const mid=(lo+hi)/2;
+  return {rows,lo,hi,mid};
+}
+
+function renderModStack(){
+  const s=computeModStack();
+  const el=document.getElementById('c-stack-rows');
+  if(!el)return;
+  el.innerHTML=s.rows.map(r=>{
+    const deltaStr=(r.lo===0&&r.hi===0)?'0J':(r.lo===r.hi?((r.lo>0?'+':'')+r.lo+'J'):((r.lo>=0?'+':'')+r.lo+' to '+(r.hi>=0?'+':'')+r.hi+'J'));
+    const cls=r.type==='stock'?'':r.type==='gas'?(r.lo<0?' warn':''):(r.lo===0&&r.hi===0?' rel':'');
+    return '<div class="stack-row"><span>'+r.label+'</span><span class="delta'+cls+'">'+deltaStr+'</span></div>';
+  }).join('');
+  document.getElementById('c-stack-mid').textContent=Math.round(s.mid);
+  document.getElementById('c-stack-range').textContent=Math.round(s.lo)+'–'+Math.round(s.hi);
+}
+
+// -------------------- PRESETS --------------------
+function loadPresetsFromStorage(){
+  try{
+    const raw=localStorage.getItem(LS_PRESETS);
+    presets=raw?JSON.parse(raw):[];
+  }catch(e){presets=[];}
+  try{activePresetId=localStorage.getItem(LS_ACTIVE)||null;}catch(e){activePresetId=null;}
+  // Load session log from storage (persist across reloads)
+  try{
+    const raw=localStorage.getItem('llbc_session_log_v1');
+    if(raw)sessionLog=JSON.parse(raw);
+  }catch(e){}
+}
+
+function savePresetsToStorage(){
+  try{localStorage.setItem(LS_PRESETS,JSON.stringify(presets));}catch(e){}
+  try{if(activePresetId)localStorage.setItem(LS_ACTIVE,activePresetId);else localStorage.removeItem(LS_ACTIVE);}catch(e){}
+}
+
+function saveSessionLog(){
+  try{localStorage.setItem('llbc_session_log_v1',JSON.stringify(sessionLog));}catch(e){}
+}
+
+function capturePresetState(){
+  return {
+    platformKey,platformVersion,customBaseline:{...customBaseline},
+    gasType,tempF,psi,
+    modCfg:{...modCfg},
+    mods:[...selMods],
+    fps:parseInt(document.getElementById('c-fps').value)||0,
+  };
+}
+
+function applyPresetState(p){
+  platformKey=p.platformKey||'x68';
+  platformVersion=p.platformVersion||'perf';
+  customBaseline={...(p.customBaseline||{low:20,high:30})};
+  gasType=p.gasType||'co2';
+  tempF=p.tempF||70;
+  psi=p.psi||800;
+  modCfg={...(p.modCfg||{bore:0.688,barrelLen:11,customName:'',customDelta:0})};
+  selMods=new Set(p.mods||[]);
+  // Update UI
+  document.getElementById('c-launcher').value=platformKey;
+  document.getElementById('c-custom-base-low').value=customBaseline.low;
+  document.getElementById('c-custom-base-high').value=customBaseline.high;
+  document.getElementById('c-temp').value=tempF;
+  document.getElementById('c-temp-out').textContent=tempF;
+  document.getElementById('c-psi').value=psi;
+  document.getElementById('c-psi-out').textContent=psi;
+  if(p.fps)document.getElementById('c-fps').value=p.fps;
+  onPlatformChange();
+}
+
+function savePresetFromInput(){
+  const inp=document.getElementById('c-preset-name');
+  const name=(inp.value||'').trim();
+  if(!name){inp.focus();return;}
+  const state=capturePresetState();
+  const id='p'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  const stk=computeModStack();
+  const preset={
+    id,name,createdAt:Date.now(),
+    state,
+    estLo:Math.round(stk.lo),estHi:Math.round(stk.hi),estMid:Math.round(stk.mid),
+    shots:[],
+  };
+  presets.unshift(preset);
+  activePresetId=id;
+  savePresetsToStorage();
+  inp.value='';
+  renderPresetList();
+  renderQuickLogAuto();
+}
+
+function loadPreset(id){
+  const p=presets.find(x=>x.id===id);
+  if(!p)return;
+  activePresetId=id;
+  savePresetsToStorage();
+  applyPresetState(p.state);
+  renderPresetList();
+  renderQuickLogAuto();
+}
+
+function deletePreset(id){
+  if(!confirm('Delete this weapon preset and all its shot history?'))return;
+  presets=presets.filter(x=>x.id!==id);
+  if(activePresetId===id)activePresetId=null;
+  savePresetsToStorage();
+  renderPresetList();
+  renderQuickLogAuto();
+  updateCharts();
+}
+
+function renderPresetList(){
+  const el=document.getElementById('c-preset-list');
+  if(!el)return;
+  if(!presets.length){
+    el.innerHTML='<div class="sub-note" style="padding:8px 0;">No weapon presets saved. Configure a platform above and save it to start building shot history.</div>';
+    return;
+  }
+  el.innerHTML=presets.map(p=>{
+    const plat=PLATFORMS[p.state.platformKey];
+    const platName=plat?plat.name:'(unknown)';
+    const shotCt=(p.shots||[]).length;
+    const isActive=p.id===activePresetId?' active':'';
+    return '<div class="preset-row'+isActive+'">'+
+      '<div><div class="pname">'+escapeHTML(p.name)+'</div><div class="pcount">'+shotCt+' shots logged</div></div>'+
+      '<div class="pplat">'+platName+'</div>'+
+      '<div class="pest">'+p.estLo+'–'+p.estHi+'J</div>'+
+      '<button class="btn-mini" onclick="loadPreset(\''+p.id+'\')">'+(isActive?'ACTIVE':'LOAD')+'</button>'+
+      '<button class="btn-mini danger" onclick="deletePreset(\''+p.id+'\')">✕</button>'+
+    '</div>';
+  }).join('');
+}
+
+function escapeHTML(s){return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+// -------------------- QUICK LOG --------------------
+function renderQuickLogAuto(){
+  const el=document.getElementById('c-ql-auto');
+  if(!el)return;
+  const preset=presets.find(x=>x.id===activePresetId);
+  if(!preset){
+    el.innerHTML='No weapon preset loaded. Save or load a preset above to enable shot logging attached to a persistent weapon profile.';
+    return;
+  }
+  const fps=parseInt(document.getElementById('c-fps').value)||0;
+  const dist=parseInt(document.getElementById('c-dist').value)||0;
+  const roundSel=document.getElementById('c-round');
+  const roundTxt=roundSel.options[roundSel.selectedIndex]?.textContent||'—';
+  const stk=computeModStack();
+  const muzzle=fps>0?(() => {
+    const rv=roundSel.value.split('|');
+    const mass=roundSel.value==='custom'?(parseFloat(document.getElementById('c-custom-mass').value)||0):parseFloat(rv[0]);
+    return fpsToJoules(fps,mass);
+  })():Math.round(stk.mid);
+  const impact=fps>0?calcImpact(muzzle,dist):0;
+  el.innerHTML='<strong>Active weapon:</strong> '+escapeHTML(preset.name)+
+    '<br><strong>Round:</strong> '+escapeHTML(roundTxt)+
+    '<br><strong>Distance:</strong> '+dist+' ft'+
+    '<br><strong>'+(fps>0?'Chrono':'Est.')+' muzzle:</strong> '+(fps>0?muzzle.toFixed(1):Math.round(stk.mid))+'J · <strong>Impact:</strong> '+(fps>0?impact.toFixed(1)+'J':'— (chrono required)')+
+    '<br><strong>Gas:</strong> '+(gasType==='co2'?('CO2 @ '+tempF+'°F'):('HPA @ '+psi+' PSI'));
+}
+
+function quickLogShot(){
+  const preset=presets.find(x=>x.id===activePresetId);
+  if(!preset){
+    alert('Load or save a weapon preset first. Shots attach to the active preset.');
+    return;
+  }
+  const fps=parseInt(document.getElementById('c-fps').value)||0;
+  const dist=parseInt(document.getElementById('c-dist').value)||0;
+  const roundSel=document.getElementById('c-round');
+  const roundTxt=roundSel.options[roundSel.selectedIndex]?.textContent||'—';
+  const rv=roundSel.value.split('|');
+  const mass=roundSel.value==='custom'?(parseFloat(document.getElementById('c-custom-mass').value)||0):parseFloat(rv[0]);
+  const muzzle=fps>0?fpsToJoules(fps,mass):0;
+  const impact=fps>0?calcImpact(muzzle,dist):0;
+  const stk=computeModStack();
+  const medium=document.getElementById('c-ql-medium').value||'—';
+  const result=document.getElementById('c-ql-result').value||'Unknown';
+  const notes=document.getElementById('c-ql-notes').value.trim();
+  const shot={
+    ts:Date.now(),
+    time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
+    presetId:preset.id,
+    launcher:preset.name,
+    round:roundTxt,
+    fps,mass,
+    muzzle:+muzzle.toFixed(1),
+    dist,
+    impact:+impact.toFixed(1),
+    stackLo:Math.round(stk.lo),stackHi:Math.round(stk.hi),stackMid:Math.round(stk.mid),
+    gas:gasType,tempF:gasType==='co2'?tempF:null,psi:gasType==='hpa'?psi:null,
+    mods:[...selMods],
+    medium,result,notes,
+  };
+  preset.shots=preset.shots||[];
+  preset.shots.unshift(shot);
+  sessionLog.unshift(shot);
+  savePresetsToStorage();
+  saveSessionLog();
+  // Clear only user-input fields; keep chrono/dist/round/mods as-is for next shot
+  document.getElementById('c-ql-medium').value='';
+  document.getElementById('c-ql-notes').value='';
+  document.getElementById('c-ql-result').value='Unknown';
+  // Flash confirmation
+  const flash=document.getElementById('c-ql-flash');
+  if(flash){
+    flash.style.display='block';
+    setTimeout(()=>{flash.style.display='none';},1200);
+  }
+  renderPresetList();
+  renderQuickLogAuto();
+  renderLog();
+  updateCharts();
+}
+
 function onLauncherChange(){populateRounds();}
-function renderMods(){}
-function toggleMod(){}
 
 function zCol(z,j){
   if(z.type==='lethal')return{f:'url(#grad-r-leth)',fl:'url(#glow-leth)'};
@@ -1104,19 +1846,28 @@ function logShot(){
   const muzzle=parseFloat(document.getElementById('l-muzzle').value)||0;
   const dist=parseFloat(document.getElementById('l-dist').value)||0;
   const impact=muzzle>0&&dist>0?calcImpact(muzzle,dist):0;
-  sessionLog.unshift({
+  const entry={
+    ts:Date.now(),
     launcher:document.getElementById('l-launcher').value,
     round:document.getElementById('l-round').value,
-    muzzle,dist,impact,
+    muzzle,dist,impact:+impact.toFixed(1),
     medium:document.getElementById('l-medium').value||'—',
     mods:document.getElementById('l-mods').value||'—',
     notes:document.getElementById('l-notes').value.trim(),
     time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
-  });
+    presetId:null,
+  };
+  sessionLog.unshift(entry);
+  saveSessionLog();
   ['l-muzzle','l-dist','l-medium','l-mods','l-notes'].forEach(id=>document.getElementById(id).value='');
   renderLog();updateCharts();
 }
-function clearLog(){sessionLog=[];renderLog();updateCharts();}
+function clearLog(){
+  if(!confirm('Clear session log? Preset shot histories are preserved.'))return;
+  sessionLog=[];
+  saveSessionLog();
+  renderLog();updateCharts();
+}
 function renderLog(){
   const el=document.getElementById('l-entries');
   if(!sessionLog.length){el.innerHTML='<div class="empty">— no shots logged —</div>';return;}
@@ -1132,66 +1883,157 @@ function renderLog(){
   }).join('');
 }
 
+function populateWeaponFilter(){
+  const sel=document.getElementById('ana-weapon-filter');
+  if(!sel)return;
+  const prev=sel.value;
+  sel.innerHTML='<option value="__all__">All weapons (session aggregate)</option>';
+  (presets||[]).forEach(p=>{
+    const opt=document.createElement('option');
+    opt.value=p.id;
+    opt.textContent=p.name+' ('+((p.shots||[]).length)+' shots)';
+    sel.appendChild(opt);
+  });
+  if(prev && [...sel.options].some(o=>o.value===prev))sel.value=prev;
+}
+
+function getAnalyticsDataset(){
+  const sel=document.getElementById('ana-weapon-filter');
+  const val=sel?sel.value:'__all__';
+  if(val==='__all__')return {label:'All Weapons',shots:sessionLog};
+  const p=presets.find(x=>x.id===val);
+  if(!p)return {label:'All Weapons',shots:sessionLog};
+  return {label:p.name,shots:p.shots||[]};
+}
+
 function updateCharts(){
-  const hasData=sessionLog.length>0;
+  populateWeaponFilter();
+  const {label,shots}=getAnalyticsDataset();
+  const hasData=shots.length>0;
   document.getElementById('ana-empty').style.display=hasData?'none':'block';
   document.getElementById('ana-content').style.display=hasData?'block':'none';
-  if(!hasData)return;
-  const wc=sessionLog.filter(e=>e.dist>0&&e.impact>0);
+  if(!hasData){
+    document.getElementById('ana-empty').textContent=
+      (presets&&presets.length)?'NO SHOTS LOGGED FOR THIS WEAPON — USE QUICK LOG ON CALCULATOR TAB':'LOG SHOTS TO GENERATE ANALYTICS';
+    return;
+  }
+  const wc=shots.filter(e=>e.dist>0&&e.impact>0);
   const PIP='rgba(197,255,0,';
   const gridColor='rgba(197,255,0,0.06)';
   const tickColor='#334428';
+  const colorFor=v=>v>=50?PIP+'0.75)':v>=45?'rgba(255,130,0,0.75)':'rgba(255,40,40,0.75)';
 
   if(charts.scatter)charts.scatter.destroy();
   charts.scatter=new Chart(document.getElementById('chart-scatter'),{type:'scatter',
     data:{datasets:[
       {data:wc.map(e=>({x:e.dist,y:parseFloat(e.impact.toFixed(1))})),
-        backgroundColor:wc.map(e=>e.impact>=50?PIP+'0.7)':e.impact>=45?'rgba(255,100,0,0.7)':'rgba(255,30,30,0.7)'),
+        backgroundColor:wc.map(e=>colorFor(e.impact)),
         pointRadius:7,pointHoverRadius:10},
-      {data:[{x:0,y:50},{x:30,y:50}],type:'line',borderColor:PIP+'0.3)',borderDash:[6,3],pointRadius:0,borderWidth:1},
-      {data:[{x:0,y:45},{x:30,y:45}],type:'line',borderColor:'rgba(255,100,0,0.3)',borderDash:[6,3],pointRadius:0,borderWidth:1},
+      {data:[{x:0,y:50},{x:100,y:50}],type:'line',borderColor:PIP+'0.3)',borderDash:[6,3],pointRadius:0,borderWidth:1},
+      {data:[{x:0,y:45},{x:100,y:45}],type:'line',borderColor:'rgba(255,100,0,0.3)',borderDash:[6,3],pointRadius:0,borderWidth:1},
     ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},title:{display:true,text:label,color:tickColor,font:{size:10,family:'Share Tech Mono'}}},
       scales:{
-        x:{title:{display:true,text:'DISTANCE (FT)',color:tickColor,font:{size:10,family:'Share Tech Mono'}},ticks:{color:tickColor},grid:{color:gridColor},min:0,max:30},
-        y:{title:{display:true,text:'IMPACT J',color:tickColor,font:{size:10,family:'Share Tech Mono'}},min:0,max:100,ticks:{color:tickColor},grid:{color:gridColor}}
+        x:{title:{display:true,text:'DISTANCE (FT)',color:tickColor,font:{size:10,family:'Share Tech Mono'}},ticks:{color:tickColor},grid:{color:gridColor},min:0,max:100},
+        y:{title:{display:true,text:'IMPACT J',color:tickColor,font:{size:10,family:'Share Tech Mono'}},min:0,max:120,ticks:{color:tickColor},grid:{color:gridColor}}
       }}
   });
 
+  // Timeline: chronological shot order, muzzle J line + impact J bars
+  const chron=[...shots].reverse();
   if(charts.timeline)charts.timeline.destroy();
-  const rev=[...sessionLog].reverse();
-  charts.timeline=new Chart(document.getElementById('chart-timeline'),{type:'bar',
-    data:{labels:rev.map((_,i)=>'S'+(i+1)),
-      datasets:[{data:rev.map(e=>parseFloat((e.impact||0).toFixed(1))),
-        backgroundColor:rev.map(e=>e.impact>=50?PIP+'0.7)':e.impact>=45?'rgba(255,100,0,0.7)':'rgba(255,30,30,0.7)'),
-        borderRadius:0}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+  charts.timeline=new Chart(document.getElementById('chart-timeline'),{
+    data:{labels:chron.map((_,i)=>'#'+(i+1)),
+      datasets:[
+        {type:'bar',label:'Impact J',data:chron.map(e=>parseFloat((e.impact||0).toFixed(1))),
+          backgroundColor:chron.map(e=>colorFor(e.impact||0)),borderRadius:0},
+        {type:'line',label:'Muzzle J',data:chron.map(e=>parseFloat((e.muzzle||0).toFixed(1))),
+          borderColor:PIP+'0.9)',backgroundColor:'transparent',borderWidth:2,pointRadius:3,tension:0.15},
+      ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:tickColor,font:{size:9,family:'Share Tech Mono'}}}},
       scales:{
         x:{ticks:{color:tickColor,font:{size:9}},grid:{color:gridColor}},
-        y:{min:0,max:100,ticks:{color:tickColor},grid:{color:gridColor}}
+        y:{min:0,max:120,ticks:{color:tickColor},grid:{color:gridColor}}
       }}
   });
 
+  // Round comparison
   const rm={};
-  wc.forEach(e=>{const r=e.round.split(' — ')[0];if(!rm[r])rm[r]=[];rm[r].push(e.impact);});
+  wc.forEach(e=>{const r=(e.round||'').split(' — ')[0]||'(unknown)';if(!rm[r])rm[r]=[];rm[r].push(e.impact);});
   const rl=Object.keys(rm);
   const ra=rl.map(r=>{const a=rm[r];return parseFloat((a.reduce((x,y)=>x+y,0)/a.length).toFixed(1));});
   if(charts.rounds)charts.rounds.destroy();
   charts.rounds=new Chart(document.getElementById('chart-rounds'),{type:'bar',
-    data:{labels:rl,datasets:[{data:ra,backgroundColor:ra.map(v=>v>=50?PIP+'0.7)':v>=45?'rgba(255,100,0,0.7)':'rgba(255,30,30,0.7)'),borderRadius:0}]},
+    data:{labels:rl,datasets:[{data:ra,backgroundColor:ra.map(colorFor),borderRadius:0}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
-      scales:{x:{ticks:{color:tickColor,font:{size:9},maxRotation:15},grid:{color:gridColor}},y:{min:0,max:100,ticks:{color:tickColor},grid:{color:gridColor}}}}
+      scales:{x:{ticks:{color:tickColor,font:{size:9},maxRotation:15},grid:{color:gridColor}},y:{min:0,max:120,ticks:{color:tickColor},grid:{color:gridColor}}}}
   });
 
+  // Temperature correlation (CO2 only)
+  const co2=wc.filter(e=>e.gas==='co2'&&typeof e.tempF==='number');
+  if(charts.temp)charts.temp.destroy();
+  if(co2.length){
+    charts.temp=new Chart(document.getElementById('chart-temp'),{type:'scatter',
+      data:{datasets:[{data:co2.map(e=>({x:e.tempF,y:parseFloat((e.muzzle||0).toFixed(1))})),
+        backgroundColor:co2.map(e=>colorFor(e.impact)),pointRadius:7}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+        scales:{
+          x:{title:{display:true,text:'AMBIENT °F',color:tickColor,font:{size:10,family:'Share Tech Mono'}},ticks:{color:tickColor},grid:{color:gridColor},min:20,max:110},
+          y:{title:{display:true,text:'MUZZLE J',color:tickColor,font:{size:10,family:'Share Tech Mono'}},ticks:{color:tickColor},grid:{color:gridColor},min:0,max:120}
+        }}
+    });
+  } else {
+    const ctx=document.getElementById('chart-temp').getContext('2d');
+    ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
+  }
+
+  // Summary + analysis notes
   if(wc.length){
-    const avg=wc.reduce((a,b)=>a+b.impact,0)/wc.length;
-    const mx=Math.max(...wc.map(e=>e.impact));
+    const muzzles=wc.map(e=>e.muzzle||0);
+    const impacts=wc.map(e=>e.impact||0);
+    const avgM=muzzles.reduce((a,b)=>a+b,0)/muzzles.length;
+    const avgI=impacts.reduce((a,b)=>a+b,0)/impacts.length;
+    const varM=Math.sqrt(muzzles.reduce((a,b)=>a+(b-avgM)*(b-avgM),0)/muzzles.length);
+    const mx=Math.max(...impacts);
+    const mn=Math.min(...impacts);
     const above=wc.filter(e=>e.impact>=50).length;
-    document.getElementById('ana-stats').innerHTML=`<div class="r3">
-      <div class="metric"><div class="lbl">Avg Impact</div><div class="metric-val">${avg.toFixed(1)}</div><div class="metric-unit">JOULES</div></div>
-      <div class="metric"><div class="lbl">Peak</div><div class="metric-val">${mx.toFixed(1)}</div><div class="metric-unit">JOULES</div></div>
-      <div class="metric"><div class="lbl">Above Floor</div><div class="metric-val" style="font-size:28px;">${above}/${wc.length}</div><div class="metric-unit">SHOTS ABOVE 50J</div></div>
-    </div>`;
+    document.getElementById('ana-stats').innerHTML='<div class="r3">'+
+      '<div class="metric"><div class="lbl">Avg Muzzle</div><div class="metric-val">'+avgM.toFixed(1)+'</div><div class="metric-unit">JOULES</div></div>'+
+      '<div class="metric"><div class="lbl">Avg Impact</div><div class="metric-val">'+avgI.toFixed(1)+'</div><div class="metric-unit">JOULES</div></div>'+
+      '<div class="metric"><div class="lbl">Above Floor</div><div class="metric-val" style="font-size:28px;">'+above+'/'+wc.length+'</div><div class="metric-unit">SHOTS ≥ 50J</div></div>'+
+      '</div><div class="r3" style="margin-top:8px;">'+
+      '<div class="metric"><div class="lbl">Peak</div><div class="metric-val">'+mx.toFixed(1)+'</div><div class="metric-unit">MAX IMPACT J</div></div>'+
+      '<div class="metric"><div class="lbl">Floor</div><div class="metric-val">'+mn.toFixed(1)+'</div><div class="metric-unit">MIN IMPACT J</div></div>'+
+      '<div class="metric"><div class="lbl">σ Muzzle</div><div class="metric-val">'+varM.toFixed(1)+'</div><div class="metric-unit">CONSISTENCY J</div></div>'+
+      '</div>';
+
+    // Analysis notes (seal wear detection, trend, temp correlation)
+    const notes=[];
+    if(varM>8)notes.push('⚠ HIGH VARIANCE — Muzzle σ of '+varM.toFixed(1)+'J indicates inconsistent output. Possible seal wear, regulator drift, or mixed conditions. Inspect o-rings and verify reg.');
+    else if(varM<3)notes.push('◆ STABLE OUTPUT — Muzzle σ of '+varM.toFixed(1)+'J is tight. Platform is performing consistently.');
+    if(wc.length>=4){
+      const early=wc.slice(Math.floor(wc.length/2)).map(e=>e.muzzle||0);
+      const late =wc.slice(0,Math.floor(wc.length/2)).map(e=>e.muzzle||0);
+      const ea=early.reduce((a,b)=>a+b,0)/early.length;
+      const la=late.reduce((a,b)=>a+b,0)/late.length;
+      const drift=la-ea;
+      if(drift<-4)notes.push('↘ DECLINING OUTPUT — Recent muzzle average ('+la.toFixed(1)+'J) down '+Math.abs(drift).toFixed(1)+'J from earlier ('+ea.toFixed(1)+'J). Suggests seal wear, cold CO2 drop, or degraded gas source.');
+      else if(drift>4)notes.push('↗ RISING OUTPUT — Recent muzzle average ('+la.toFixed(1)+'J) up '+drift.toFixed(1)+'J from earlier ('+ea.toFixed(1)+'J). Warmup effect or mod change.');
+    }
+    if(co2.length>=3){
+      const low=co2.filter(e=>e.tempF<62);
+      const mid=co2.filter(e=>e.tempF>=62&&e.tempF<80);
+      const hot=co2.filter(e=>e.tempF>=80);
+      const avg=arr=>arr.length?(arr.reduce((a,b)=>a+(b.muzzle||0),0)/arr.length):null;
+      const parts=[];
+      const al=avg(low),am=avg(mid),ah=avg(hot);
+      if(al!==null)parts.push('<62°F: '+al.toFixed(1)+'J');
+      if(am!==null)parts.push('62–80°F: '+am.toFixed(1)+'J');
+      if(ah!==null)parts.push('≥80°F: '+ah.toFixed(1)+'J');
+      if(parts.length>=2)notes.push('◆ CO2 TEMP CURVE — '+parts.join(' · '));
+    }
+    if(!notes.length)notes.push('Insufficient data for trend detection. Log more shots on this weapon to unlock analysis.');
+    document.getElementById('ana-notes').innerHTML=notes.map(n=>'<div style="margin-bottom:6px;">'+n+'</div>').join('');
   }
 }
 
@@ -1202,8 +2044,34 @@ function showTab(id){
   });
 }
 
-populateRounds();
-calcUpdate();
+// ============================================================
+// INIT
+// ============================================================
+function initApp(){
+  initPlatformOptions();
+  // Mirror launcher options into session log tab
+  const ll=document.getElementById('l-launcher');
+  if(ll){
+    ll.innerHTML='';
+    Object.values(PLATFORMS).forEach(p=>{
+      const o=document.createElement('option');o.textContent=p.name;ll.appendChild(o);
+    });
+  }
+  loadPresetsFromStorage();
+  populateRounds();
+  // Apply active preset state on load if present, otherwise initialise defaults
+  const activeP=presets.find(x=>x.id===activePresetId);
+  if(activeP){
+    applyPresetState(activeP.state);
+  } else {
+    onPlatformChange();
+  }
+  renderPresetList();
+  renderLog();
+  updateCharts();
+  calcUpdate();
+}
+initApp();
 </script>
 </body>
 </html>
