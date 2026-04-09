@@ -12,6 +12,12 @@
   --border:rgba(197,255,0,0.10);--border-hi:rgba(197,255,0,0.35);
   --text:#88a060;--bright:#b8d080;--muted:#334428;
   --danger:#ff2020;--warn:#ff6600;
+  --ok:#c5ff00;
+  --sev0:#6f8b52;
+  --sev1:#c5ff00;
+  --sev2:#ffb000;
+  --sev3:#ff6600;
+  --sev4:#ff2020;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;}
@@ -103,6 +109,29 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;background:var(--pip)
 /* DAMAGE TEXT */
 .dmg-text{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--text);line-height:1.6;letter-spacing:0.02em;}
 
+/* SEVERITY / DEFINITIONS */
+.sev-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.sev-pill{font-family:'Orbitron',monospace;font-size:10px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;border:1px solid rgba(197,255,0,0.18);padding:6px 10px;background:rgba(3,5,10,0.7);}
+.sev-pill[data-sev="0"]{color:var(--sev0);border-color:rgba(111,139,82,0.35);}
+.sev-pill[data-sev="1"]{color:var(--sev1);border-color:rgba(197,255,0,0.35);text-shadow:0 0 12px rgba(197,255,0,0.25);}
+.sev-pill[data-sev="2"]{color:var(--sev2);border-color:rgba(255,176,0,0.35);}
+.sev-pill[data-sev="3"]{color:var(--sev3);border-color:rgba(255,102,0,0.35);}
+.sev-pill[data-sev="4"]{color:var(--sev4);border-color:rgba(255,32,32,0.35);}
+.sev-note{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.06em;line-height:1.35;}
+.defs{margin-top:10px;display:grid;gap:8px;}
+.def{border:1px solid rgba(197,255,0,0.08);background:rgba(3,5,10,0.55);padding:8px 10px;}
+.def summary{cursor:pointer;user-select:none;list-style:none;font-family:'Orbitron',monospace;font-size:10px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--bright);}
+.def summary::-webkit-details-marker{display:none;}
+.def .def-body{margin-top:8px;font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--text);line-height:1.55;}
+.kbadge{display:inline-block;margin-left:8px;vertical-align:1px;}
+
+/* LAUNCHER INFO */
+.launcher-info{display:grid;grid-template-columns:140px 1fr;gap:12px;align-items:center;}
+.limg{width:140px;height:90px;border:1px solid rgba(197,255,0,0.12);background:rgba(3,5,10,0.6);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.limg svg{width:140px;height:90px;}
+.linfo .lname{font-family:'Orbitron',monospace;font-size:12px;color:var(--bright);letter-spacing:0.08em;margin-bottom:4px;}
+.linfo .lmeta{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.06em;line-height:1.35;}
+
 /* PLACEMENT */
 .pl-grid{display:grid;grid-template-columns:220px 1fr;gap:16px;align-items:start;}
 .zone-legend{overflow-y:auto;max-height:480px;}
@@ -182,7 +211,12 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
         <option value="x68">NKWerks Pistelle X-68</option>
         <option value="introbuster">Mercury Rise Intrubuster Gen2</option>
         <option value="m17">Valken M17 / M17 CQMF</option>
+        <option value="m17g3">Milsig M17 G3</option>
+        <option value="t17">Milsig T17</option>
         <option value="hdr68">Umarex T4E HDR68</option>
+        <option value="hdx68">Umarex T4E HDX68</option>
+        <option value="hds68">Umarex T4E HDS68</option>
+        <option value="hdb68">Umarex T4E HDB68</option>
         <option value="hdr50">Umarex T4E HDR50</option>
         <option value="fsc">FSC .68 Pistol</option>
         <option value="custom">Custom</option>
@@ -199,6 +233,11 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
         <option value="9.88|0.684">AR Tactical LL — 9.88g</option>
       </select>
     </div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">Launcher Info</div>
+    <div id="c-launcher-info" class="launcher-info"></div>
   </div>
 
   <!-- FPS INPUT -->
@@ -255,6 +294,8 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 
   <div class="card">
     <div class="dmg-text" id="c-dmg">—</div>
+    <div style="height:10px"></div>
+    <div id="c-response"></div>
   </div>
 
 </div>
@@ -390,6 +431,11 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
     </div>
     <div class="zone-legend" id="zone-legend"></div>
   </div>
+
+  <div class="card" style="margin-top:12px;">
+    <div class="lbl">Target Response (education + harm-reduction)</div>
+    <div id="pl-response"></div>
+  </div>
 </div>
 
 <!-- SESSION LOG -->
@@ -401,7 +447,12 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
         <option>NKWerks Pistelle X-68</option>
         <option>Mercury Rise Intrubuster Gen2</option>
         <option>Valken M17 / M17 CQMF</option>
+        <option>Milsig M17 G3</option>
+        <option>Milsig T17</option>
         <option>Umarex T4E HDR68</option>
+        <option>Umarex T4E HDX68</option>
+        <option>Umarex T4E HDS68</option>
+        <option>Umarex T4E HDB68</option>
         <option>Umarex T4E HDR50</option>
         <option>FSC .68 Pistol</option>
         <option>Custom</option>
@@ -472,6 +523,9 @@ Chart.defaults.borderColor='rgba(197,255,0,0.06)';
 
 const LAUNCHERS={
   x68:{name:'NKWerks Pistelle X-68',bore:0.688,baseJ:42,
+    stockJ:'~40J (varies with setup)',
+    note:'High-output platform. Always chrono with your actual round.',
+    svg:launcherSvg('carbine'),
     mods:[
       {id:'x68_bbl',name:'Max Power 11.5" .686 Bore Barrel + Suppressor Kit',cat:'power',dJ:18},
       {id:'x68_exp',name:'12-Chamber Expansion Chamber / HPA Volumizer',cat:'power',dJ:20},
@@ -482,6 +536,9 @@ const LAUNCHERS={
       {id:'x68_pbody',name:'PDW Carbine Body Kit',cat:'tactical',dJ:0},
     ]},
   introbuster:{name:'Mercury Rise Intrubuster Gen2',bore:0.688,baseJ:40,
+    stockJ:'~40J (varies with setup)',
+    note:'Chrono and verify range/energy in your environment.',
+    svg:launcherSvg('carbine'),
     mods:[
       {id:'ib_bbl',name:'Bore-matched barrel',cat:'power',dJ:12},
       {id:'ib_exp',name:'Expansion chamber',cat:'power',dJ:10},
@@ -490,6 +547,9 @@ const LAUNCHERS={
       {id:'ib_bolt',name:'Performance tuning bolt spring',cat:'performance',dJ:2},
     ]},
   m17:{name:'Valken M17 / M17 CQMF',bore:0.688,baseJ:18,
+    stockJ:'~16–20J (typical stock range)',
+    note:'Different from Milsig M17 G3. Verify your exact model + chrono.',
+    svg:launcherSvg('rifle'),
     mods:[
       {id:'m17_bbl',name:'8" Hammerhead .686 Barrel',cat:'power',dJ:12},
       {id:'m17_hpa',name:'9ci 1000psi HPA Tank',cat:'power',dJ:10},
@@ -502,7 +562,26 @@ const LAUNCHERS={
       {id:'m17_rail',name:'MCS Swordfish Rail',cat:'tactical',dJ:0},
       {id:'m17_shroud',name:'Hammerhead Shroud (MCSUS)',cat:'tactical',dJ:0},
     ]},
+  m17g3:{name:'Milsig M17 G3',bore:0.688,baseJ:18,
+    stockJ:'~16–20J (stock)',
+    note:'Separate entry from Valken M17. Use chrono for real numbers.',
+    svg:launcherSvg('rifle'),
+    mods:[
+      {id:'m17g3_bbl',name:'Bore-matched barrel',cat:'power',dJ:8},
+      {id:'m17g3_tune',name:'Air efficiency / seal tuning',cat:'performance',dJ:2},
+    ]},
+  t17:{name:'Milsig T17',bore:0.688,baseJ:18,
+    stockJ:'~16–20J (stock)',
+    note:'Use chrono; performance varies by tuning, air system, and round fit.',
+    svg:launcherSvg('rifle'),
+    mods:[
+      {id:'t17_bbl',name:'Bore-matched barrel',cat:'power',dJ:8},
+      {id:'t17_tune',name:'Air efficiency / seal tuning',cat:'performance',dJ:2},
+    ]},
   hdr68:{name:'Umarex T4E HDR68',bore:0.688,baseJ:23,
+    stockJ:'~20–30J (varies by version and tuning)',
+    note:'Revolver format; validate energy with your round choice.',
+    svg:launcherSvg('pistol'),
     mods:[
       {id:'h68_fp',name:'Firing pin upgrade',cat:'power',dJ:8},
       {id:'h68_spring',name:'Hammer spring upgrade',cat:'power',dJ:5},
@@ -510,7 +589,32 @@ const LAUNCHERS={
       {id:'h68_ram',name:'RAM upgrade',cat:'power',dJ:6},
       {id:'h68_oring',name:'O-ring seal kit',cat:'performance',dJ:4},
     ]},
+  hdx68:{name:'Umarex T4E HDX68',bore:0.688,baseJ:30,
+    stockJ:'~16J or ~40J (depends on the model you purchase)',
+    note:'Pump-action style. Confirm which variant you have, then chrono.',
+    svg:launcherSvg('shotgun'),
+    mods:[
+      {id:'hdx_bbl',name:'Bore-matched barrel',cat:'power',dJ:6},
+      {id:'hdx_seal',name:'Seal / efficiency tuning',cat:'performance',dJ:2},
+    ]},
+  hds68:{name:'Umarex T4E HDS68',bore:0.688,baseJ:12,
+    stockJ:'~7–16J (stock)',
+    note:'Compact double-barrel. Expect higher variability shot-to-shot.',
+    svg:launcherSvg('dbl'),
+    mods:[
+      {id:'hds_seal',name:'Seal / efficiency tuning',cat:'performance',dJ:1},
+    ]},
+  hdb68:{name:'Umarex T4E HDB68',bore:0.688,baseJ:12,
+    stockJ:'(add verified stock range if you have chrono data)',
+    note:'Added as requested. Please chrono and update range when confirmed.',
+    svg:launcherSvg('pistol'),
+    mods:[
+      {id:'hdb_seal',name:'Seal / efficiency tuning',cat:'performance',dJ:1},
+    ]},
   hdr50:{name:'Umarex T4E HDR50',bore:0.500,baseJ:18,
+    stockJ:'~10–20J (varies by version and tuning)',
+    note:'Caliber differs; round selection changes perceived effect.',
+    svg:launcherSvg('pistol'),
     mods:[
       {id:'h50_fp',name:'Firing pin upgrade',cat:'power',dJ:8},
       {id:'h50_spring',name:'Hammer spring upgrade',cat:'power',dJ:6},
@@ -519,12 +623,18 @@ const LAUNCHERS={
       {id:'h50_oring',name:'O-ring seal kit',cat:'performance',dJ:5},
     ]},
   fsc:{name:'FSC .68 Pistol',bore:0.686,baseJ:25,
+    stockJ:'~10–25J (varies by setup)',
+    note:'Verify with chrono; compact systems swing with temperature and seals.',
+    svg:launcherSvg('pistol'),
     mods:[
       {id:'fsc_fp',name:'Firing pin upgrade',cat:'power',dJ:5},
       {id:'fsc_bbl',name:'Bore-matched barrel',cat:'power',dJ:8},
       {id:'fsc_oring',name:'O-ring upgrade',cat:'performance',dJ:4},
     ]},
   custom:{name:'Custom',bore:0.688,baseJ:40,
+    stockJ:'(user-defined)',
+    note:'Use chrono + documented setup so other users can learn safely.',
+    svg:launcherSvg('carbine'),
     mods:[
       {id:'cu_bbl',name:'Bore-matched barrel',cat:'power',dJ:15},
       {id:'cu_exp',name:'Expansion chamber',cat:'power',dJ:15},
@@ -540,23 +650,23 @@ const LAUNCHERS={
 
 const ZONES=[
   {id:'z-chest',tl:'tl-chest',label:'Chest / Sternum',type:'primary',gJ:50,wJ:35,
-   eff:j=>j>=50?'RIB FRACTURE probable. Diaphragm spasm. High incapacitation.':j>=35?'Deep bruising. Rib involvement possible.':'Surface trauma only.'},
+   eff:j=>j>=50?'High injury risk. Avoid targeting.':j>=35?'Painful impact possible; response varies.':'Often limited visible response (esp. through clothing).'},
   {id:'z-solar',tl:'tl-solar',label:'Solar Plexus',type:'primary',gJ:40,wJ:28,
-   eff:j=>j>=40?'DIAPHRAGM SPASM. Involuntary breath expulsion. Wind knockout.':j>=28?'Wind disruption. Pain compliance likely.':'Minor effect.'},
+   eff:j=>j>=40?'High injury risk. Avoid targeting.':j>=28?'Pain and breath disruption possible; inconsistent.':'Often minor / inconsistent response.'},
   {id:'z-abdom',tl:'tl-abdom',label:'Abdomen',type:'secondary',gJ:55,wJ:42,
-   eff:j=>j>=55?'Deep organ proximity. High pain compliance.':j>=42?'Deep muscle trauma.':'Surface bruising.'},
+   eff:j=>j>=55?'High injury risk. Avoid targeting.':j>=42?'Painful impact possible; response varies.':'Often superficial bruising / limited response.'},
   {id:'z-groin',tl:null,label:'Groin',type:'secondary',gJ:35,wJ:25,
-   eff:j=>j>=35?'IMMEDIATE pain compliance. High incapacitation.':j>=25?'Significant pain.':'Minor effect.'},
+   eff:()=>'High injury risk. Avoid targeting.'},
   {id:'z-lsh',tl:'tl-lsh',label:'Shoulder (bilateral)',type:'secondary',gJ:60,wJ:50,
-   eff:j=>j>=60?'Joint/clavicle involvement. Arm incapacitation.':j>=50?'Pain compliance. Arm function degraded.':'Bruising only.'},
+   eff:j=>j>=60?'High injury risk near joints. Avoid targeting.':j>=50?'Pain and temporary function degradation possible.':'Often bruising only.'},
   {id:'z-lth',tl:'tl-lth',label:'Thigh / Quad (bilateral)',type:'secondary',gJ:65,wJ:50,
-   eff:j=>j>=65?'MAJOR MUSCLE TRAUMA. Hematoma. Mobility elimination likely.':j>=50?'Deep bruising. Mobility degraded.':'Surface bruising.'},
+   eff:j=>j>=65?'Severe bruising/hematoma risk. Avoid relying on “instant stop”.':j>=50?'Painful bruising possible; response varies widely.':'Often bruising only / limited immediate response.'},
   {id:'z-lkn',tl:null,label:'Knee (bilateral)',type:'secondary',gJ:60,wJ:50,
-   eff:j=>j>=60?'Joint disruption. Immediate mobility loss.':j>=50?'Joint pain. Temporary mobility reduction.':'Pain compliance only.'},
+   eff:j=>j>=60?'High injury risk at joints. Avoid targeting.':j>=50?'Painful impact possible; response varies.':'Often minor / inconsistent response.'},
   {id:'z-head',tl:null,label:'Head / Skull / Orbital',type:'lethal',gJ:999,wJ:999,
-   eff:()=>'LETHAL. TBI / hemorrhage / orbital destruction at any energy level. NEVER target.'},
+   eff:()=>'Catastrophic injury risk at any energy. Never target.'},
   {id:'z-throat',tl:null,label:'Throat / Trachea',type:'lethal',gJ:999,wJ:999,
-   eff:()=>'LETHAL. Airway collapse at any impact energy. NEVER target.'},
+   eff:()=>'Catastrophic injury risk at any energy. Never target.'},
 ];
 
 const PAIRS={'z-lsh':'z-rsh','z-lth':'z-rth','z-lkn':'z-rkn'};
@@ -580,13 +690,169 @@ function adjFPS(delta){
 }
 
 function getDmg(j){
-  if(j<25)return'DETERRENCE ONLY — no reliable physical effect';
-  if(j<35)return'SURFACE BRUISING — pain compliance unlikely on determined threat';
-  if(j<45)return'HEMATOMA — no bone involvement. Backup close-range role only';
-  if(j<55)return'SHEET PAN ZONE — rib bruising possible, diaphragm disruption probable';
-  if(j<65)return'HIGH INCAPACITATION — rib fracture possible, diaphragm spasm highly likely';
-  if(j<80)return'FIGHT STOPPER — rib fracture probable, major muscle trauma, mobility loss';
-  return'DEFINITIVE FIGHT-ENDER — max energy. LETHAL RISK elevated at head and throat';
+  if(j<25)return'DETERRENCE RANGE — do not expect consistent physical compliance';
+  if(j<35)return'LIGHT IMPACT — bruising possible; behavior change is inconsistent';
+  if(j<45)return'MODERATE IMPACT — painful; still not a guaranteed stop';
+  if(j<55)return'HIGH IMPACT — injury risk rises; response remains unpredictable';
+  if(j<65)return'VERY HIGH IMPACT — significant injury risk; avoid “testing” on people';
+  if(j<80)return'EXTREME IMPACT — serious injury risk; use only where lawful/justified';
+  return'MAX IMPACT — severe injury risk; never aim at head/neck; seek training';
+}
+
+function sevFromImpact(j){
+  if(j<20) return {sev:0,label:'Minimal expected response',summary:'Often little visible reaction, especially through clothing or on large muscle.'};
+  if(j<30) return {sev:1,label:'Low expected response',summary:'Pain possible; compliance is not reliable on a determined person.'};
+  if(j<45) return {sev:2,label:'Variable response',summary:'Pain can be significant; reactions vary widely by person, clothing, angle, and round.'};
+  if(j<60) return {sev:3,label:'High injury risk',summary:'Bruising/hematoma risk rises; do not expect instant incapacitation.'};
+  return {sev:4,label:'Severe injury risk',summary:'Risk of serious injury increases sharply. Avoid use except lawful necessity; never target head/neck.'};
+}
+
+function responseDefinitions(){
+  return `
+  <div class="defs">
+    <details class="def">
+      <summary>What “target response” means <span class="kbadge sev-pill" data-sev="1">Info</span></summary>
+      <div class="def-body">
+        This is an educational summary of <b>possible</b> visible reactions to blunt-impact launchers at the displayed energy.
+        Human response is unpredictable: adrenaline, substances, pain tolerance, clothing, angle, and round type can all reduce or mask effects.
+        Do not treat any level as a guaranteed “stop”.
+      </div>
+    </details>
+    <details class="def">
+      <summary>Shot placement & “dense areas” (harm-reduction) <span class="kbadge sev-pill" data-sev="2">Context</span></summary>
+      <div class="def-body">
+        Impacts on thick clothing and large muscle groups can show <b>less immediate visible reaction</b> than bony or highly sensitive areas,
+        even at the same joules. The safer takeaway is: <b>don’t rely on pain compliance</b>—prioritize distance, cover, escape, and calling for help.
+        Avoid targeting the head, neck, throat, spine, and groin due to disproportionate injury risk.
+      </div>
+    </details>
+    <details class="def">
+      <summary>Severity colors <span class="kbadge sev-pill" data-sev="3">Scale</span></summary>
+      <div class="def-body">
+        <div style="margin-bottom:8px;"><span class="sev-pill" data-sev="0">Minimal</span> likely little visible reaction.</div>
+        <div style="margin-bottom:8px;"><span class="sev-pill" data-sev="1">Low</span> pain possible; compliance unreliable.</div>
+        <div style="margin-bottom:8px;"><span class="sev-pill" data-sev="2">Variable</span> wide range of reactions.</div>
+        <div style="margin-bottom:8px;"><span class="sev-pill" data-sev="3">High risk</span> injury likelihood increases.</div>
+        <div><span class="sev-pill" data-sev="4">Severe risk</span> serious injury risk; avoid use except lawful necessity.</div>
+      </div>
+    </details>
+  </div>`;
+}
+
+function renderResponse(elId, impactJ){
+  const s=sevFromImpact(impactJ);
+  const html=`
+    <div class="sev-row">
+      <div class="sev-pill" data-sev="${s.sev}">${s.label}</div>
+      <div class="sev-note">${s.summary}</div>
+    </div>
+    ${responseDefinitions()}
+  `;
+  const el=document.getElementById(elId);
+  if(el) el.innerHTML=html;
+}
+
+function launcherSvg(kind){
+  const stroke='rgba(197,255,0,0.85)';
+  const glow='rgba(197,255,0,0.25)';
+  const base=`<rect x="0" y="0" width="140" height="90" fill="rgba(0,0,0,0)"/>`;
+  if(kind==='carbine'){
+    return `<svg viewBox="0 0 140 90" xmlns="http://www.w3.org/2000/svg">
+      <defs><filter id="g"><feGaussianBlur stdDeviation="1.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+      ${base}
+      <g filter="url(#g)" fill="none" stroke="${stroke}" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 42 H110 L134 38"/>
+        <path d="M8 47 H108 L134 43"/>
+        <path d="M56 40 V30 H92"/>
+        <path d="M66 47 Q68 58 84 66 Q104 72 122 62"/>
+        <path d="M78 47 Q78 42 84 41 Q92 40 96 46"/>
+        <path d="M36 47 V60 H52 V47"/>
+      </g>
+      <g opacity="0.7" fill="none" stroke="${glow}" stroke-width="6">
+        <path d="M8 44 H110 L134 40"/>
+      </g>
+    </svg>`;
+  }
+  if(kind==='dbl'){
+    return `<svg viewBox="0 0 140 90" xmlns="http://www.w3.org/2000/svg">
+      <defs><filter id="g"><feGaussianBlur stdDeviation="1.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+      ${base}
+      <g filter="url(#g)" fill="none" stroke="${stroke}" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 40 H78 C95 40 102 36 112 30 L130 24"/>
+        <path d="M12 45 H78 C95 45 102 41 112 35 L130 29"/>
+        <path d="M78 38 L96 56"/>
+        <path d="M84 55 Q90 65 104 68 Q120 70 126 64"/>
+        <path d="M92 54 Q92 48 98 46 Q106 44 112 49"/>
+      </g>
+      <g opacity="0.7" fill="none" stroke="${glow}" stroke-width="6">
+        <path d="M12 42 H78 C95 42 102 38 112 32 L130 26"/>
+      </g>
+    </svg>`;
+  }
+  if(kind==='shotgun'){
+    return `<svg viewBox="0 0 140 90" xmlns="http://www.w3.org/2000/svg">
+      <defs><filter id="g"><feGaussianBlur stdDeviation="1.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+      ${base}
+      <g filter="url(#g)" fill="none" stroke="${stroke}" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10 42 H95 L132 34"/>
+        <path d="M10 47 H92 L132 39"/>
+        <path d="M62 40 V30 H90"/>
+        <path d="M56 48 Q60 58 76 62 Q94 66 108 60"/>
+        <path d="M74 48 Q74 42 80 41 Q88 40 92 46"/>
+        <path d="M34 48 V60 H52 V48"/>
+      </g>
+      <g opacity="0.7" fill="none" stroke="${glow}" stroke-width="6">
+        <path d="M10 44 H95 L132 36"/>
+      </g>
+    </svg>`;
+  }
+  if(kind==='pistol'){
+    return `<svg viewBox="0 0 140 90" xmlns="http://www.w3.org/2000/svg">
+      <defs><filter id="g"><feGaussianBlur stdDeviation="1.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+      ${base}
+      <g filter="url(#g)" fill="none" stroke="${stroke}" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 44 H94 L130 38"/>
+        <path d="M14 49 H92 L130 43"/>
+        <path d="M58 49 Q60 60 74 68 Q90 74 102 66"/>
+        <path d="M70 49 Q70 43 76 42 Q84 41 88 46"/>
+      </g>
+      <g opacity="0.7" fill="none" stroke="${glow}" stroke-width="6">
+        <path d="M14 46 H94 L130 40"/>
+      </g>
+    </svg>`;
+  }
+  if(kind==='rifle'){
+    return `<svg viewBox="0 0 140 90" xmlns="http://www.w3.org/2000/svg">
+      <defs><filter id="g"><feGaussianBlur stdDeviation="1.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+      ${base}
+      <g filter="url(#g)" fill="none" stroke="${stroke}" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 42 H104 L134 36"/>
+        <path d="M8 47 H102 L134 41"/>
+        <path d="M54 40 V28 H86"/>
+        <path d="M62 47 Q64 58 78 66 Q92 72 110 64"/>
+        <path d="M74 47 Q74 42 80 41 Q88 40 92 46"/>
+      </g>
+      <g opacity="0.7" fill="none" stroke="${glow}" stroke-width="6">
+        <path d="M8 44 H104 L134 38"/>
+      </g>
+    </svg>`;
+  }
+  return `<svg viewBox="0 0 140 90" xmlns="http://www.w3.org/2000/svg">${base}</svg>`;
+}
+
+function renderLauncherInfo(){
+  const id=document.getElementById('c-launcher').value;
+  const l=LAUNCHERS[id]||LAUNCHERS.custom;
+  const html=`
+    <div class="limg">${l.svg||launcherSvg('carbine')}</div>
+    <div class="linfo">
+      <div class="lname">${l.name}</div>
+      <div class="lmeta"><span style="color:var(--pip);">Stock energy</span>: ${l.stockJ||'—'}</div>
+      <div class="lmeta" style="margin-top:4px;">${l.note||''}</div>
+    </div>
+  `;
+  const el=document.getElementById('c-launcher-info');
+  if(el) el.innerHTML=html;
 }
 
 function calcUpdate(){
@@ -622,14 +888,16 @@ function calcUpdate(){
     else{sc='s-bad';st='BELOW MINIMUM — UNRELIABLE INCAPACITATION';}
     document.getElementById('c-status').innerHTML='<div class="status-strip '+sc+'">'+st+'</div>';
     document.getElementById('c-dmg').textContent=getDmg(impact);
+    renderResponse('c-response', impact);
   } else {
     document.getElementById('c-status').innerHTML='';
     document.getElementById('c-dmg').textContent='—';
+    document.getElementById('c-response').innerHTML='';
   }
   if(fps>0) updatePlacement(impact,muzzle,dist);
 }
 
-function onLauncherChange(){calcUpdate();}
+function onLauncherChange(){renderLauncherInfo();calcUpdate();}
 function renderMods(){}
 function toggleMod(){}
 
@@ -680,6 +948,7 @@ function updatePlacement(impact,muzzle,dist){
     </div>`;
   });
   document.getElementById('zone-legend').innerHTML=legend;
+  renderResponse('pl-response', impact);
 }
 
 function logShot(){
@@ -784,6 +1053,7 @@ function showTab(id){
   });
 }
 
+renderLauncherInfo();
 calcUpdate();
 </script>
 </body>
