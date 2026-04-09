@@ -12,6 +12,8 @@
   --border:rgba(197,255,0,0.10);--border-hi:rgba(197,255,0,0.35);
   --text:#88a060;--bright:#b8d080;--muted:#334428;
   --danger:#ff2020;--warn:#ff6600;
+  --ok:#40cc80;
+  --sev0:#7a8796;--sev1:#c5ff00;--sev2:#ffd800;--sev3:#ff8800;--sev4:#ff4040;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;}
@@ -102,6 +104,20 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;background:var(--pip)
 
 /* DAMAGE TEXT */
 .dmg-text{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--text);line-height:1.6;letter-spacing:0.02em;}
+
+/* TARGET RESPONSE (education + harm-reduction) */
+.sev-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.sev-pill{display:inline-flex;align-items:center;gap:8px;font-family:'Orbitron',sans-serif;font-size:12px;font-weight:900;letter-spacing:0.08em;text-transform:uppercase;padding:6px 10px;border-radius:999px;border:1px solid rgba(197,255,0,0.18);background:rgba(197,255,0,0.04);}
+.sev-pill .dot{width:10px;height:10px;border-radius:50%;}
+.sev-note{font-family:'Barlow Condensed',sans-serif;font-size:15px;color:var(--bright);line-height:1.35;flex:1;min-width:240px;}
+.defs{margin-top:10px;display:flex;flex-direction:column;gap:10px;}
+.def{border:1px solid rgba(197,255,0,0.12);background:rgba(0,0,0,0.18);}
+.def summary{cursor:pointer;user-select:none;padding:10px 12px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:0.08em;color:var(--bright);list-style:none;}
+.def summary::-webkit-details-marker{display:none;}
+.def summary::before{content:'▸';display:inline-block;margin-right:8px;color:var(--muted);}
+.def[open] summary::before{content:'▾';}
+.def .def-body{padding:10px 12px 12px;border-top:1px solid rgba(197,255,0,0.08);font-family:'Barlow Condensed',sans-serif;font-size:14px;line-height:1.55;color:var(--text);}
+.kbadge{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.08em;padding:1px 6px;border-radius:999px;border:1px solid rgba(197,255,0,0.16);color:var(--bright);background:rgba(197,255,0,0.04);margin-left:8px;}
 
 /* PLACEMENT */
 .pl-grid{display:grid;grid-template-columns:300px 1fr;gap:16px;align-items:start;}
@@ -644,6 +660,11 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
     </div>
   </div>
 
+  <div class="card" style="margin-top:12px;">
+    <div class="lbl">Target Response (education + harm-reduction)</div>
+    <div id="c-response"></div>
+  </div>
+
   <!-- Hidden status / damage text node (still used by calcUpdate for legacy refs) -->
   <div id="c-status" style="display:none;"></div>
   <div id="c-bar" style="display:none;"></div>
@@ -749,13 +770,13 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
           <div id="c-version-wrap" style="display:none;margin-top:14px;">
             <div class="lbl" style="font-size:10px;margin-bottom:6px;">Platform Version</div>
             <div style="display:flex;gap:12px;">
-              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+              <label id="c-ver-std-wrap" style="display:flex;align-items:center;gap:8px;cursor:pointer;">
                 <input type="radio" name="c-version" value="std" onchange="onVersionChange()" style="accent-color:var(--pip);">
-                <span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--bright);letter-spacing:0.06em;">Standard — 11J</span>
+                <span id="c-ver-std-label" style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--bright);letter-spacing:0.06em;">Standard</span>
               </label>
-              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+              <label id="c-ver-perf-wrap" style="display:flex;align-items:center;gap:8px;cursor:pointer;">
                 <input type="radio" name="c-version" value="perf" onchange="onVersionChange()" style="accent-color:var(--pip);">
-                <span style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--bright);letter-spacing:0.06em;">Performance — 40J</span>
+                <span id="c-ver-perf-label" style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--bright);letter-spacing:0.06em;">Performance</span>
               </label>
             </div>
           </div>
@@ -1080,6 +1101,10 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
         <div class="profile-state" id="tr-state">NO DATA</div>
         <div class="profile-copy" id="tr-copy">Enter chronograph FPS in Calculator tab to generate a cinematic system readout.</div>
       </div>
+      <div class="profile-card">
+        <div class="profile-title">TARGET RESPONSE (EDUCATION + HARM-REDUCTION)</div>
+        <div id="pl-response"></div>
+      </div>
       <div class="zone-legend" id="zone-legend"></div>
     </div>
   </div>
@@ -1201,21 +1226,27 @@ const PLATFORMS={
 m17:    {name:'Valken M17',                    platformClass:'rifle',    bore:0.688, stockBarrel:14, mag:10, stockLow:10, stockHigh:20, gas:['co2','hpa'], note:'Temp dependent'},
 cqmf:   {name:'Valken CQMF',                   platformClass:'rifle',    bore:0.688, stockBarrel:8,  mag:10, stockLow:10, stockHigh:20, gas:['co2','hpa'], note:'Same platform as M17, shorter barrel'},
 hdr68:  {name:'Umarex HDR 68',                 platformClass:'revolver', bore:0.688, stockBarrel:6,  mag:6,  stockLow:7,  stockHigh:16, gas:['co2'], belowFloor:true, note:'Wide variance, temp sensitive. HPA conversion available via platform-specific mod.'},
-hds68:  {name:'Umarex HDS 68',                 platformClass:'shotgun',  bore:0.688, stockBarrel:10, mag:6,  versions:true, gas:['co2'], note:'Select version below'},
-hdx68:  {name:'Umarex HDX 68',                 platformClass:'shotgun',  bore:0.688, stockBarrel:10, mag:6,  versions:true, gas:['co2'], note:'Shotgun config — select version below'},
+hds68:  {name:'Umarex HDS 68',                 platformClass:'shotgun',  bore:0.688, stockBarrel:10, mag:2,  versions:'hds', gas:['co2'], note:'Compact double barrel — chrono your setup'},
+hdx68:  {name:'Umarex HDX 68',                 platformClass:'shotgun',  bore:0.688, stockBarrel:10, mag:6,  versions:'hdx', gas:['co2'], note:'Multiple stock configs — pick the closest baseline and chrono'},
+hdb68:  {name:'Umarex HDB 68',                 platformClass:'pistol',   bore:0.688, stockBarrel:4,  mag:2,  stockLow:7,  stockHigh:16, gas:['co2'], note:'Double barrel'},
 x68:    {name:'NXWerks Pistelle X-68',         platformClass:'pistol',   bore:0.688, stockBarrel:6,  mag:7,  stockLow:42, stockHigh:45, gas:['co2','hpa']},
 x68g2:  {name:'DI Pistelle X-68 Gen 2',        platformClass:'pistol',   bore:0.688, stockBarrel:6,  mag:7,  stockLow:42, stockHigh:45, gas:['co2','hpa']},
 fsc:    {name:'FSC .68 Pistol',                platformClass:'pistol',   bore:0.686, stockBarrel:4,  mag:8,  stockLow:20, stockHigh:22, gas:['co2','hpa']},
 di68:   {name:'DI 68',                         platformClass:'rifle',    bore:0.688, stockBarrel:14, mag:20, stockLow:35, stockHigh:45, gas:['co2','hpa']},
 intru:  {name:'Mercury Rise Intrubuster Gen 2',platformClass:'rifle',    bore:0.688, stockBarrel:14, mag:20, stockLow:40, stockHigh:45, gas:['co2','hpa']},
-milsig: {name:'Milsig M17 / T17 G3',           platformClass:'rifle',    bore:0.688, stockBarrel:14, mag:10, stockLow:10, stockHigh:20, gas:['co2','hpa'], note:'Same range as stock M17'},
+m17g3:  {name:'Milsig M17 G3',                 platformClass:'rifle',    bore:0.688, stockBarrel:14, mag:10, stockLow:16, stockHigh:20, gas:['co2','hpa'], note:'Stock baseline range (chrono for real numbers)'},
+t17:    {name:'Milsig T17',                    platformClass:'rifle',    bore:0.688, stockBarrel:14, mag:10, stockLow:16, stockHigh:20, gas:['co2','hpa'], note:'Stock baseline range (chrono for real numbers)'},
 custom: {name:'Custom / Other',                platformClass:'other',    bore:0.688, stockBarrel:8,  mag:10, stockLow:20, stockHigh:30, gas:['co2','hpa'], customBaseline:true}
 };
 
-// HDS 68 / HDX 68 share a Standard / Performance version selector.
-const HDS_VERSIONS={
-  std: {label:'Standard',    stockLow:11, stockHigh:11},
-  perf:{label:'Performance', stockLow:40, stockHigh:40}
+const PLATFORM_VERSIONS={
+  hds:{
+    std: {label:'Standard (7–16J)', stockLow:7, stockHigh:16},
+  },
+  hdx:{
+    std: {label:'Standard (16J)', stockLow:16, stockHigh:16},
+    perf:{label:'Performance (40J)', stockLow:40, stockHigh:40},
+  }
 };
 
 const PLATFORM_IMAGES={
@@ -1598,6 +1629,62 @@ function getDmg(j){
   return'EXTREME TARGET ENERGY — highest displayed output tier (impact J)';
 }
 
+function sevFromImpact(j){
+  if(!isFinite(j)||j<=0)return {sev:0,label:'No data',color:'var(--sev0)',summary:'Enter chronograph FPS to estimate impact energy.'};
+  if(j<20)return {sev:0,label:'Very low',color:'var(--sev0)',summary:'Often limited visible response, especially through clothing.'};
+  if(j<35)return {sev:1,label:'Low',color:'var(--sev1)',summary:'Visible response may be minimal in dense areas (chest/thighs).'};
+  if(j<50)return {sev:2,label:'Moderate',color:'var(--sev2)',summary:'Pain response possible; outcomes vary heavily by placement and clothing.'};
+  if(j<65)return {sev:3,label:'High',color:'var(--sev3)',summary:'Higher injury risk. Avoid high-risk anatomy; prioritize safer zones.'};
+  return {sev:4,label:'Very high',color:'var(--sev4)',summary:'Elevated injury risk. Reassess setup and engagement choices.'};
+}
+
+function responseDefinitions(){
+  return `
+    <div class="defs">
+      <details class="def">
+        <summary>What “target response” means<span class="kbadge">education</span></summary>
+        <div class="def-body">
+          “Target response” is <strong>how a person may visibly react</strong> (flinch, step, stumble, pause) after impact. It is <strong>not guaranteed</strong> even at high energy. Clothing, body composition, adrenaline, substances, and exact placement can overwhelm pain-based compliance.
+        </div>
+      </details>
+      <details class="def">
+        <summary>Placement + dense areas (harm‑reduction)</summary>
+        <div class="def-body">
+          At ~20J into <strong>dense areas</strong> like chest or thighs, visible response can be limited—especially through heavy clothing. If your goal is to stop harm, prioritize <strong>safer target zones</strong> and sufficient retained energy at your actual distance.
+          <br><br>
+          Avoid targeting <strong>head/face/neck</strong>. Avoid <strong>spine</strong> and other high‑risk anatomy. This tool is informational and not medical advice.
+        </div>
+      </details>
+      <details class="def">
+        <summary>Severity colors</summary>
+        <div class="def-body">
+          Colors reflect a rough <strong>impact‑energy band</strong> and uncertainty, not a promise of effects. Higher bands can increase injury risk and should push users toward more conservative choices.
+        </div>
+      </details>
+    </div>
+  `;
+}
+
+function renderResponse(elId, impactJ){
+  const el=document.getElementById(elId);
+  if(!el)return;
+  if(!isFinite(impactJ)||impactJ<=0){
+    el.innerHTML='<div class="sev-note">Enter chronograph FPS to generate an educational target-response estimate.</div>'+responseDefinitions();
+    return;
+  }
+  const s=sevFromImpact(impactJ);
+  el.innerHTML=`
+    <div class="sev-row">
+      <div class="sev-pill" style="border-color:color-mix(in oklab, ${s.color} 55%, rgba(197,255,0,0.12));background:color-mix(in oklab, ${s.color} 14%, rgba(0,0,0,0.25));">
+        <span class="dot" style="background:${s.color};box-shadow:0 0 10px color-mix(in oklab, ${s.color} 55%, transparent);"></span>
+        ${s.label} · ${impactJ.toFixed(1)}J
+      </div>
+      <div class="sev-note">${s.summary}</div>
+    </div>
+    ${responseDefinitions()}
+  `;
+}
+
 function calcUpdate(){
   const sel=document.getElementById('c-round');
   let mass;
@@ -1668,8 +1755,13 @@ function calcUpdate(){
   // Round-specific note
   updateRoundNote();
 
-  if(fps>0) updatePlacement(impact,muzzle,dist);
-  else clearPlacement();
+  if(fps>0){
+    updatePlacement(impact,muzzle,dist);
+    renderResponse('c-response',impact);
+  } else {
+    clearPlacement();
+    renderResponse('c-response',0);
+  }
 
   // Refresh quick log auto summary when core calc inputs change
   if(typeof renderQuickLogAuto==='function') renderQuickLogAuto();
@@ -1702,6 +1794,7 @@ function clearPlacement(){
   const ipConfidence=document.getElementById('ip-confidence');if(ipConfidence)ipConfidence.textContent='—';
   const trState=document.getElementById('tr-state');if(trState){trState.className='profile-state';trState.textContent='NO DATA';}
   const trCopy=document.getElementById('tr-copy');if(trCopy)trCopy.textContent='Enter chronograph FPS in Calculator tab to generate a cinematic system readout.';
+  renderResponse('pl-response',0);
   // Clear all zone fills
   ZONES.forEach(z=>{
     const el=document.getElementById(z.id);if(el){el.setAttribute('fill','rgba(0,0,0,0)');el.setAttribute('filter','none');}
@@ -1789,7 +1882,8 @@ function getPlatformReliabilityBase(){
     case 'fsc': return 44;
     case 'm17':
     case 'cqmf':
-    case 'milsig':
+    case 'm17g3':
+    case 't17':
     case 'di68': return 50;
     default: return 45;
   }
@@ -1799,8 +1893,9 @@ function getCurrentStockRange(){
   const p=getCurrentPlatform();
   if(!p)return [0,0];
   if(p.versions){
-    const v=HDS_VERSIONS[platformVersion]||HDS_VERSIONS.perf;
-    return [v.stockLow,v.stockHigh];
+    const table=PLATFORM_VERSIONS[p.versions]||{};
+    const v=table[platformVersion]||table.std||table.perf;
+    if(v)return [v.stockLow,v.stockHigh];
   }
   if(p.customBaseline){
     return [customBaseline.low,customBaseline.high];
@@ -1819,8 +1914,19 @@ function onPlatformChange(){
   });
   selMods=keep;
   // Version selector visibility
-  document.getElementById('c-version-wrap').style.display=p.versions?'block':'none';
+  const vwrap=document.getElementById('c-version-wrap');
+  vwrap.style.display=p.versions?'block':'none';
   if(p.versions){
+    const table=PLATFORM_VERSIONS[p.versions]||{};
+    const stdWrap=document.getElementById('c-ver-std-wrap');
+    const perfWrap=document.getElementById('c-ver-perf-wrap');
+    const stdLab=document.getElementById('c-ver-std-label');
+    const perfLab=document.getElementById('c-ver-perf-label');
+    if(stdLab&&table.std)stdLab.textContent=table.std.label||'Standard';
+    if(perfLab&&table.perf)perfLab.textContent=table.perf.label||'Performance';
+    if(stdWrap)stdWrap.style.display=table.std?'flex':'none';
+    if(perfWrap)perfWrap.style.display=table.perf?'flex':'none';
+    if(!table[platformVersion])platformVersion=(table.perf?'perf':'std');
     const radios=document.querySelectorAll('input[name="c-version"]');
     radios.forEach(r=>{r.checked=(r.value===platformVersion);});
   }
@@ -2197,6 +2303,7 @@ function capturePresetState(){
 
 function applyPresetState(p){
   platformKey=p.platformKey||'x68';
+  if(platformKey==='milsig')platformKey='m17g3';
   platformVersion=p.platformVersion||'perf';
   customBaseline={...(p.customBaseline||{low:20,high:30})};
   gasType=p.gasType||'co2';
@@ -2416,6 +2523,7 @@ function updatePlacement(impact,muzzle,dist){
   const ipConfidence=document.getElementById('ip-confidence');if(ipConfidence)ipConfidence.textContent=confidence;
   const trState=document.getElementById('tr-state');if(trState){trState.className='profile-state'+(response.tone==='warn'?' warn':response.tone==='bad'?' bad':'');trState.textContent=response.state;}
   const trCopy=document.getElementById('tr-copy');if(trCopy)trCopy.textContent=response.copy;
+  renderResponse('pl-response',impact);
 
   const azones=getActiveZones();
   azones.forEach(z=>{
@@ -2784,7 +2892,8 @@ function renderWeaponVisual(){
   const status=document.getElementById('hero-visual-status');
   const meta=document.getElementById('hero-visual-meta');
   if(!img||!empty||!status||!meta)return;
-  const src=PLATFORM_IMAGES[platformKey]||'';
+  let src=PLATFORM_IMAGES[platformKey]||'';
+  if(!src && (platformKey==='m17g3'||platformKey==='t17')) src=PLATFORM_IMAGES.milsig||PLATFORM_IMAGES.m17||'';
   if(src){
     img.src=src;
     img.style.display='block';
