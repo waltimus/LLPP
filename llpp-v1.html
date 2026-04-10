@@ -826,17 +826,18 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
           <div class="ql-row" style="margin-top:10px;">
             <div>
               <div class="lbl" style="font-size:10px;margin-bottom:5px;">Target Medium</div>
-              <input type="text" id="c-ql-medium" placeholder="composite, sheet pan, silicone, gel...">
-            </div>
-            <div>
-              <div class="lbl" style="font-size:10px;margin-bottom:5px;">Result</div>
-              <select id="c-ql-result">
-                <option value="Unknown">Unknown</option>
-                <option value="Miss">Miss</option>
-                <option value="Marginal">Marginal</option>
-                <option value="Moderate">Moderate</option>
-                <option value="Severe">Severe</option>
-                <option value="Incapacitate">Incapacitate</option>
+              <select id="c-ql-medium">
+                <option value="Trap" selected>Trap</option>
+                <option value="Silicone Mold">Silicone Mold</option>
+                <option value="Coconut">Coconut</option>
+                <option value="Wood Board">Wood Board</option>
+                <option value="Composite Panel">Composite Panel</option>
+                <option value="Sheet Pan">Sheet Pan</option>
+                <option value="Gel Block">Gel Block</option>
+                <option value="Foam">Foam</option>
+                <option value="Denim">Denim</option>
+                <option value="Cardboard">Cardboard</option>
+                <option value="Other">Other</option>
               </select>
             </div>
             <div class="ql-full">
@@ -1411,7 +1412,19 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
   <div class="r2" style="margin-top:12px;">
     <div class="card" style="margin-bottom:0">
       <div class="lbl">Target Medium</div>
-      <input type="text" id="l-medium" placeholder="composite, gel block, foam, denim...">
+      <select id="l-medium">
+        <option value="Trap" selected>Trap</option>
+        <option value="Silicone Mold">Silicone Mold</option>
+        <option value="Coconut">Coconut</option>
+        <option value="Wood Board">Wood Board</option>
+        <option value="Composite Panel">Composite Panel</option>
+        <option value="Sheet Pan">Sheet Pan</option>
+        <option value="Gel Block">Gel Block</option>
+        <option value="Foam">Foam</option>
+        <option value="Denim">Denim</option>
+        <option value="Cardboard">Cardboard</option>
+        <option value="Other">Other</option>
+      </select>
     </div>
     <div class="card" style="margin-bottom:0">
       <div class="lbl">Active Mods</div>
@@ -1434,17 +1447,20 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 <div id="analytics" class="panel">
   <div id="ana-empty" style="padding:3rem 0;text-align:center;font-family:'Orbitron',monospace;font-size:11px;color:var(--muted);letter-spacing:0.15em;">LOG SHOTS TO GENERATE ANALYTICS</div>
   <div id="ana-content" style="display:none;">
-    <div class="card" style="margin-bottom:12px;">
-      <div class="lbl">Weapon Filter</div>
-      <select id="ana-weapon-filter" onchange="updateCharts()">
-        <option value="__all__">All weapons (session aggregate)</option>
-      </select>
-      <div class="sub-note" style="margin-top:8px;">Select a weapon preset to view its cumulative performance history. Analytics persist across sessions so long as the preset is not deleted.</div>
+    <div class="card" style="margin-bottom:12px;display:flex;align-items:center;gap:12px;">
+      <div style="flex:1;">
+        <div class="lbl">Weapon Filter</div>
+        <select id="ana-weapon-filter" onchange="updateCharts()">
+          <option value="__all__">All weapons (session aggregate)</option>
+        </select>
+        <div class="sub-note" style="margin-top:8px;">Select a weapon preset to view its cumulative performance history. Analytics persist across sessions so long as the preset is not deleted.</div>
+      </div>
+      <button class="btn" onclick="clearAnalytics()" style="white-space:nowrap;padding:8px 14px;font-size:10px;">CLEAR DATA</button>
     </div>
+    <div class="stitle">Muzzle Energy Over Time</div>
+    <div class="chart-wrap"><canvas id="chart-timeline"></canvas></div>
     <div class="stitle">Impact J vs Distance</div>
     <div class="chart-wrap"><canvas id="chart-scatter"></canvas></div>
-    <div class="stitle">FPS / Muzzle J Trend Over Time</div>
-    <div class="chart-wrap"><canvas id="chart-timeline"></canvas></div>
     <div class="stitle">Performance Summary</div>
     <div id="ana-stats"></div>
     <div class="stitle">Round Comparison — Avg Impact J</div>
@@ -3361,8 +3377,8 @@ function quickLogShot(){
   const muzzle=fps>0?fpsToJoules(fps,mass):0;
   const impact=fps>0?calcImpact(muzzle,dist):0;
   const stk=computeModStack();
-  const medium=document.getElementById('c-ql-medium').value||'—';
-  const result=document.getElementById('c-ql-result').value||'Unknown';
+  const mediumEl=document.getElementById('c-ql-medium');
+  const medium=mediumEl?mediumEl.value:'Trap';
   const notes=document.getElementById('c-ql-notes').value.trim();
   const shot={
     ts:Date.now(),
@@ -3377,7 +3393,7 @@ function quickLogShot(){
     stackLo:Math.round(stk.lo),stackHi:Math.round(stk.hi),stackMid:Math.round(stk.mid),
     gas:gasType,tempF:gasType==='co2'?tempF:null,psi:gasType==='hpa'?psi:null,
     mods:[...selMods],
-    medium,result,notes,
+    medium,notes,
   };
   preset.shots=preset.shots||[];
   preset.shots.unshift(shot);
@@ -3385,9 +3401,8 @@ function quickLogShot(){
   savePresetsToStorage();
   saveSessionLog();
   // Clear only user-input fields; keep chrono/dist/round/mods as-is for next shot
-  document.getElementById('c-ql-medium').value='';
+  if(mediumEl) mediumEl.value='Trap';
   document.getElementById('c-ql-notes').value='';
-  document.getElementById('c-ql-result').value='Unknown';
   // Flash confirmation
   const flash=document.getElementById('c-ql-flash');
   if(flash){
@@ -3553,6 +3568,30 @@ function clearLog(){
   saveSessionLog();
   renderLog();updateCharts();
 }
+function clearAnalytics(){
+  const sel=document.getElementById('ana-weapon-filter');
+  const val=sel?sel.value:'__all__';
+  if(val==='__all__'){
+    if(!confirm('Clear ALL shot data from ALL weapon presets and session log? This cannot be undone.'))return;
+    sessionLog=[];
+    saveSessionLog();
+    presets.forEach(p=>{p.shots=[];});
+    savePresetsToStorage();
+  } else {
+    const p=presets.find(x=>x.id===val);
+    if(!p)return;
+    if(!confirm('Clear all shot data for '+p.name+'? This cannot be undone.'))return;
+    // Remove this preset's shots from session log too
+    sessionLog=sessionLog.filter(s=>s.presetId!==p.id);
+    saveSessionLog();
+    p.shots=[];
+    savePresetsToStorage();
+  }
+  renderLog();
+  renderPresetList();
+  updateCharts();
+  if(typeof calculateTIS==='function') calculateTIS();
+}
 function renderLog(){
   const el=document.getElementById('l-entries');
   if(!sessionLog.length){el.innerHTML='<div class="empty">— no shots logged —</div>';return;}
@@ -3612,23 +3651,16 @@ function updateCharts(){
   const tickColor='#334428';
   const colorFor=v=>v>=50?PIP+'0.75)':v>=45?'rgba(255,130,0,0.75)':'rgba(255,40,40,0.75)';
 
-  if(charts.scatter)charts.scatter.destroy();
-  charts.scatter=new Chart(document.getElementById('chart-scatter'),{type:'scatter',
-    data:{datasets:[
-      {data:wc.map(e=>({x:e.dist,y:parseFloat(e.impact.toFixed(1))})),
-        backgroundColor:wc.map(e=>colorFor(e.impact)),
-        pointRadius:7,pointHoverRadius:10},
-      {data:[{x:0,y:50},{x:100,y:50}],type:'line',borderColor:PIP+'0.3)',borderDash:[6,3],pointRadius:0,borderWidth:1},
-      {data:[{x:0,y:45},{x:100,y:45}],type:'line',borderColor:'rgba(255,100,0,0.3)',borderDash:[6,3],pointRadius:0,borderWidth:1},
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},title:{display:true,text:label,color:tickColor,font:{size:10,family:'Share Tech Mono'}}},
-      scales:{
-        x:{title:{display:true,text:'DISTANCE (FT)',color:tickColor,font:{size:10,family:'Share Tech Mono'}},ticks:{color:tickColor},grid:{color:gridColor},min:0,max:100},
-        y:{title:{display:true,text:'IMPACT J',color:tickColor,font:{size:10,family:'Share Tech Mono'}},min:0,max:120,ticks:{color:tickColor},grid:{color:gridColor}}
-      }}
-  });
+  // Dynamic Y-axis: derive from platform capability or shot data, whichever is higher
+  const allMuzzles=shots.map(e=>e.muzzle||0);
+  const allImpacts=wc.map(e=>e.impact||0);
+  const peakShot=Math.max(...allMuzzles,...allImpacts,1);
+  const stackMax=(typeof computeModStack==='function')?computeModStack().hi:0;
+  const rawCeil=Math.max(peakShot,stackMax,30); // at least 30J floor
+  // Round up to nearest 10 with 20% headroom
+  const yMax=Math.ceil(rawCeil*1.2/10)*10;
 
-  // Timeline: chronological shot order, muzzle J line + impact J bars
+  // Timeline FIRST: chronological shot order, muzzle J line + impact J bars
   const chron=[...shots].reverse();
   if(charts.timeline)charts.timeline.destroy();
   charts.timeline=new Chart(document.getElementById('chart-timeline'),{
@@ -3642,7 +3674,24 @@ function updateCharts(){
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:tickColor,font:{size:9,family:'Share Tech Mono'}}}},
       scales:{
         x:{ticks:{color:tickColor,font:{size:9}},grid:{color:gridColor}},
-        y:{min:0,max:120,ticks:{color:tickColor},grid:{color:gridColor}}
+        y:{min:0,max:yMax,ticks:{color:tickColor},grid:{color:gridColor}}
+      }}
+  });
+
+  // Impact J vs Distance scatter
+  if(charts.scatter)charts.scatter.destroy();
+  charts.scatter=new Chart(document.getElementById('chart-scatter'),{type:'scatter',
+    data:{datasets:[
+      {data:wc.map(e=>({x:e.dist,y:parseFloat(e.impact.toFixed(1))})),
+        backgroundColor:wc.map(e=>colorFor(e.impact)),
+        pointRadius:7,pointHoverRadius:10},
+      {data:[{x:0,y:50},{x:100,y:50}],type:'line',borderColor:PIP+'0.3)',borderDash:[6,3],pointRadius:0,borderWidth:1},
+      {data:[{x:0,y:45},{x:100,y:45}],type:'line',borderColor:'rgba(255,100,0,0.3)',borderDash:[6,3],pointRadius:0,borderWidth:1},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},title:{display:true,text:label,color:tickColor,font:{size:10,family:'Share Tech Mono'}}},
+      scales:{
+        x:{title:{display:true,text:'DISTANCE (FT)',color:tickColor,font:{size:10,family:'Share Tech Mono'}},ticks:{color:tickColor},grid:{color:gridColor},min:0,max:100},
+        y:{title:{display:true,text:'IMPACT J',color:tickColor,font:{size:10,family:'Share Tech Mono'}},min:0,max:yMax,ticks:{color:tickColor},grid:{color:gridColor}}
       }}
   });
 
@@ -3655,7 +3704,7 @@ function updateCharts(){
   charts.rounds=new Chart(document.getElementById('chart-rounds'),{type:'bar',
     data:{labels:rl,datasets:[{data:ra,backgroundColor:ra.map(colorFor),borderRadius:0}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
-      scales:{x:{ticks:{color:tickColor,font:{size:9},maxRotation:15},grid:{color:gridColor}},y:{min:0,max:120,ticks:{color:tickColor},grid:{color:gridColor}}}}
+      scales:{x:{ticks:{color:tickColor,font:{size:9},maxRotation:15},grid:{color:gridColor}},y:{min:0,max:yMax,ticks:{color:tickColor},grid:{color:gridColor}}}}
   });
 
   // Temperature correlation (CO2 only)
@@ -3668,7 +3717,7 @@ function updateCharts(){
       options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
         scales:{
           x:{title:{display:true,text:'AMBIENT °F',color:tickColor,font:{size:10,family:'Share Tech Mono'}},ticks:{color:tickColor},grid:{color:gridColor},min:20,max:110},
-          y:{title:{display:true,text:'MUZZLE J',color:tickColor,font:{size:10,family:'Share Tech Mono'}},ticks:{color:tickColor},grid:{color:gridColor},min:0,max:120}
+          y:{title:{display:true,text:'MUZZLE J',color:tickColor,font:{size:10,family:'Share Tech Mono'}},ticks:{color:tickColor},grid:{color:gridColor},min:0,max:yMax}
         }}
     });
   } else {
