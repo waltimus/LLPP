@@ -402,6 +402,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 .hero-fps-section{display:flex;align-items:center;justify-content:center;gap:14px;margin:2px 0 0;}
 .hero-fps-input{font-family:'Orbitron',monospace;font-size:76px;font-weight:900;color:var(--pip);background:rgba(0,0,0,0.24);border:1px solid rgba(197,255,0,0.24);text-align:center;width:100%;padding:14px 10px;text-shadow:0 0 35px rgba(197,255,0,0.6),0 0 12px rgba(197,255,0,0.8);-moz-appearance:textfield;outline:none;box-shadow:inset 0 0 20px rgba(197,255,0,0.04);}
 .hero-fps-input::-webkit-inner-spin-button,.hero-fps-input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+.hero-fps-unit{font-family:'Orbitron',monospace;font-size:28px;font-weight:700;color:var(--pip);letter-spacing:0.12em;text-shadow:0 0 18px rgba(197,255,0,0.5);opacity:0.7;padding-left:4px;user-select:none;}
 .chrono-note{text-align:center;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.08em;margin-top:10px;}
 
 .visual-nav-hdr{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px;}
@@ -576,12 +577,16 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 .tis-band-strong{color:#e06020;}
 .tis-band-severe{color:#e02020;}
 /* Factor breakdown rows */
-.tis-factor-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(197,255,0,0.04);}
-.tis-factor-label{color:var(--muted);flex:1;font-family:'Share Tech Mono',monospace;font-size:11px;}
-.tis-factor-val{color:var(--bright);font-weight:700;min-width:50px;text-align:right;font-family:'Orbitron',monospace;font-size:12px;}
-.tis-factor-note{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);margin-top:1px;margin-bottom:4px;}
-.tis-factor-bar{height:4px;margin:2px 0 6px;background:rgba(255,255,255,0.04);border-radius:2px;overflow:hidden;}
-.tis-factor-bar-fill{height:100%;border-radius:2px;transition:width 0.4s;}
+.tis-factor-row{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;border-bottom:1px solid rgba(197,255,0,0.06);}
+.tis-factor-label{color:var(--muted);flex:1;font-family:'Share Tech Mono',monospace;font-size:14px;letter-spacing:0.04em;}
+.tis-factor-val{color:var(--bright);font-weight:700;min-width:60px;text-align:right;font-family:'Orbitron',monospace;font-size:16px;}
+.tis-factor-note{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);margin-top:2px;margin-bottom:6px;line-height:1.5;}
+/* Segmented sci-fi bar — 20 segments with gap, glow effect */
+.tis-factor-bar{display:flex;gap:2px;height:10px;margin:4px 0 8px;position:relative;}
+.tis-factor-bar-fill{display:flex;gap:2px;height:100%;transition:width 0.5s;}
+.tis-factor-seg{flex:0 0 auto;width:calc((100% - 38px) / 20);height:100%;opacity:0.9;transition:opacity 0.3s,box-shadow 0.3s;}
+.tis-factor-seg.lit{opacity:1;box-shadow:0 0 6px currentColor;}
+.tis-factor-seg.dim{background:rgba(255,255,255,0.04);opacity:1;}
 .tis-divider{border:none;border-top:1px solid rgba(197,255,0,0.12);margin:10px 0;}
 .tis-warning{margin-top:8px;padding:10px 14px;font-family:'Barlow Condensed',sans-serif;font-size:13px;line-height:1.4;}
 .tis-warning.amber{background:rgba(255,179,71,0.06);border:1px solid rgba(255,179,71,0.2);border-left:3px solid #ffb347;color:#ffb347;}
@@ -669,6 +674,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
           <div class="section-subtitle">Live command readout</div>
           <div class="hero-fps-section">
             <input type="number" id="c-fps" class="hero-fps-input" value="300" min="0" max="800" placeholder="300" oninput="calcUpdate()">
+            <div class="hero-fps-unit">FPS</div>
           </div>
 
           <div class="energy-grid">
@@ -1502,15 +1508,15 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
       </div>
       <div class="card" style="padding:16px 18px;">
         <div class="section-title" style="font-size:13px;margin-bottom:10px;">ASSESSMENT</div>
-        <div id="tis-summary" style="font-family:'Barlow Condensed',sans-serif;font-size:16px;color:var(--bright);line-height:1.65;"></div>
-        <div id="tis-reasons" style="margin-top:12px;font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);line-height:1.7;"></div>
+        <div id="tis-summary" style="font-family:'Barlow Condensed',sans-serif;font-size:18px;color:var(--bright);line-height:1.7;"></div>
+        <div id="tis-reasons" style="margin-top:12px;font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--muted);line-height:1.8;"></div>
       </div>
     </div>
 
     <!-- ROW 3: Factor Breakdown -->
     <div class="card" style="padding:16px 18px;">
       <div class="section-title" style="font-size:13px;margin-bottom:12px;">FACTOR BREAKDOWN</div>
-      <div id="tis-detail-body" style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--bright);line-height:1.7;"></div>
+      <div id="tis-detail-body" style="font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--bright);line-height:1.8;"></div>
     </div>
 
     <!-- ROW 4: Warnings -->
@@ -1534,7 +1540,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
       <button class="modal-close" onclick="closeModal('modal-ips-info')">&times;</button>
     </div>
     <div class="modal-body">
-      <div class="disclaimer-body" style="font-size:14px;">
+      <div class="disclaimer-body" style="font-size:16px;line-height:1.8;">
         <p>The Injury Potential Score (IPS) estimates the <strong>consequence severity</strong> if impact occurs at the current energy level and projectile type. A higher score means greater risk of injury.</p>
         <p>It is driven primarily by <strong>retained energy at distance</strong> (post-clothing adjustment) and modified by projectile class — aluminum rounds concentrate force and score higher, while frangible irritant rounds score lower on kinetic injury.</p>
         <p><strong>This is not a lethality index.</strong> It reflects the probability of bruising, fracture, soft tissue damage, and pain compliance at the delivered energy level. Use it alongside TIS to understand the full picture: high TIS with low IPS is the ideal outcome.</p>
@@ -1554,17 +1560,21 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
       <button class="modal-close" onclick="closeModal('modal-conf-info')">&times;</button>
     </div>
     <div class="modal-body">
-      <div class="disclaimer-body" style="font-size:14px;">
+      <div class="disclaimer-body" style="font-size:16px;line-height:1.8;">
         <p>Confidence measures <strong>how much the system trusts its own output</strong> given the information you've provided. It starts at 88 (never 100 — there is always modeling uncertainty) and applies penalties for each source of unknown.</p>
-        <p><strong>Common penalties:</strong></p>
+        <p><strong>Penalties (reduce confidence):</strong></p>
         <p>CO2 gas system: <em>−8</em> (inherent shot-to-shot variance vs HPA)</p>
         <p>Poor CO2 platform (FSC, X-68 Gen1): <em>−10 additional</em></p>
         <p>No chrono input (using manufacturer spec): <em>−15</em></p>
         <p>Unknown/custom projectile: <em>−10</em></p>
-        <p>Heavy mod stack (3+ mods): <em>−12</em></p>
+        <p>Unverified power/tactical mods (3+): <em>−12</em></p>
+        <p>Gen1 reliability flag (no seal kit): <em>−12</em></p>
         <p>Cold weather + CO2: <em>−8</em></p>
         <p>Extended range (50+ ft): <em>−5</em></p>
-        <p style="margin-top:12px;"><strong>How to improve your confidence:</strong> Log real chrono data, use a known projectile, run HPA if possible, and stay within your platform's effective envelope.</p>
+        <p style="margin-top:14px;"><strong>Boosts (increase confidence):</strong></p>
+        <p>Each reliability mod (O-ring, detent, bolt spring, heatcore, lube): <em>+3 each</em></p>
+        <p>Seal kit on Gen1 X-68: <em>removes −12 reliability penalty</em></p>
+        <p style="margin-top:14px;"><strong>How to improve your confidence:</strong> Install reliability mods, log real chrono data, use a known projectile, run HPA if possible, and stay within your platform's effective envelope.</p>
       </div>
     </div>
   </div>
@@ -1733,7 +1743,8 @@ const MODS_RELI=[
   {id:'oring',     name:'O-ring Upgrade / Seal Kit',  desc:'High-durometer seals. Reduces gas blowby. Improves consistency and seal life. No power gain.', dLow:0, dHigh:0, meta:'RELIABILITY'},
   {id:'detent',    name:'Detent Upgrade',             desc:'Improved ball retention in breach. Prevents double feeds and misfires.',                       dLow:0, dHigh:0, meta:'RELIABILITY'},
   {id:'boltspring',name:'Bolt Spring Upgrade',        desc:'Improved cycling consistency. Better gas seal on bolt face.',                                  dLow:0, dHigh:0, meta:'RELIABILITY', appliesTo:['rifle']},
-  {id:'heatcore',  name:'Heatcore O-ring (Grimburg)', desc:'Premium O-ring for improved gas seal and temperature consistency.',                            dLow:0, dHigh:0, meta:'RELIABILITY'}
+  {id:'heatcore',  name:'Heatcore O-ring (Grimburg)', desc:'Premium O-ring for improved gas seal and temperature consistency.',                            dLow:0, dHigh:0, meta:'RELIABILITY'},
+  {id:'lube',      name:'Lubrication Service',        desc:'Full internal lubrication of seals, bolt, and cycling components. Reduces friction and improves shot-to-shot consistency. No power gain.', dLow:0, dHigh:0, meta:'RELIABILITY'}
 ];
 
 const MODS_TAC=[
@@ -1815,6 +1826,7 @@ function computeStats(){
   let rel=getPlatformReliabilityBase();
   if(selMods){
     ['oring','detent','boltspring','heatcore'].forEach(id=>{if(selMods.has(id))rel+=15;});
+    if(selMods.has('lube'))rel+=10;
     if(selMods.has('regup'))rel+=5;
     if(selMods.has('regbyp'))rel+=3;
   }
@@ -3937,6 +3949,8 @@ function getGasConsistency(pKey,gType){
 
 // --- Platform reliability modifier ---
 function getPlatformReliabilityMod(pKey){
+  const hasSeals=typeof selMods!=='undefined'&&selMods.has('oring');
+  if(pKey==='x68'&&hasSeals) return 0; // Seal kit cancels Gen1 O-ring penalty
   if(pKey==='x68') return -15; // Gen1 O-ring issues
   if(pKey==='x68g2') return 8; // Gen2 upgraded
   return 0;
@@ -3994,16 +4008,24 @@ function calcConfidence(fps,roundVal,pKey,gType){
   if(!fps||fps<=0) score-=15;
   // Unknown/custom projectile
   if(roundVal==='custom') score-=10;
-  // Heavy mod stack = untested config
-  const mods=typeof selMods!=='undefined'?selMods.size:0;
-  if(mods>2) score-=12;
-  else if(mods>0) score-=4;
+  // Mod stack: reliability mods BOOST confidence, unverified power mods penalize
+  if(typeof selMods!=='undefined'){
+    const reliMods=['oring','detent','boltspring','heatcore','lube'];
+    let reliCount=0,otherCount=0;
+    selMods.forEach(id=>{if(reliMods.includes(id))reliCount++;else otherCount++;});
+    // Each reliability mod adds +3 confidence (verified improvement)
+    score+=reliCount*3;
+    // Unverified power/tactical mods still penalize
+    if(otherCount>2) score-=12;
+    else if(otherCount>0) score-=4;
+  }
   // Cold weather + CO2 = compounding uncertainty
   if(typeof tempF!=='undefined'&&tempF<55&&gType==='co2') score-=8;
   // Custom build = no established baseline
   if(pKey==='custom') score-=10;
-  // Known reliability issues
-  if(pKey==='x68') score-=12;
+  // Known reliability issues — seal kit cancels Gen1 penalty
+  const hasSeals=typeof selMods!=='undefined'&&selMods.has('oring');
+  if(pKey==='x68'&&!hasSeals) score-=12;
   // Extended range increases uncertainty
   const distEl=document.getElementById('c-dist');
   const dist=distEl?parseInt(distEl.value)||15:15;
@@ -4017,13 +4039,13 @@ function calcIPS(impactJ,roundVal){
   // Base: energy-driven
   let base;
   if(impactJ>100) base=98;
-  else if(impactJ>=85) base=92;
-  else if(impactJ>=70) base=82;
-  else if(impactJ>=50) base=68;
-  else if(impactJ>=35) base=52;
-  else if(impactJ>=20) base=35;
-  else if(impactJ>=10) base=18;
-  else base=5;
+  else if(impactJ>=85) base=94;
+  else if(impactJ>=70) base=88;
+  else if(impactJ>=55) base=76;
+  else if(impactJ>=40) base=62;
+  else if(impactJ>=25) base=45;
+  else if(impactJ>=12) base=25;
+  else base=8;
   // Projectile class modifier
   const proj=PROJECTILE_DB[roundVal];
   if(proj){
@@ -4246,8 +4268,14 @@ function calculateTIS(){
     function factorRow(label,val,maxVal,note,color){
       const pct=Math.max(0,Math.min(100,Math.round((val/maxVal)*100)));
       const c=color||'var(--pip)';
-      return '<div class="tis-factor-row"><div class="tis-factor-label">'+label+'</div><div class="tis-factor-val" style="color:'+c+'">'+Math.round(val)+' <span style="font-size:9px;color:var(--muted)">/ '+maxVal+'</span></div></div>'
-        +'<div class="tis-factor-bar"><div class="tis-factor-bar-fill" style="width:'+pct+'%;background:'+c+';"></div></div>'
+      const litCount=Math.round(pct/5); // 20 segments total
+      let segs='';
+      for(let i=0;i<20;i++){
+        if(i<litCount) segs+='<div class="tis-factor-seg lit" style="background:'+c+';color:'+c+';"></div>';
+        else segs+='<div class="tis-factor-seg dim"></div>';
+      }
+      return '<div class="tis-factor-row"><div class="tis-factor-label">'+label+'</div><div class="tis-factor-val" style="color:'+c+'">'+Math.round(val)+' <span style="font-size:11px;color:var(--muted)">/ '+maxVal+'</span></div></div>'
+        +'<div class="tis-factor-bar">'+segs+'</div>'
         +(note?'<div class="tis-factor-note">'+note+'</div>':'');
     }
 
@@ -4258,19 +4286,26 @@ function calculateTIS(){
     html+=factorRow('Accuracy & Follow-Up (15%)',f4,100,followLabel+(platformKey==='hds68'?' · HDS 2-shot cap':''),f4>=70?'var(--pip)':f4>=50?'#e09940':'#e02020');
     html+=factorRow('Context Uncertainty (10%)',Math.round(f5),100,ctxLabel+' · penalty: −'+Math.round(ctxPen),f5>=70?'var(--pip)':f5>=50?'#e09940':'#e02020');
     html+='<hr class="tis-divider">';
-    html+='<div class="tis-factor-row"><div class="tis-factor-label" style="color:var(--bright);font-weight:700;">WEIGHTED TIS</div><div class="tis-factor-val" style="font-size:16px;color:'+bandColor(tisBand.cls)+';">'+tis+'</div></div>';
-    html+='<div class="tis-factor-note" style="margin-bottom:8px;">'+tisBand.label+'</div>';
-    html+='<div class="tis-factor-row"><div class="tis-factor-label" style="color:var(--bright);">Injury Potential</div><div class="tis-factor-val" style="color:'+bandColor(ipsBand.cls)+';">'+ips+'</div></div>';
-    html+='<div class="tis-factor-note">'+ipsBand.label+'</div>';
-    html+='<div class="tis-factor-row"><div class="tis-factor-label" style="color:var(--bright);">Confidence</div><div class="tis-factor-val" style="color:'+bandColor(confBand.cls)+';">'+conf+'</div></div>';
+    html+='<div class="tis-factor-row"><div class="tis-factor-label" style="color:var(--bright);font-weight:700;font-size:15px;">WEIGHTED TIS</div><div class="tis-factor-val" style="font-size:22px;color:'+bandColor(tisBand.cls)+';">'+tis+'</div></div>';
+    html+='<div class="tis-factor-note" style="margin-bottom:8px;font-size:13px;">'+tisBand.label+'</div>';
+    html+='<div class="tis-factor-row"><div class="tis-factor-label" style="color:var(--bright);font-size:14px;">Injury Potential</div><div class="tis-factor-val" style="font-size:18px;color:'+bandColor(ipsBand.cls)+';">'+ips+'</div></div>';
+    html+='<div class="tis-factor-note" style="font-size:12px;">'+ipsBand.label+'</div>';
+    html+='<div class="tis-factor-row"><div class="tis-factor-label" style="color:var(--bright);font-size:14px;">Confidence</div><div class="tis-factor-val" style="font-size:18px;color:'+bandColor(confBand.cls)+';">'+conf+'</div></div>';
 
-    // Confidence penalties
+    // Confidence penalties & boosts
     const penList=[];
     if(gType==='co2') penList.push('CO2 gas variance (−8)');
     if(gType==='co2'&&['fsc','x68','intru'].includes(platformKey)) penList.push('Known CO2 consistency issues (−10)');
     if(roundVal==='custom') penList.push('Unknown projectile (−10)');
-    if(typeof selMods!=='undefined'&&selMods.size>2) penList.push('Unverified mod stack (−12)');
-    if(platformKey==='x68') penList.push('Gen1 reliability flag (−12)');
+    const reliMods=['oring','detent','boltspring','heatcore','lube'];
+    let reliCount=0,otherModCount=0;
+    if(typeof selMods!=='undefined') selMods.forEach(id=>{if(reliMods.includes(id))reliCount++;else otherModCount++;});
+    if(reliCount>0) penList.push('Reliability mods installed (+'+reliCount*3+')');
+    if(otherModCount>2) penList.push('Unverified mod stack (−12)');
+    else if(otherModCount>0) penList.push('Unverified mods (−4)');
+    const hasSeals=typeof selMods!=='undefined'&&selMods.has('oring');
+    if(platformKey==='x68'&&!hasSeals) penList.push('Gen1 reliability flag (−12)');
+    if(platformKey==='x68'&&hasSeals) penList.push('Gen1 seal kit installed — penalty removed');
     if(typeof tempF!=='undefined'&&tempF<55&&gType==='co2') penList.push('Cold weather, CO2 (−8)');
     if(dist>50) penList.push('Extended range (−5)');
     if(penList.length){
