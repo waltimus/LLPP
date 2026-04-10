@@ -1524,8 +1524,8 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
         <div style="margin-bottom:10px;">
           <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.08em;margin-bottom:4px;">CLOTHING ASSUMPTION</div>
           <select id="tis-clothing" onchange="calcUpdate()" style="font-family:'Share Tech Mono',monospace;font-size:12px;background:#03050a;color:var(--bright);border:1px solid var(--border);padding:8px 10px;width:100%;">
-            <option value="summer">Summer — Hoodie (x0.92)</option>
-            <option value="spring">Spring/Fall — Hoodie + Jacket (x0.85)</option>
+            <option value="summer">Summer — Light Layer (x0.96)</option>
+            <option value="spring">Spring/Fall — Hoodie (x0.90)</option>
             <option value="winter">Winter — Heavy Coat (x0.78)</option>
           </select>
         </div>
@@ -3990,7 +3990,7 @@ const PROJECTILE_DB={
 };
 
 // --- Clothing multipliers ---
-const CLOTHING_MULT={summer:0.92, spring:0.85, winter:0.78};
+const CLOTHING_MULT={summer:0.96, spring:0.90, winter:0.78};
 
 // --- Season auto-detect ---
 function detectSeason(){
@@ -4014,6 +4014,8 @@ function getGasConsistency(pKey,gType){
   if(p&&p.co2Options&&p.co2Options.includes('88g')) return 72;
   // Umarex 12g platforms — better by design
   if(['hdr68','hds68','hdx68','hdb68','tc68'].includes(pKey)) return 65;
+  // Pistelle X-68 / X-68 Gen2 — purpose-built CO2 platforms, better than generic
+  if(['x68','x68g2'].includes(pKey)) return 58;
   // Specific poor performers
   if(pKey==='fsc') return 28;
   if(pKey==='intru') return 44;
@@ -4384,7 +4386,7 @@ function calculateTIS(){
     const projName=proj?proj.name:(roundVal==='custom'?'Custom':'Unknown');
     const gasLabel=gType==='hpa'?'HPA — consistent':(gType==='co2'?'CO2':'Unknown');
     const followLabel=magSize+' capacity / '+(adjustedJ>=50?'50J+':adjustedJ>=35?'35-50J':'<35J')+' band';
-    const ctxLabel=(clothing==='winter'?'heavy coat':clothing==='spring'?'hoodie+jacket':'hoodie')+(moving?' / moving':' / stationary');
+    const ctxLabel=(clothing==='winter'?'heavy coat':clothing==='spring'?'hoodie':'light layer')+(moving?' / moving':' / stationary');
 
     function factorRow(label,val,maxVal,note,color){
       const pct=Math.max(0,Math.min(100,Math.round((val/maxVal)*100)));
