@@ -557,57 +557,35 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 .session-item-del:hover{background:rgba(255,40,40,0.2);}
 
 /* ============================================================
-   TIS PANEL — Threat Interruption Score
+   TIS — Threat Interruption Score (inline + score tab)
    ============================================================ */
-.tis-panel{position:fixed;top:60px;right:16px;z-index:90;display:flex;gap:10px;align-items:flex-start;pointer-events:auto;}
-.tis-card{background:rgba(6,8,12,0.92);border:1px solid var(--border);backdrop-filter:blur(12px);padding:12px 16px 10px;min-width:140px;text-align:center;position:relative;}
-.tis-card::before,.tis-card::after{content:'';position:absolute;width:10px;height:10px;border-color:var(--border-hi);border-style:solid;}
-.tis-card::before{top:-1px;left:-1px;border-width:2px 0 0 2px;}
-.tis-card::after{bottom:-1px;right:-1px;border-width:0 2px 2px 0;}
-.tis-card-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.14em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
-.tis-card-score{font-family:'Orbitron',monospace;font-size:48px;font-weight:900;line-height:1;letter-spacing:-0.02em;transition:color 0.3s;}
-.tis-card-band{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:0.1em;margin-top:4px;text-transform:uppercase;}
-.tis-card-bar{height:4px;margin-top:8px;background:rgba(255,255,255,0.04);border-radius:2px;overflow:hidden;}
-.tis-card-bar-fill{height:100%;border-radius:2px;transition:width 0.6s ease,background 0.3s;}
-.tis-card .tis-info-btn{position:absolute;top:6px;right:8px;background:none;border:1px solid rgba(197,255,0,0.2);color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;width:18px;height:18px;line-height:18px;text-align:center;padding:0;cursor:pointer;border-radius:50%;}
-.tis-card .tis-info-btn:hover{color:var(--pip);border-color:var(--pip);}
-.tis-null{background:rgba(6,8,12,0.92);border:1px solid var(--border);backdrop-filter:blur(12px);padding:20px 24px;text-align:center;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.06em;line-height:1.6;max-width:480px;}
-.tis-null::before,.tis-null::after{content:'';position:absolute;width:10px;height:10px;border-color:var(--border-hi);border-style:solid;}
-.tis-null::before{top:-1px;left:-1px;border-width:2px 0 0 2px;}
-.tis-null::after{bottom:-1px;right:-1px;border-width:0 2px 2px 0;}
-.tis-null{position:relative;}
-.tis-detail-btn{display:block;margin:6px auto 0;background:none;border:1px solid var(--border);color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.1em;padding:4px 14px;cursor:pointer;}
-.tis-detail-btn:hover{border-color:var(--pip);color:var(--pip);}
-.tis-footer{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:0.04em;text-align:center;max-width:480px;margin-top:6px;line-height:1.4;opacity:0.7;}
+.tis-inline{display:flex;align-items:center;gap:8px;padding:4px 14px;background:rgba(6,8,12,0.8);border:1px solid var(--border);cursor:pointer;transition:border-color 0.2s,box-shadow 0.2s;position:relative;}
+.tis-inline:hover{border-color:var(--border-hi);box-shadow:0 0 12px rgba(197,255,0,0.1);}
+.tis-inline::before,.tis-inline::after{content:'';position:absolute;width:6px;height:6px;border-color:var(--border-hi);border-style:solid;}
+.tis-inline::before{top:-1px;left:-1px;border-width:2px 0 0 2px;}
+.tis-inline::after{bottom:-1px;right:-1px;border-width:0 2px 2px 0;}
+.tis-inline-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.14em;color:var(--muted);}
+.tis-inline-score{font-family:'Orbitron',monospace;font-size:22px;font-weight:900;line-height:1;letter-spacing:-0.02em;transition:color 0.3s;}
+.tis-inline-band{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.08em;}
+.tis-inline-bar{width:40px;height:3px;background:rgba(255,255,255,0.04);border-radius:2px;overflow:hidden;}
+.tis-inline-bar-fill{height:100%;width:0%;border-radius:2px;transition:width 0.6s ease,background 0.3s;}
 /* Band colors */
 .tis-band-minimal{color:#555;}
 .tis-band-limited{color:#d4c755;}
 .tis-band-moderate{color:#e09940;}
 .tis-band-strong{color:#e06020;}
 .tis-band-severe{color:#e02020;}
-/* Score detail panel */
-.tis-detail-panel{display:none;position:fixed;top:180px;right:16px;z-index:91;background:rgba(6,8,12,0.96);border:1px solid var(--border-hi);backdrop-filter:blur(14px);padding:16px 20px;width:420px;max-height:70vh;overflow-y:auto;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--bright);line-height:1.6;}
-.tis-detail-panel.open{display:block;}
-.tis-detail-panel::before,.tis-detail-panel::after{content:'';position:absolute;width:10px;height:10px;border-color:var(--pip);border-style:solid;}
-.tis-detail-panel::before{top:-1px;left:-1px;border-width:2px 0 0 2px;}
-.tis-detail-panel::after{bottom:-1px;right:-1px;border-width:0 2px 2px 0;}
-.tis-detail-hdr{font-family:'Orbitron',sans-serif;font-size:12px;font-weight:700;color:var(--pip);letter-spacing:0.12em;margin-bottom:10px;}
-.tis-factor-row{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(197,255,0,0.04);}
-.tis-factor-label{color:var(--muted);flex:1;}
-.tis-factor-val{color:var(--bright);font-weight:700;min-width:40px;text-align:right;}
-.tis-factor-note{font-size:9px;color:var(--muted);margin-top:1px;}
-.tis-divider{border:none;border-top:1px solid rgba(197,255,0,0.12);margin:8px 0;}
-.tis-summary{font-family:'Barlow Condensed',sans-serif;font-size:13px;color:var(--bright);line-height:1.5;margin-top:10px;padding:10px 12px;background:rgba(197,255,0,0.03);border-left:3px solid var(--pip);}
-.tis-warning{margin-top:8px;padding:8px 12px;font-family:'Barlow Condensed',sans-serif;font-size:13px;line-height:1.4;}
-.tis-warning.amber{background:rgba(255,179,71,0.06);border-left:3px solid #ffb347;color:#ffb347;}
-.tis-warning.red{background:rgba(255,40,40,0.06);border-left:3px solid #ff4040;color:#ff6a6a;}
-/* Clothing selector */
-.tis-clothing-wrap{margin-top:6px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);}
-.tis-clothing-wrap select{font-family:'Share Tech Mono',monospace;font-size:10px;background:#03050a;color:var(--bright);border:1px solid var(--border);padding:2px 6px;}
-@media(max-width:900px){
-  .tis-panel{position:relative;top:auto;right:auto;margin:10px 0;justify-content:center;flex-wrap:wrap;}
-  .tis-detail-panel{position:relative;top:auto;right:auto;width:100%;margin-top:8px;}
-}
+/* Factor breakdown rows */
+.tis-factor-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(197,255,0,0.04);}
+.tis-factor-label{color:var(--muted);flex:1;font-family:'Share Tech Mono',monospace;font-size:11px;}
+.tis-factor-val{color:var(--bright);font-weight:700;min-width:50px;text-align:right;font-family:'Orbitron',monospace;font-size:12px;}
+.tis-factor-note{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);margin-top:1px;margin-bottom:4px;}
+.tis-factor-bar{height:4px;margin:2px 0 6px;background:rgba(255,255,255,0.04);border-radius:2px;overflow:hidden;}
+.tis-factor-bar-fill{height:100%;border-radius:2px;transition:width 0.4s;}
+.tis-divider{border:none;border-top:1px solid rgba(197,255,0,0.12);margin:10px 0;}
+.tis-warning{margin-top:8px;padding:10px 14px;font-family:'Barlow Condensed',sans-serif;font-size:13px;line-height:1.4;}
+.tis-warning.amber{background:rgba(255,179,71,0.06);border:1px solid rgba(255,179,71,0.2);border-left:3px solid #ffb347;color:#ffb347;}
+.tis-warning.red{background:rgba(255,40,40,0.06);border:1px solid rgba(255,40,40,0.2);border-left:3px solid #ff4040;color:#ff6a6a;}
 </style>
 </head>
 <body>
@@ -623,82 +601,11 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
   </div>
 </div>
 
-<!-- TIS PANEL — Threat Interruption Score -->
-<div class="tis-panel" id="tis-panel">
-  <div class="tis-null" id="tis-null">Please select your launcher to see your Threat Interruption Score.</div>
-  <div id="tis-cards" style="display:none;">
-    <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;">
-      <div class="tis-card" id="tis-card-tis">
-        <div class="tis-card-label">THREAT INTERRUPTION <button class="tis-info-btn" onclick="openModal('modal-tis-info')" title="What is TIS?">i</button></div>
-        <div class="tis-card-score" id="tis-score">—</div>
-        <div class="tis-card-band" id="tis-band">—</div>
-        <div class="tis-card-bar"><div class="tis-card-bar-fill" id="tis-bar-fill" style="width:0%;"></div></div>
-      </div>
-      <div class="tis-card" id="tis-card-ips">
-        <div class="tis-card-label">INJURY POTENTIAL</div>
-        <div class="tis-card-score" id="ips-score">—</div>
-        <div class="tis-card-band" id="ips-band">—</div>
-        <div class="tis-card-bar"><div class="tis-card-bar-fill" id="ips-bar-fill" style="width:0%;"></div></div>
-      </div>
-      <div class="tis-card" id="tis-card-conf">
-        <div class="tis-card-label">CONFIDENCE</div>
-        <div class="tis-card-score" id="conf-score">—</div>
-        <div class="tis-card-band" id="conf-band">—</div>
-        <div class="tis-card-bar"><div class="tis-card-bar-fill" id="conf-bar-fill" style="width:0%;"></div></div>
-      </div>
-    </div>
-    <button class="tis-detail-btn" id="tis-detail-toggle" onclick="toggleTisDetail()">SCORE DETAIL &#9662;</button>
-    <div class="tis-footer">Scores are modeled estimates, not guarantees. Human response to less-lethal impact is highly variable. Educational and training use only.</div>
-    <div class="tis-clothing-wrap">
-      CLOTHING: <select id="tis-clothing" onchange="calcUpdate()">
-        <option value="summer">Summer — Hoodie (x0.92)</option>
-        <option value="spring">Spring/Fall — Hoodie + Jacket (x0.85)</option>
-        <option value="winter">Winter — Heavy Coat (x0.78)</option>
-      </select>
-      &nbsp; TARGET: <select id="tis-movement" onchange="calcUpdate()">
-        <option value="stationary">Stationary</option>
-        <option value="moving">Moving</option>
-      </select>
-    </div>
-  </div>
-</div>
-<!-- TIS Detail Panel -->
-<div class="tis-detail-panel" id="tis-detail-panel">
-  <div class="tis-detail-hdr">SLATE — SCORE BREAKDOWN</div>
-  <div id="tis-detail-body"></div>
-  <div id="tis-warnings"></div>
-  <div class="tis-summary" id="tis-summary"></div>
-</div>
-
-<!-- TIS Info Modal -->
-<div class="modal-backdrop" id="modal-tis-info">
-  <div class="modal-panel" style="max-width:560px;">
-    <div class="modal-hdr">
-      <div>
-        <div class="modal-title">THREAT INTERRUPTION SCORE</div>
-        <div class="modal-sub">What it measures and what it does not</div>
-      </div>
-      <button class="modal-close" onclick="closeModal('modal-tis-info')">&times;</button>
-    </div>
-    <div class="modal-body">
-      <div class="disclaimer-body">
-        <p>The Threat Interruption Score (TIS) is a weighted estimate of how likely your current launcher configuration is to produce an <strong>immediate, observable disruption of threatening behavior</strong> at your selected engagement distance.</p>
-        <p>It accounts for impact energy, projectile behavior, platform consistency, follow-up capability, and real-world contextual variables.</p>
-        <p><strong>It is a projected likelihood, not a guarantee.</strong> Human response to less-lethal impact is highly variable and depends on pain tolerance, adrenaline, intoxication, clothing, body mass, and shot placement.</p>
-        <p>Always train with your platform and understand the law in your jurisdiction.</p>
-        <p style="margin-top:12px;"><strong>The three scores:</strong></p>
-        <p><em>TIS (0-100)</em> — Likelihood of immediate disruptive effect on threatening behavior.</p>
-        <p><em>Injury Potential (0-100)</em> — Consequence severity if impact occurs. Higher is more injurious.</p>
-        <p><em>Confidence (0-100)</em> — Reliability of both scores given your available inputs. Log chrono data and specify your exact projectile to improve confidence.</p>
-      </div>
-    </div>
-  </div>
-</div>
-
 <div class="tabs">
   <div class="tab active" onclick="showTab('calc')">Calculator</div>
   <div class="tab" onclick="showTab('placement')">Placement</div>
   <div class="tab" onclick="showTab('analytics')">Analytics</div>
+  <div class="tab" onclick="showTab('score')">Score</div>
   <div class="tab" onclick="showTab('info')">Information</div>
 </div>
 
@@ -711,9 +618,17 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
   <div class="hero-panel">
     <div class="hero-weapon-name" id="hero-weapon" style="display:none;">SELECT A PLATFORM</div>
     <div class="hero-weapon-sub" id="hero-weapon-sub" style="text-align:center;font-size:11px;">— · — · —</div>
-    <div style="text-align:center;margin:-4px 0 14px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.12em;">
-      ACTIVE SESSION: <span id="active-session-name" style="color:var(--pip);">NO WEAPON LOADED</span>
-      <button class="btn-session" style="margin-left:12px;padding:5px 14px;font-size:9px;" onclick="openModal('modal-sessions')">+ ADD / SWITCH</button>
+    <div style="display:flex;align-items:center;justify-content:center;gap:16px;margin:-4px 0 14px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.12em;flex-wrap:wrap;">
+      <div>
+        ACTIVE SESSION: <span id="active-session-name" style="color:var(--pip);">NO WEAPON LOADED</span>
+        <button class="btn-session" style="margin-left:12px;padding:5px 14px;font-size:9px;" onclick="openModal('modal-sessions')">+ ADD / SWITCH</button>
+      </div>
+      <div class="tis-inline" id="tis-inline" onclick="showTab('score')" title="Click for full score breakdown">
+        <div class="tis-inline-label">TIS</div>
+        <div class="tis-inline-score" id="tis-score">—</div>
+        <div class="tis-inline-band" id="tis-band">—</div>
+        <div class="tis-inline-bar"><div class="tis-inline-bar-fill" id="tis-bar-fill"></div></div>
+      </div>
     </div>
 
     <div class="hero-grid">
@@ -1509,6 +1424,90 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 </div>
 
 <!-- INFORMATION -->
+<!-- SCORE DETAIL TAB -->
+<div id="score" class="panel">
+  <div class="card">
+    <div class="section-title" style="font-size:18px;">THREAT INTERRUPTION SCORE</div>
+    <div class="section-subtitle">How likely your current configuration is to produce immediate behavioral disruption</div>
+  </div>
+
+  <!-- Big score display -->
+  <div class="card" id="tis-hero-card" style="text-align:center;padding:24px 20px;">
+    <div id="tis-hero-null" style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:0.06em;padding:20px 0;">Select a launcher and enter chronograph FPS to see your Threat Interruption Score.</div>
+    <div id="tis-hero-active" style="display:none;">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.14em;margin-bottom:4px;">THREAT INTERRUPTION SCORE</div>
+      <div id="tis-hero-score" style="font-family:'Orbitron',monospace;font-size:72px;font-weight:900;line-height:1;letter-spacing:-0.02em;transition:color 0.3s;">—</div>
+      <div id="tis-hero-band" style="font-family:'Share Tech Mono',monospace;font-size:14px;letter-spacing:0.12em;margin-top:6px;">—</div>
+      <div style="height:6px;margin:12px auto 0;max-width:300px;background:rgba(255,255,255,0.04);border-radius:3px;overflow:hidden;">
+        <div id="tis-hero-bar-fill" style="height:100%;width:0%;border-radius:3px;transition:width 0.6s ease,background 0.3s;"></div>
+      </div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:0.04em;margin-top:10px;opacity:0.7;">Scores are modeled estimates, not guarantees. Human response to less-lethal impact is highly variable.</div>
+    </div>
+  </div>
+
+  <!-- Context inputs -->
+  <div class="card" style="padding:14px 18px;">
+    <div class="section-title" style="font-size:12px;margin-bottom:8px;">SCENARIO CONTEXT</div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;">
+      <div>
+        <div class="lbl">Clothing Assumption</div>
+        <select id="tis-clothing" onchange="calcUpdate()" style="font-family:'Share Tech Mono',monospace;font-size:11px;background:#03050a;color:var(--bright);border:1px solid var(--border);padding:6px 10px;min-width:200px;">
+          <option value="summer">Summer — Hoodie (x0.92)</option>
+          <option value="spring">Spring/Fall — Hoodie + Jacket (x0.85)</option>
+          <option value="winter">Winter — Heavy Coat (x0.78)</option>
+        </select>
+      </div>
+      <div>
+        <div class="lbl">Target Movement</div>
+        <select id="tis-movement" onchange="calcUpdate()" style="font-family:'Share Tech Mono',monospace;font-size:11px;background:#03050a;color:var(--bright);border:1px solid var(--border);padding:6px 10px;min-width:140px;">
+          <option value="stationary">Stationary</option>
+          <option value="moving">Moving</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Factor breakdown -->
+  <div class="card" style="padding:14px 18px;">
+    <div class="section-title" style="font-size:12px;margin-bottom:10px;">FACTOR BREAKDOWN</div>
+    <div id="tis-detail-body" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--bright);line-height:1.6;"></div>
+  </div>
+
+  <!-- Sub-scores -->
+  <div style="display:flex;gap:12px;flex-wrap:wrap;">
+    <div class="card" style="flex:1;min-width:180px;padding:14px 18px;text-align:center;">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.12em;">INJURY POTENTIAL</div>
+      <div id="ips-score" style="font-family:'Orbitron',monospace;font-size:36px;font-weight:900;line-height:1.1;margin-top:4px;">—</div>
+      <div id="ips-band" style="font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:0.1em;margin-top:2px;">—</div>
+    </div>
+    <div class="card" style="flex:1;min-width:180px;padding:14px 18px;text-align:center;">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.12em;">CONFIDENCE</div>
+      <div id="conf-score" style="font-family:'Orbitron',monospace;font-size:36px;font-weight:900;line-height:1.1;margin-top:4px;">—</div>
+      <div id="conf-band" style="font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:0.1em;margin-top:2px;">—</div>
+    </div>
+  </div>
+
+  <!-- Warnings -->
+  <div id="tis-warnings"></div>
+
+  <!-- Plain-English summary -->
+  <div class="card" style="padding:14px 18px;">
+    <div class="section-title" style="font-size:12px;margin-bottom:8px;">ASSESSMENT</div>
+    <div id="tis-summary" style="font-family:'Barlow Condensed',sans-serif;font-size:14px;color:var(--bright);line-height:1.6;"></div>
+    <div id="tis-reasons" style="margin-top:10px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);line-height:1.6;"></div>
+  </div>
+
+  <!-- What is TIS -->
+  <div class="card" style="padding:14px 18px;">
+    <div class="section-title" style="font-size:12px;margin-bottom:8px;">WHAT IS THE THREAT INTERRUPTION SCORE?</div>
+    <div class="disclaimer-body" style="font-size:13px;">
+      <p>The Threat Interruption Score (TIS) is a weighted estimate of how likely your current launcher configuration is to produce an <strong>immediate, observable disruption of threatening behavior</strong> at your selected engagement distance.</p>
+      <p>It accounts for impact energy, projectile behavior, platform consistency, follow-up capability, and real-world contextual variables. <strong>It is a projected likelihood, not a guarantee.</strong></p>
+      <p>Human response to less-lethal impact is highly variable and depends on pain tolerance, adrenaline, intoxication, clothing, body mass, and shot placement. Always train with your platform and understand the law in your jurisdiction.</p>
+    </div>
+  </div>
+</div>
+
 <div id="info" class="panel">
   <div class="card">
     <div class="section-title" style="font-size:18px;">LESS-LETHAL · PRINCIPLES & CONSIDERATIONS</div>
@@ -3629,7 +3628,7 @@ function updateCharts(){
 }
 
 function showTab(id){
-  const ids=['calc','placement','analytics','info'];
+  const ids=['calc','placement','analytics','score','info'];
   const tabs=document.querySelectorAll('.tabs > .tab');
   ids.forEach((t,i)=>{
     if(tabs[i])tabs[i].classList.toggle('active',t===id);
@@ -3922,16 +3921,33 @@ function getContextPenalty(clothing,moving,dist){
 
 // --- Confidence rating ---
 function calcConfidence(fps,roundVal,pKey,gType){
-  let score=100;
-  if(!fps||fps<=0) score-=15; // no chrono
-  if(roundVal==='custom') score-=10; // unknown projectile
+  // Confidence is never 100 — there's always modeling uncertainty.
+  // Base starts at 88 (chrono-validated known platform) and goes down.
+  let score=88;
+  // CO2 variance is inherent — always a penalty vs HPA
+  if(gType==='co2') score-=8;
+  // Specific poor CO2 platforms get extra penalty
+  if(gType==='co2'&&['fsc','x68','intru'].includes(pKey)) score-=10;
+  // No chrono = using manufacturer spec, not measured
+  if(!fps||fps<=0) score-=15;
+  // Unknown/custom projectile
+  if(roundVal==='custom') score-=10;
+  // Heavy mod stack = untested config
   const mods=typeof selMods!=='undefined'?selMods.size:0;
-  if(mods>2) score-=12; // unverified mod stack
-  if(gType==='co2'&&!fps) score-=8; // 12g with no logged session
-  if(typeof tempF!=='undefined'&&tempF<55&&!fps) score-=8; // cold, no cold chrono
-  if(pKey==='custom') score-=10; // custom build
-  if(pKey==='x68') score-=12; // known reliability issues
-  return Math.max(0,Math.min(100,score));
+  if(mods>2) score-=12;
+  else if(mods>0) score-=4;
+  // Cold weather + CO2 = compounding uncertainty
+  if(typeof tempF!=='undefined'&&tempF<55&&gType==='co2') score-=8;
+  // Custom build = no established baseline
+  if(pKey==='custom') score-=10;
+  // Known reliability issues
+  if(pKey==='x68') score-=12;
+  // Extended range increases uncertainty
+  const distEl=document.getElementById('c-dist');
+  const dist=distEl?parseInt(distEl.value)||15:15;
+  if(dist>50) score-=5;
+  else if(dist>35) score-=2;
+  return Math.max(0,Math.min(100,Math.round(score)));
 }
 
 // --- Injury Potential Score ---
@@ -4015,22 +4031,22 @@ function getTisWarnings(roundVal,impactJ,pKey){
 // --- Main TIS calculation ---
 function calculateTIS(){
   const p=getCurrentPlatform();
-  const nullEl=document.getElementById('tis-null');
-  const cardsEl=document.getElementById('tis-cards');
+  const heroNull=document.getElementById('tis-hero-null');
+  const heroActive=document.getElementById('tis-hero-active');
+  const inlineEl=document.getElementById('tis-inline');
+
+  // Null state — no platform or no FPS
   if(!p||!platformKey||platformKey==='custom'){
-    if(nullEl)nullEl.style.display='block';
-    if(cardsEl)cardsEl.style.display='none';
+    setTisNull(true);
     return;
   }
   const rawFps=document.getElementById('c-fps').value;
   const fps=rawFps===''||rawFps==null?0:(parseInt(rawFps)||0);
   if(fps<=0){
-    if(nullEl)nullEl.style.display='block';
-    if(cardsEl)cardsEl.style.display='none';
+    setTisNull(true);
     return;
   }
-  if(nullEl)nullEl.style.display='none';
-  if(cardsEl)cardsEl.style.display='block';
+  setTisNull(false);
 
   const sel=document.getElementById('c-round');
   const roundVal=sel?sel.value:'';
@@ -4059,9 +4075,8 @@ function calculateTIS(){
 
   // Factor 2: Projectile Behavior (20%)
   const proj=PROJECTILE_DB[roundVal];
-  let f2=proj?proj.base:50; // default 50 for custom/unknown
+  let f2=proj?proj.base:50;
   const feedMod=proj?proj.feedMod:0;
-  // Shaped round penalty
   const shapeEl=document.getElementById('c-custom-shape');
   if(roundVal==='custom'&&shapeEl){
     const shape=shapeEl.value;
@@ -4074,7 +4089,7 @@ function calculateTIS(){
   let f3=getGasConsistency(platformKey,gType);
   f3+=getPlatformReliabilityMod(platformKey);
   f3+=getColdMod(gType,typeof tempF!=='undefined'?tempF:70,platformKey);
-  f3+=feedMod; // projectile feed reliability
+  f3+=feedMod;
   f3=Math.max(0,Math.min(100,f3));
 
   // Factor 4: Accuracy & Follow-Up (15%)
@@ -4083,26 +4098,45 @@ function calculateTIS(){
 
   // Factor 5: Context modifier (10%)
   const ctxPen=getContextPenalty(clothing,moving,dist);
-  const f5=Math.max(0,100-ctxPen*6.67); // scale 0-15 penalty to 0-100 range
+  const f5=Math.max(0,100-ctxPen*6.67);
 
   // Weighted TIS
   const rawTIS=(f1*0.35)+(f2*0.20)+(f3*0.20)+(f4*0.15)+(f5*0.10);
   const tis=Math.max(0,Math.min(100,Math.round(rawTIS)));
 
-  // IPS
+  // IPS & Confidence
   const ips=calcIPS(impactJ,roundVal);
-
-  // Confidence
   const conf=calcConfidence(fps,roundVal,platformKey,gType);
 
-  // --- Update UI ---
   const tisBand=getTisBand(tis);
   const ipsBand=getIpsBand(ips);
   const confBand=getConfBand(conf);
 
-  setTisCard('tis-score','tis-band','tis-bar-fill',tis,tisBand);
-  setTisCard('ips-score','ips-band','ips-bar-fill',ips,ipsBand);
-  setTisCard('conf-score','conf-band','conf-bar-fill',conf,confBand);
+  // --- Inline TIS (next to Active Session) ---
+  const inScore=document.getElementById('tis-score');
+  const inBand=document.getElementById('tis-band');
+  const inBar=document.getElementById('tis-bar-fill');
+  if(inScore){inScore.textContent=tis;inScore.className='tis-inline-score '+tisBand.cls;}
+  if(inBand){inBand.textContent=tisBand.label;inBand.className='tis-inline-band '+tisBand.cls;}
+  if(inBar){inBar.style.width=tis+'%';inBar.style.background=bandColor(tisBand.cls);}
+
+  // --- Score tab hero ---
+  const heroScore=document.getElementById('tis-hero-score');
+  const heroBand=document.getElementById('tis-hero-band');
+  const heroBar=document.getElementById('tis-hero-bar-fill');
+  if(heroScore){heroScore.textContent=tis;heroScore.style.color=bandColor(tisBand.cls);}
+  if(heroBand){heroBand.textContent=tisBand.label;heroBand.className=tisBand.cls;}
+  if(heroBar){heroBar.style.width=tis+'%';heroBar.style.background=bandColor(tisBand.cls);}
+
+  // --- IPS & Confidence sub-scores ---
+  const ipsEl=document.getElementById('ips-score');
+  const ipsBandEl=document.getElementById('ips-band');
+  if(ipsEl){ipsEl.textContent=ips;ipsEl.style.color=bandColor(ipsBand.cls);}
+  if(ipsBandEl){ipsBandEl.textContent=ipsBand.label;ipsBandEl.className=ipsBand.cls;}
+  const confEl=document.getElementById('conf-score');
+  const confBandEl=document.getElementById('conf-band');
+  if(confEl){confEl.textContent=conf;confEl.style.color=bandColor(confBand.cls);}
+  if(confBandEl){confBandEl.textContent=confBand.label;confBandEl.className=confBand.cls;}
 
   // --- Warnings ---
   const warnEl=document.getElementById('tis-warnings');
@@ -4111,70 +4145,83 @@ function calculateTIS(){
     warnEl.innerHTML=warnings.map(w=>'<div class="tis-warning '+w.level+'">'+w.text+'</div>').join('');
   }
 
-  // --- Detail panel ---
+  // --- Factor breakdown (Score tab) ---
   const detailBody=document.getElementById('tis-detail-body');
   if(detailBody){
     const projName=proj?proj.name:(roundVal==='custom'?'Custom':'Unknown');
     const gasLabel=gType==='hpa'?'HPA — consistent':(gType==='co2'?'CO2':'Unknown');
     const followLabel=magSize+' capacity / '+(adjustedJ>=50?'50J+':adjustedJ>=35?'35-50J':'<35J')+' band';
-    const ctxLabel=(clothing==='winter'?'heavy coat':clothing==='spring'?'hoodie+jacket':'hoodie')+(moving?' / moving target':' / stationary');
+    const ctxLabel=(clothing==='winter'?'heavy coat':clothing==='spring'?'hoodie+jacket':'hoodie')+(moving?' / moving':' / stationary');
 
-    let html='';
-    html+='<div class="tis-factor-row"><div class="tis-factor-label">Impact energy at distance</div><div class="tis-factor-val">'+f1+'</div></div>';
-    html+='<div class="tis-factor-row"><div class="tis-factor-label">Projectile behavior</div><div class="tis-factor-val">'+Math.round(f2)+'</div></div>';
-    html+='<div class="tis-factor-note">['+projName+']</div>';
-    html+='<div class="tis-factor-row"><div class="tis-factor-label">Platform consistency</div><div class="tis-factor-val">'+Math.round(f3)+'</div></div>';
-    html+='<div class="tis-factor-note">['+gasLabel+']</div>';
-    html+='<div class="tis-factor-row"><div class="tis-factor-label">Accuracy &amp; follow-up</div><div class="tis-factor-val">'+Math.round(f4)+'</div></div>';
-    html+='<div class="tis-factor-note">['+followLabel+']</div>';
-    html+='<div class="tis-factor-row"><div class="tis-factor-label">Context modifier</div><div class="tis-factor-val">−'+Math.round(ctxPen)+'</div></div>';
-    html+='<div class="tis-factor-note">['+ctxLabel+']</div>';
-    html+='<hr class="tis-divider">';
-    html+='<div class="tis-factor-row"><div class="tis-factor-label"><strong>Threat Interruption Score</strong></div><div class="tis-factor-val" style="color:'+bandColor(tisBand.cls)+';">'+tis+' / 100</div></div>';
-    html+='<div class="tis-factor-note">['+tisBand.label+']</div>';
-    html+='<div class="tis-factor-row"><div class="tis-factor-label"><strong>Injury Potential Score</strong></div><div class="tis-factor-val" style="color:'+bandColor(ipsBand.cls)+';">'+ips+' / 100</div></div>';
-    html+='<div class="tis-factor-note">['+ipsBand.label+']</div>';
-    html+='<div class="tis-factor-row"><div class="tis-factor-label"><strong>Confidence</strong></div><div class="tis-factor-val">'+conf+' / 100</div></div>';
-
-    // Confidence penalties breakdown
-    const penList=[];
-    if(!fps||fps<=0) penList.push('No chrono baseline (−15)');
-    if(roundVal==='custom') penList.push('Unknown projectile weight (−10)');
-    if(typeof selMods!=='undefined'&&selMods.size>2) penList.push('Unverified mod stack (−12)');
-    if(gType==='co2'&&!fps) penList.push('12g CO2, no logged session (−8)');
-    if(penList.length){
-      html+='<div class="tis-factor-note" style="margin-top:4px;">Penalties: '+penList.join(', ')+'</div>';
+    function factorRow(label,val,maxVal,note,color){
+      const pct=Math.max(0,Math.min(100,Math.round((val/maxVal)*100)));
+      const c=color||'var(--pip)';
+      return '<div class="tis-factor-row"><div class="tis-factor-label">'+label+'</div><div class="tis-factor-val" style="color:'+c+'">'+Math.round(val)+' <span style="font-size:9px;color:var(--muted)">/ '+maxVal+'</span></div></div>'
+        +'<div class="tis-factor-bar"><div class="tis-factor-bar-fill" style="width:'+pct+'%;background:'+c+';"></div></div>'
+        +(note?'<div class="tis-factor-note">'+note+'</div>':'');
     }
 
+    let html='';
+    html+=factorRow('Impact Energy at Distance (35%)',f1,100,'Post-clothing: '+adjustedJ.toFixed(1)+'J at '+dist+' ft',f1>=65?'var(--pip)':f1>=45?'#e09940':'#e02020');
+    html+=factorRow('Projectile Behavior (20%)',f2,100,projName+(feedMod?(' · feed modifier: '+feedMod):''),f2>=70?'var(--pip)':f2>=50?'#e09940':'#e02020');
+    html+=factorRow('Platform Consistency (20%)',f3,100,gasLabel+(getColdMod(gType,tempF,platformKey)<0?' · cold penalty applied':''),f3>=70?'var(--pip)':f3>=50?'#e09940':'#e02020');
+    html+=factorRow('Accuracy & Follow-Up (15%)',f4,100,followLabel+(platformKey==='hds68'?' · HDS 2-shot cap':''),f4>=70?'var(--pip)':f4>=50?'#e09940':'#e02020');
+    html+=factorRow('Context Uncertainty (10%)',Math.round(f5),100,ctxLabel+' · penalty: −'+Math.round(ctxPen),f5>=70?'var(--pip)':f5>=50?'#e09940':'#e02020');
+    html+='<hr class="tis-divider">';
+    html+='<div class="tis-factor-row"><div class="tis-factor-label" style="color:var(--bright);font-weight:700;">WEIGHTED TIS</div><div class="tis-factor-val" style="font-size:16px;color:'+bandColor(tisBand.cls)+';">'+tis+'</div></div>';
+    html+='<div class="tis-factor-note" style="margin-bottom:8px;">'+tisBand.label+'</div>';
+    html+='<div class="tis-factor-row"><div class="tis-factor-label" style="color:var(--bright);">Injury Potential</div><div class="tis-factor-val" style="color:'+bandColor(ipsBand.cls)+';">'+ips+'</div></div>';
+    html+='<div class="tis-factor-note">'+ipsBand.label+'</div>';
+    html+='<div class="tis-factor-row"><div class="tis-factor-label" style="color:var(--bright);">Confidence</div><div class="tis-factor-val" style="color:'+bandColor(confBand.cls)+';">'+conf+'</div></div>';
+
+    // Confidence penalties
+    const penList=[];
+    if(gType==='co2') penList.push('CO2 gas variance (−8)');
+    if(gType==='co2'&&['fsc','x68','intru'].includes(platformKey)) penList.push('Known CO2 consistency issues (−10)');
+    if(roundVal==='custom') penList.push('Unknown projectile (−10)');
+    if(typeof selMods!=='undefined'&&selMods.size>2) penList.push('Unverified mod stack (−12)');
+    if(platformKey==='x68') penList.push('Gen1 reliability flag (−12)');
+    if(typeof tempF!=='undefined'&&tempF<55&&gType==='co2') penList.push('Cold weather, CO2 (−8)');
+    if(dist>50) penList.push('Extended range (−5)');
+    if(penList.length){
+      html+='<div class="tis-factor-note" style="margin-top:4px;">Penalties: '+penList.join(' · ')+'</div>';
+    }
     detailBody.innerHTML=html;
   }
 
-  // --- Summary statement ---
+  // --- Reasons (plain-English explanations for low factors) ---
+  const reasonsEl=document.getElementById('tis-reasons');
+  if(reasonsEl){
+    const reasons=[];
+    if(f1<70) reasons.push('Energy penalty: '+adjustedJ.toFixed(0)+'J through clothing at '+dist+' ft is below the strong-effect threshold. Close distance or increase platform output.');
+    if(f3<60) reasons.push('Consistency penalty: '+gType.toUpperCase()+' gas on this platform shows significant shot-to-shot variance. Log chrono data to confirm.');
+    if(f4<50) reasons.push('Follow-up ceiling applied: '+adjustedJ.toFixed(0)+'J platforms are capped at limited effective follow-up shots.');
+    if(conf<70) reasons.push('Confidence reduced: multiple uncertainty factors are stacking. Validate your setup with a chrono session.');
+    if(platformKey==='hds68') reasons.push('HDS 68 follow-up score capped at 15 — 2-shot reload constraint overrides capacity.');
+    reasonsEl.innerHTML=reasons.length?reasons.map(r=>'<div style="margin-bottom:4px;">• '+r+'</div>').join(''):'<div style="color:var(--pip);">All factors within acceptable range.</div>';
+  }
+
+  // --- Summary ---
   const summEl=document.getElementById('tis-summary');
   if(summEl){
     const pName=p.name.replace(/^(Umarex|Valken|NXWerks|Defense Innovations|DI|Mercury Rise|Milsig)\s*/i,'');
     const projName=proj?proj.name:'your loaded projectile';
     const gasWord=gType==='hpa'?'HPA':'CO2';
-    const distFt=dist;
-    summEl.textContent='Your '+pName+' loaded with '+projName+' running '+gasWord+' at '+distFt+' ft is projected to deliver '+tisBand.label.toLowerCase()+' immediate disruption with '+ipsBand.label.toLowerCase()+' injury consequence. Confidence is '+confBand.label.toLowerCase()+(conf<85?' — log a chrono session to validate your actual output.':'.');
+    summEl.textContent='Your '+pName+' loaded with '+projName+' running '+gasWord+' at '+dist+' ft is projected to deliver '+tisBand.label.toLowerCase()+' immediate disruption with '+ipsBand.label.toLowerCase()+' injury consequence. Confidence is '+confBand.label.toLowerCase()+(conf<70?' — log a chrono session to validate your actual output.':'.');
   }
 }
 
-function setTisCard(scoreId,bandId,barId,score,band){
-  const sEl=document.getElementById(scoreId);
-  const bEl=document.getElementById(bandId);
-  const barEl=document.getElementById(barId);
-  if(sEl){sEl.textContent=score;sEl.className='tis-card-score '+band.cls;}
-  if(bEl){bEl.textContent=band.label;bEl.className='tis-card-band '+band.cls;}
-  if(barEl){barEl.style.width=score+'%';barEl.style.background=bandColor(band.cls);}
-}
-
-function toggleTisDetail(){
-  const panel=document.getElementById('tis-detail-panel');
-  const btn=document.getElementById('tis-detail-toggle');
-  if(!panel)return;
-  const open=panel.classList.toggle('open');
-  if(btn)btn.innerHTML=open?'SCORE DETAIL &#9652;':'SCORE DETAIL &#9662;';
+function setTisNull(isNull){
+  const heroNull=document.getElementById('tis-hero-null');
+  const heroActive=document.getElementById('tis-hero-active');
+  const inScore=document.getElementById('tis-score');
+  const inBand=document.getElementById('tis-band');
+  if(heroNull)heroNull.style.display=isNull?'block':'none';
+  if(heroActive)heroActive.style.display=isNull?'none':'block';
+  if(isNull){
+    if(inScore){inScore.textContent='—';inScore.className='tis-inline-score';}
+    if(inBand){inBand.textContent='—';inBand.className='tis-inline-band';}
+  }
 }
 
 // ============================================================
