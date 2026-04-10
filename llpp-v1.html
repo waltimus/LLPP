@@ -555,6 +555,59 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 .session-item-meta{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.04em;margin-top:2px;}
 .session-item-del{background:rgba(255,40,40,0.08);border:1px solid rgba(255,40,40,0.3);color:#ff5a5a;font-family:'Share Tech Mono',monospace;font-size:10px;padding:4px 8px;cursor:pointer;letter-spacing:0.06em;}
 .session-item-del:hover{background:rgba(255,40,40,0.2);}
+
+/* ============================================================
+   TIS PANEL — Threat Interruption Score
+   ============================================================ */
+.tis-panel{position:fixed;top:60px;right:16px;z-index:90;display:flex;gap:10px;align-items:flex-start;pointer-events:auto;}
+.tis-card{background:rgba(6,8,12,0.92);border:1px solid var(--border);backdrop-filter:blur(12px);padding:12px 16px 10px;min-width:140px;text-align:center;position:relative;}
+.tis-card::before,.tis-card::after{content:'';position:absolute;width:10px;height:10px;border-color:var(--border-hi);border-style:solid;}
+.tis-card::before{top:-1px;left:-1px;border-width:2px 0 0 2px;}
+.tis-card::after{bottom:-1px;right:-1px;border-width:0 2px 2px 0;}
+.tis-card-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.14em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
+.tis-card-score{font-family:'Orbitron',monospace;font-size:48px;font-weight:900;line-height:1;letter-spacing:-0.02em;transition:color 0.3s;}
+.tis-card-band{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:0.1em;margin-top:4px;text-transform:uppercase;}
+.tis-card-bar{height:4px;margin-top:8px;background:rgba(255,255,255,0.04);border-radius:2px;overflow:hidden;}
+.tis-card-bar-fill{height:100%;border-radius:2px;transition:width 0.6s ease,background 0.3s;}
+.tis-card .tis-info-btn{position:absolute;top:6px;right:8px;background:none;border:1px solid rgba(197,255,0,0.2);color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:10px;width:18px;height:18px;line-height:18px;text-align:center;padding:0;cursor:pointer;border-radius:50%;}
+.tis-card .tis-info-btn:hover{color:var(--pip);border-color:var(--pip);}
+.tis-null{background:rgba(6,8,12,0.92);border:1px solid var(--border);backdrop-filter:blur(12px);padding:20px 24px;text-align:center;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.06em;line-height:1.6;max-width:480px;}
+.tis-null::before,.tis-null::after{content:'';position:absolute;width:10px;height:10px;border-color:var(--border-hi);border-style:solid;}
+.tis-null::before{top:-1px;left:-1px;border-width:2px 0 0 2px;}
+.tis-null::after{bottom:-1px;right:-1px;border-width:0 2px 2px 0;}
+.tis-null{position:relative;}
+.tis-detail-btn{display:block;margin:6px auto 0;background:none;border:1px solid var(--border);color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.1em;padding:4px 14px;cursor:pointer;}
+.tis-detail-btn:hover{border-color:var(--pip);color:var(--pip);}
+.tis-footer{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:0.04em;text-align:center;max-width:480px;margin-top:6px;line-height:1.4;opacity:0.7;}
+/* Band colors */
+.tis-band-minimal{color:#555;}
+.tis-band-limited{color:#d4c755;}
+.tis-band-moderate{color:#e09940;}
+.tis-band-strong{color:#e06020;}
+.tis-band-severe{color:#e02020;}
+/* Score detail panel */
+.tis-detail-panel{display:none;position:fixed;top:180px;right:16px;z-index:91;background:rgba(6,8,12,0.96);border:1px solid var(--border-hi);backdrop-filter:blur(14px);padding:16px 20px;width:420px;max-height:70vh;overflow-y:auto;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--bright);line-height:1.6;}
+.tis-detail-panel.open{display:block;}
+.tis-detail-panel::before,.tis-detail-panel::after{content:'';position:absolute;width:10px;height:10px;border-color:var(--pip);border-style:solid;}
+.tis-detail-panel::before{top:-1px;left:-1px;border-width:2px 0 0 2px;}
+.tis-detail-panel::after{bottom:-1px;right:-1px;border-width:0 2px 2px 0;}
+.tis-detail-hdr{font-family:'Orbitron',sans-serif;font-size:12px;font-weight:700;color:var(--pip);letter-spacing:0.12em;margin-bottom:10px;}
+.tis-factor-row{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(197,255,0,0.04);}
+.tis-factor-label{color:var(--muted);flex:1;}
+.tis-factor-val{color:var(--bright);font-weight:700;min-width:40px;text-align:right;}
+.tis-factor-note{font-size:9px;color:var(--muted);margin-top:1px;}
+.tis-divider{border:none;border-top:1px solid rgba(197,255,0,0.12);margin:8px 0;}
+.tis-summary{font-family:'Barlow Condensed',sans-serif;font-size:13px;color:var(--bright);line-height:1.5;margin-top:10px;padding:10px 12px;background:rgba(197,255,0,0.03);border-left:3px solid var(--pip);}
+.tis-warning{margin-top:8px;padding:8px 12px;font-family:'Barlow Condensed',sans-serif;font-size:13px;line-height:1.4;}
+.tis-warning.amber{background:rgba(255,179,71,0.06);border-left:3px solid #ffb347;color:#ffb347;}
+.tis-warning.red{background:rgba(255,40,40,0.06);border-left:3px solid #ff4040;color:#ff6a6a;}
+/* Clothing selector */
+.tis-clothing-wrap{margin-top:6px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);}
+.tis-clothing-wrap select{font-family:'Share Tech Mono',monospace;font-size:10px;background:#03050a;color:var(--bright);border:1px solid var(--border);padding:2px 6px;}
+@media(max-width:900px){
+  .tis-panel{position:relative;top:auto;right:auto;margin:10px 0;justify-content:center;flex-wrap:wrap;}
+  .tis-detail-panel{position:relative;top:auto;right:auto;width:100%;margin-top:8px;}
+}
 </style>
 </head>
 <body>
@@ -562,11 +615,83 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 <div class="topbar">
   <div>
     <div class="brand">[SLATE]</div>
-    <div class="brand-sub">LESS LETHAL BALLISTICS CALCULATOR · FIELD PLATFORM v3.1</div>
+    <div class="brand-sub">SYSTEM FOR LESS-LETHAL ASSESSMENT &amp; TRAINING EVALUATION · v3.1</div>
   </div>
   <div style="text-align:right;">
     <div id="live-readout" title="muzzle / impact" style="font-family:'Orbitron',monospace;font-size:22px;font-weight:900;color:var(--pip);text-shadow:0 0 18px rgba(197,255,0,0.4);letter-spacing:0.04em;line-height:1;">↑ — &nbsp; ↓ —</div>
     <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.12em;margin-top:4px;">MUZZLE / TARGET</div>
+  </div>
+</div>
+
+<!-- TIS PANEL — Threat Interruption Score -->
+<div class="tis-panel" id="tis-panel">
+  <div class="tis-null" id="tis-null">Please select your launcher to see your Threat Interruption Score.</div>
+  <div id="tis-cards" style="display:none;">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;">
+      <div class="tis-card" id="tis-card-tis">
+        <div class="tis-card-label">THREAT INTERRUPTION <button class="tis-info-btn" onclick="openModal('modal-tis-info')" title="What is TIS?">i</button></div>
+        <div class="tis-card-score" id="tis-score">—</div>
+        <div class="tis-card-band" id="tis-band">—</div>
+        <div class="tis-card-bar"><div class="tis-card-bar-fill" id="tis-bar-fill" style="width:0%;"></div></div>
+      </div>
+      <div class="tis-card" id="tis-card-ips">
+        <div class="tis-card-label">INJURY POTENTIAL</div>
+        <div class="tis-card-score" id="ips-score">—</div>
+        <div class="tis-card-band" id="ips-band">—</div>
+        <div class="tis-card-bar"><div class="tis-card-bar-fill" id="ips-bar-fill" style="width:0%;"></div></div>
+      </div>
+      <div class="tis-card" id="tis-card-conf">
+        <div class="tis-card-label">CONFIDENCE</div>
+        <div class="tis-card-score" id="conf-score">—</div>
+        <div class="tis-card-band" id="conf-band">—</div>
+        <div class="tis-card-bar"><div class="tis-card-bar-fill" id="conf-bar-fill" style="width:0%;"></div></div>
+      </div>
+    </div>
+    <button class="tis-detail-btn" id="tis-detail-toggle" onclick="toggleTisDetail()">SCORE DETAIL &#9662;</button>
+    <div class="tis-footer">Scores are modeled estimates, not guarantees. Human response to less-lethal impact is highly variable. Educational and training use only.</div>
+    <div class="tis-clothing-wrap">
+      CLOTHING: <select id="tis-clothing" onchange="calcUpdate()">
+        <option value="summer">Summer — Hoodie (x0.92)</option>
+        <option value="spring">Spring/Fall — Hoodie + Jacket (x0.85)</option>
+        <option value="winter">Winter — Heavy Coat (x0.78)</option>
+      </select>
+      &nbsp; TARGET: <select id="tis-movement" onchange="calcUpdate()">
+        <option value="stationary">Stationary</option>
+        <option value="moving">Moving</option>
+      </select>
+    </div>
+  </div>
+</div>
+<!-- TIS Detail Panel -->
+<div class="tis-detail-panel" id="tis-detail-panel">
+  <div class="tis-detail-hdr">SLATE — SCORE BREAKDOWN</div>
+  <div id="tis-detail-body"></div>
+  <div id="tis-warnings"></div>
+  <div class="tis-summary" id="tis-summary"></div>
+</div>
+
+<!-- TIS Info Modal -->
+<div class="modal-backdrop" id="modal-tis-info">
+  <div class="modal-panel" style="max-width:560px;">
+    <div class="modal-hdr">
+      <div>
+        <div class="modal-title">THREAT INTERRUPTION SCORE</div>
+        <div class="modal-sub">What it measures and what it does not</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-tis-info')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="disclaimer-body">
+        <p>The Threat Interruption Score (TIS) is a weighted estimate of how likely your current launcher configuration is to produce an <strong>immediate, observable disruption of threatening behavior</strong> at your selected engagement distance.</p>
+        <p>It accounts for impact energy, projectile behavior, platform consistency, follow-up capability, and real-world contextual variables.</p>
+        <p><strong>It is a projected likelihood, not a guarantee.</strong> Human response to less-lethal impact is highly variable and depends on pain tolerance, adrenaline, intoxication, clothing, body mass, and shot placement.</p>
+        <p>Always train with your platform and understand the law in your jurisdiction.</p>
+        <p style="margin-top:12px;"><strong>The three scores:</strong></p>
+        <p><em>TIS (0-100)</em> — Likelihood of immediate disruptive effect on threatening behavior.</p>
+        <p><em>Injury Potential (0-100)</em> — Consequence severity if impact occurs. Higher is more injurious.</p>
+        <p><em>Confidence (0-100)</em> — Reliability of both scores given your available inputs. Log chrono data and specify your exact projectile to improve confidence.</p>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -2040,6 +2165,9 @@ function calcUpdate(){
 
   // Refresh hero panel stat bars + action button labels
   if(typeof updateHeroPanel==='function') updateHeroPanel();
+
+  // TIS panel
+  if(typeof calculateTIS==='function') calculateTIS();
 }
 
 function updateRoundNote(){
@@ -3693,10 +3821,368 @@ function updateHeroPanel(){
 }
 
 // ============================================================
+// TIS ENGINE — Threat Interruption Score
+// ============================================================
+
+// --- Projectile behavior database ---
+const PROJECTILE_DB={
+  '7.70|0.687':{name:'Grimburg JulV3',     base:88, cls:'kinetic-spherical', feedMod:0},
+  '8.66|0.688':{name:'Smasher XXL',        base:78, cls:'kinetic-spherical', feedMod:0},
+  '9.88|0.684':{name:'AR Tactical JOULES', base:76, cls:'kinetic-spherical', feedMod:0},
+  '8.00|0.686':{name:'Grimburg JulV2',     base:68, cls:'kinetic-spherical', feedMod:0},
+  '8.58|0.684':{name:'Smasher XL',         base:74, cls:'kinetic-spherical', feedMod:0},
+  '6.59|0.679':{name:'Rubber-Steel',       base:52, cls:'kinetic-spherical', feedMod:-12},
+  // .50 cal
+  '1.20|0.500':{name:'T4E Rubber Ball',    base:40, cls:'kinetic-spherical', feedMod:0},
+  '1.45|0.500':{name:'T4E Rubber/Steel',   base:45, cls:'kinetic-spherical', feedMod:0},
+  '2.00|0.500':{name:'T4E Powderball',     base:30, cls:'irritant-frangible',feedMod:0},
+  '2.95|0.500':{name:'T4E Marker Ball',    base:35, cls:'kinetic-spherical', feedMod:0},
+  '4.30|0.500':{name:'T4E Steel BB Heavy', base:38, cls:'kinetic-flagged',   feedMod:-15},
+};
+
+// --- Clothing multipliers ---
+const CLOTHING_MULT={summer:0.92, spring:0.85, winter:0.78};
+
+// --- Season auto-detect ---
+function detectSeason(){
+  const m=new Date().getMonth(); // 0-11
+  if(m>=5&&m<=7) return 'summer';
+  if(m>=10||m<=1) return 'winter';
+  return 'spring';
+}
+
+// --- Energy band scoring (post-clothing) ---
+function scoreEnergy(j){
+  if(j>100)return 100; if(j>=85)return 95; if(j>=70)return 82;
+  if(j>=50)return 65; if(j>=30)return 45; if(j>=15)return 20; return 5;
+}
+
+// --- Gas consistency baseline ---
+function getGasConsistency(pKey,gType){
+  const p=PLATFORMS[pKey];
+  if(gType==='hpa') return 92;
+  // 88g CO2
+  if(p&&p.co2Options&&p.co2Options.includes('88g')) return 72;
+  // Umarex 12g platforms — better by design
+  if(['hdr68','hds68','hdx68','hdb68','tc68'].includes(pKey)) return 65;
+  // Specific poor performers
+  if(pKey==='fsc') return 28;
+  if(pKey==='intru') return 44;
+  // Generic 12g
+  return 48;
+}
+
+// --- Platform reliability modifier ---
+function getPlatformReliabilityMod(pKey){
+  if(pKey==='x68') return -15; // Gen1 O-ring issues
+  if(pKey==='x68g2') return 8; // Gen2 upgraded
+  return 0;
+}
+
+// --- Cold weather modifier ---
+function getColdMod(gType,tempF,pKey){
+  if(tempF>=55) return 0;
+  if(gType==='hpa') return 0;
+  const p=PLATFORMS[pKey];
+  if(p&&p.co2Options&&p.co2Options.includes('88g')) return -10;
+  return -18;
+}
+
+// --- Follow-up ceiling & score ---
+function getFollowUpScore(joules,magSize,pKey){
+  // HDS exception: 2-shot hard cap
+  if(pKey==='hds68') return 15;
+  let ceiling;
+  if(joules>=75) ceiling=3;
+  else if(joules>=50) ceiling=3;
+  else if(joules>=35) ceiling=6;
+  else if(joules>=20) ceiling=8;
+  else ceiling=8;
+  const effective=Math.min(magSize,ceiling);
+  if(effective<=1)return 15;
+  if(effective<=2)return 35;
+  if(effective<=4)return 55;
+  if(effective<=6)return 72;
+  if(effective<=8)return 82;
+  return 88;
+}
+
+// --- Context modifier ---
+function getContextPenalty(clothing,moving,dist){
+  let pen=0;
+  if(clothing==='winter') pen+=5;
+  else if(clothing==='spring') pen+=3;
+  if(moving) pen+=6;
+  if(dist>50) pen+=4;
+  else if(dist>30) pen+=2;
+  return Math.min(15,pen);
+}
+
+// --- Confidence rating ---
+function calcConfidence(fps,roundVal,pKey,gType){
+  let score=100;
+  if(!fps||fps<=0) score-=15; // no chrono
+  if(roundVal==='custom') score-=10; // unknown projectile
+  const mods=typeof selMods!=='undefined'?selMods.size:0;
+  if(mods>2) score-=12; // unverified mod stack
+  if(gType==='co2'&&!fps) score-=8; // 12g with no logged session
+  if(typeof tempF!=='undefined'&&tempF<55&&!fps) score-=8; // cold, no cold chrono
+  if(pKey==='custom') score-=10; // custom build
+  if(pKey==='x68') score-=12; // known reliability issues
+  return Math.max(0,Math.min(100,score));
+}
+
+// --- Injury Potential Score ---
+function calcIPS(impactJ,roundVal){
+  // Base: energy-driven
+  let base;
+  if(impactJ>100) base=98;
+  else if(impactJ>=85) base=92;
+  else if(impactJ>=70) base=82;
+  else if(impactJ>=50) base=68;
+  else if(impactJ>=35) base=52;
+  else if(impactJ>=20) base=35;
+  else if(impactJ>=10) base=18;
+  else base=5;
+  // Projectile class modifier
+  const proj=PROJECTILE_DB[roundVal];
+  if(proj){
+    if(proj.cls==='kinetic-flagged') base=Math.min(100,base+10); // aluminum — worse injuries
+    if(proj.cls==='irritant-frangible') base=Math.max(0,base-15); // pepperball — less kinetic injury
+  }
+  // Custom shaped projectile adds injury risk
+  const shapeEl=document.getElementById('c-custom-shape');
+  if(roundVal==='custom'&&shapeEl){
+    const shape=shapeEl.value;
+    if(shape==='shaped') base=Math.min(100,base+8);
+    if(shape==='slug') base=Math.min(100,base+12);
+  }
+  return Math.max(0,Math.min(100,Math.round(base)));
+}
+
+// --- TIS band classification ---
+function getTisBand(score){
+  if(score>=85) return {label:'SEVERE',cls:'tis-band-severe'};
+  if(score>=70) return {label:'STRONG',cls:'tis-band-strong'};
+  if(score>=50) return {label:'MODERATE',cls:'tis-band-moderate'};
+  if(score>=25) return {label:'LIMITED',cls:'tis-band-limited'};
+  return {label:'MINIMAL',cls:'tis-band-minimal'};
+}
+function getIpsBand(score){
+  if(score>=85) return {label:'EXTREME',cls:'tis-band-severe'};
+  if(score>=70) return {label:'HIGH',cls:'tis-band-strong'};
+  if(score>=50) return {label:'MODERATE',cls:'tis-band-moderate'};
+  if(score>=25) return {label:'LOW',cls:'tis-band-limited'};
+  return {label:'MINIMAL',cls:'tis-band-minimal'};
+}
+function getConfBand(score){
+  if(score>=85) return {label:'STRONG',cls:'tis-band-moderate'};
+  if(score>=70) return {label:'FAIR',cls:'tis-band-limited'};
+  if(score>=50) return {label:'UNCERTAIN',cls:'tis-band-strong'};
+  return {label:'UNRELIABLE',cls:'tis-band-severe'};
+}
+
+// --- Bar color from band class ---
+function bandColor(cls){
+  if(cls==='tis-band-severe') return '#e02020';
+  if(cls==='tis-band-strong') return '#e06020';
+  if(cls==='tis-band-moderate') return '#e09940';
+  if(cls==='tis-band-limited') return '#d4c755';
+  return '#555';
+}
+
+// --- Warnings ---
+function getTisWarnings(roundVal,impactJ,pKey){
+  const warnings=[];
+  const proj=PROJECTILE_DB[roundVal];
+  // Aluminum
+  if(proj&&proj.cls==='kinetic-flagged'){
+    warnings.push({level:'amber',text:'Aluminum rounds are not bore-matched and will cause barrel scoring over time. Accuracy degrades with use. Rounds deform after several firings. Use with caution.'});
+  }
+  // Pepperball above 25J
+  if(proj&&proj.cls==='irritant-frangible'&&impactJ>25){
+    warnings.push({level:'red',text:'WARNING: Standard pepperball rounds risk fragmenting inside the barrel at outputs above 25J. This can damage your launcher and cause injury. Do not use standard pepperball rounds above 25J.'});
+  }
+  // X-68 Gen1 reliability
+  if(pKey==='x68'){
+    warnings.push({level:'amber',text:'This platform has known O-ring reliability issues. Consider upgrading seals or moving to Gen2 hardware.'});
+  }
+  return warnings;
+}
+
+// --- Main TIS calculation ---
+function calculateTIS(){
+  const p=getCurrentPlatform();
+  const nullEl=document.getElementById('tis-null');
+  const cardsEl=document.getElementById('tis-cards');
+  if(!p||!platformKey||platformKey==='custom'){
+    if(nullEl)nullEl.style.display='block';
+    if(cardsEl)cardsEl.style.display='none';
+    return;
+  }
+  const rawFps=document.getElementById('c-fps').value;
+  const fps=rawFps===''||rawFps==null?0:(parseInt(rawFps)||0);
+  if(fps<=0){
+    if(nullEl)nullEl.style.display='block';
+    if(cardsEl)cardsEl.style.display='none';
+    return;
+  }
+  if(nullEl)nullEl.style.display='none';
+  if(cardsEl)cardsEl.style.display='block';
+
+  const sel=document.getElementById('c-round');
+  const roundVal=sel?sel.value:'';
+  let mass;
+  if(roundVal==='custom'){
+    mass=parseFloat(document.getElementById('c-custom-mass').value)||7.7;
+  } else {
+    mass=parseFloat(roundVal.split('|')[0])||7.7;
+  }
+  const dist=parseInt(document.getElementById('c-dist').value)||15;
+  const muzzleJ=fpsToJoules(fps,mass);
+  const impactJ=calcImpact(muzzleJ,dist);
+
+  // Clothing
+  const clothEl=document.getElementById('tis-clothing');
+  const clothing=clothEl?clothEl.value:'summer';
+  const clothMult=CLOTHING_MULT[clothing]||0.92;
+  const adjustedJ=impactJ*clothMult;
+
+  // Movement
+  const moveEl=document.getElementById('tis-movement');
+  const moving=moveEl?moveEl.value==='moving':false;
+
+  // Factor 1: Impact Energy (35%)
+  const f1=scoreEnergy(adjustedJ);
+
+  // Factor 2: Projectile Behavior (20%)
+  const proj=PROJECTILE_DB[roundVal];
+  let f2=proj?proj.base:50; // default 50 for custom/unknown
+  const feedMod=proj?proj.feedMod:0;
+  // Shaped round penalty
+  const shapeEl=document.getElementById('c-custom-shape');
+  if(roundVal==='custom'&&shapeEl){
+    const shape=shapeEl.value;
+    if(shape==='shaped') f2=Math.max(0,f2-8);
+    if(shape==='slug') f2=Math.max(0,f2-4);
+  }
+
+  // Factor 3: Platform Consistency (20%)
+  const gType=typeof gasType!=='undefined'?gasType:'co2';
+  let f3=getGasConsistency(platformKey,gType);
+  f3+=getPlatformReliabilityMod(platformKey);
+  f3+=getColdMod(gType,typeof tempF!=='undefined'?tempF:70,platformKey);
+  f3+=feedMod; // projectile feed reliability
+  f3=Math.max(0,Math.min(100,f3));
+
+  // Factor 4: Accuracy & Follow-Up (15%)
+  const magSize=p.mag||6;
+  const f4=getFollowUpScore(adjustedJ,magSize,platformKey);
+
+  // Factor 5: Context modifier (10%)
+  const ctxPen=getContextPenalty(clothing,moving,dist);
+  const f5=Math.max(0,100-ctxPen*6.67); // scale 0-15 penalty to 0-100 range
+
+  // Weighted TIS
+  const rawTIS=(f1*0.35)+(f2*0.20)+(f3*0.20)+(f4*0.15)+(f5*0.10);
+  const tis=Math.max(0,Math.min(100,Math.round(rawTIS)));
+
+  // IPS
+  const ips=calcIPS(impactJ,roundVal);
+
+  // Confidence
+  const conf=calcConfidence(fps,roundVal,platformKey,gType);
+
+  // --- Update UI ---
+  const tisBand=getTisBand(tis);
+  const ipsBand=getIpsBand(ips);
+  const confBand=getConfBand(conf);
+
+  setTisCard('tis-score','tis-band','tis-bar-fill',tis,tisBand);
+  setTisCard('ips-score','ips-band','ips-bar-fill',ips,ipsBand);
+  setTisCard('conf-score','conf-band','conf-bar-fill',conf,confBand);
+
+  // --- Warnings ---
+  const warnEl=document.getElementById('tis-warnings');
+  if(warnEl){
+    const warnings=getTisWarnings(roundVal,impactJ,platformKey);
+    warnEl.innerHTML=warnings.map(w=>'<div class="tis-warning '+w.level+'">'+w.text+'</div>').join('');
+  }
+
+  // --- Detail panel ---
+  const detailBody=document.getElementById('tis-detail-body');
+  if(detailBody){
+    const projName=proj?proj.name:(roundVal==='custom'?'Custom':'Unknown');
+    const gasLabel=gType==='hpa'?'HPA — consistent':(gType==='co2'?'CO2':'Unknown');
+    const followLabel=magSize+' capacity / '+(adjustedJ>=50?'50J+':adjustedJ>=35?'35-50J':'<35J')+' band';
+    const ctxLabel=(clothing==='winter'?'heavy coat':clothing==='spring'?'hoodie+jacket':'hoodie')+(moving?' / moving target':' / stationary');
+
+    let html='';
+    html+='<div class="tis-factor-row"><div class="tis-factor-label">Impact energy at distance</div><div class="tis-factor-val">'+f1+'</div></div>';
+    html+='<div class="tis-factor-row"><div class="tis-factor-label">Projectile behavior</div><div class="tis-factor-val">'+Math.round(f2)+'</div></div>';
+    html+='<div class="tis-factor-note">['+projName+']</div>';
+    html+='<div class="tis-factor-row"><div class="tis-factor-label">Platform consistency</div><div class="tis-factor-val">'+Math.round(f3)+'</div></div>';
+    html+='<div class="tis-factor-note">['+gasLabel+']</div>';
+    html+='<div class="tis-factor-row"><div class="tis-factor-label">Accuracy &amp; follow-up</div><div class="tis-factor-val">'+Math.round(f4)+'</div></div>';
+    html+='<div class="tis-factor-note">['+followLabel+']</div>';
+    html+='<div class="tis-factor-row"><div class="tis-factor-label">Context modifier</div><div class="tis-factor-val">−'+Math.round(ctxPen)+'</div></div>';
+    html+='<div class="tis-factor-note">['+ctxLabel+']</div>';
+    html+='<hr class="tis-divider">';
+    html+='<div class="tis-factor-row"><div class="tis-factor-label"><strong>Threat Interruption Score</strong></div><div class="tis-factor-val" style="color:'+bandColor(tisBand.cls)+';">'+tis+' / 100</div></div>';
+    html+='<div class="tis-factor-note">['+tisBand.label+']</div>';
+    html+='<div class="tis-factor-row"><div class="tis-factor-label"><strong>Injury Potential Score</strong></div><div class="tis-factor-val" style="color:'+bandColor(ipsBand.cls)+';">'+ips+' / 100</div></div>';
+    html+='<div class="tis-factor-note">['+ipsBand.label+']</div>';
+    html+='<div class="tis-factor-row"><div class="tis-factor-label"><strong>Confidence</strong></div><div class="tis-factor-val">'+conf+' / 100</div></div>';
+
+    // Confidence penalties breakdown
+    const penList=[];
+    if(!fps||fps<=0) penList.push('No chrono baseline (−15)');
+    if(roundVal==='custom') penList.push('Unknown projectile weight (−10)');
+    if(typeof selMods!=='undefined'&&selMods.size>2) penList.push('Unverified mod stack (−12)');
+    if(gType==='co2'&&!fps) penList.push('12g CO2, no logged session (−8)');
+    if(penList.length){
+      html+='<div class="tis-factor-note" style="margin-top:4px;">Penalties: '+penList.join(', ')+'</div>';
+    }
+
+    detailBody.innerHTML=html;
+  }
+
+  // --- Summary statement ---
+  const summEl=document.getElementById('tis-summary');
+  if(summEl){
+    const pName=p.name.replace(/^(Umarex|Valken|NXWerks|DI|Mercury Rise|Milsig)\s*/i,'');
+    const projName=proj?proj.name:'your loaded projectile';
+    const gasWord=gType==='hpa'?'HPA':'CO2';
+    const distFt=dist;
+    summEl.textContent='Your '+pName+' loaded with '+projName+' running '+gasWord+' at '+distFt+' ft is projected to deliver '+tisBand.label.toLowerCase()+' immediate disruption with '+ipsBand.label.toLowerCase()+' injury consequence. Confidence is '+confBand.label.toLowerCase()+(conf<85?' — log a chrono session to validate your actual output.':'.');
+  }
+}
+
+function setTisCard(scoreId,bandId,barId,score,band){
+  const sEl=document.getElementById(scoreId);
+  const bEl=document.getElementById(bandId);
+  const barEl=document.getElementById(barId);
+  if(sEl){sEl.textContent=score;sEl.className='tis-card-score '+band.cls;}
+  if(bEl){bEl.textContent=band.label;bEl.className='tis-card-band '+band.cls;}
+  if(barEl){barEl.style.width=score+'%';barEl.style.background=bandColor(band.cls);}
+}
+
+function toggleTisDetail(){
+  const panel=document.getElementById('tis-detail-panel');
+  const btn=document.getElementById('tis-detail-toggle');
+  if(!panel)return;
+  const open=panel.classList.toggle('open');
+  if(btn)btn.innerHTML=open?'SCORE DETAIL &#9652;':'SCORE DETAIL &#9662;';
+}
+
+// ============================================================
 // INIT
 // ============================================================
 function initApp(){
   initPlatformOptions();
+  // Auto-detect season for TIS clothing
+  const clothSel=document.getElementById('tis-clothing');
+  if(clothSel) clothSel.value=detectSeason();
   // Mirror launcher options into session log tab
   const ll=document.getElementById('l-launcher');
   if(ll){
