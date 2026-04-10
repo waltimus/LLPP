@@ -1582,7 +1582,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
         <p>Poor CO2 platform (FSC, X-68 Gen1): <em>−10 additional</em></p>
         <p>No chrono input (using manufacturer spec): <em>−15</em></p>
         <p>Unknown/custom projectile: <em>−10</em></p>
-        <p>Unverified power/tactical mods (3+): <em>−12</em></p>
+        <p>Stacked power mods (3+ power mods): <em>−12</em> (tactical mods like optics, lights, grips have no penalty)</p>
         <p>Gen1 reliability flag (no seal kit): <em>−12</em></p>
         <p>Cold weather + CO2: <em>−8</em></p>
         <p>Extended range (50+ ft): <em>−5</em></p>
@@ -4033,13 +4033,16 @@ function calcConfidence(fps,roundVal,pKey,gType){
   // Mod stack: reliability mods BOOST confidence, unverified power mods penalize
   if(typeof selMods!=='undefined'){
     const reliMods=['oring','detent','boltspring','heatcore','lube'];
-    let reliCount=0,otherCount=0;
-    selMods.forEach(id=>{if(reliMods.includes(id))reliCount++;else otherCount++;});
+    const tacMods=['sights','magnifier','light','laser','foregrip','pgrip','rail','stockup','buttstock','carbinekit','boxmag','shroud','suppressor'];
+    let reliCount=0,powerCount=0;
+    selMods.forEach(id=>{
+      if(reliMods.includes(id)) reliCount++;
+      else if(!tacMods.includes(id)) powerCount++; // only power mods count
+    });
     // Each reliability mod adds +3 confidence (verified improvement)
     score+=reliCount*3;
-    // Unverified power/tactical mods still penalize
-    if(otherCount>2) score-=12;
-    else if(otherCount>0) score-=4;
+    // Only stacked power mods penalize — tactical mods have zero ballistic effect
+    if(powerCount>=3) score-=12;
   }
   // Cold weather + CO2 = compounding uncertainty
   if(typeof tempF!=='undefined'&&tempF<55&&gType==='co2') score-=8;
@@ -4363,11 +4366,14 @@ function calculateTIS(){
     if(gType==='co2'&&['fsc','x68','intru'].includes(platformKey)) penList.push('Known CO2 consistency issues (−10)');
     if(roundVal==='custom') penList.push('Unknown projectile (−10)');
     const reliMods=['oring','detent','boltspring','heatcore','lube'];
-    let reliCount=0,otherModCount=0;
-    if(typeof selMods!=='undefined') selMods.forEach(id=>{if(reliMods.includes(id))reliCount++;else otherModCount++;});
+    const tacMods=['sights','magnifier','light','laser','foregrip','pgrip','rail','stockup','buttstock','carbinekit','boxmag','shroud','suppressor'];
+    let reliCount=0,powerModCount=0;
+    if(typeof selMods!=='undefined') selMods.forEach(id=>{
+      if(reliMods.includes(id)) reliCount++;
+      else if(!tacMods.includes(id)) powerModCount++;
+    });
     if(reliCount>0) penList.push('Reliability mods installed (+'+reliCount*3+')');
-    if(otherModCount>2) penList.push('Unverified mod stack (−12)');
-    else if(otherModCount>0) penList.push('Unverified mods (−4)');
+    if(powerModCount>=3) penList.push('Stacked power mods (−12)');
     const hasSeals=typeof selMods!=='undefined'&&selMods.has('oring');
     if(platformKey==='x68'&&!hasSeals) penList.push('Gen1 reliability flag (−12)');
     if(platformKey==='x68'&&hasSeals) penList.push('Gen1 seal kit installed — penalty removed');
