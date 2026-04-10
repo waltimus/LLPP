@@ -2454,7 +2454,14 @@ function applyLoadout(s){
   if(typeof s.tempF==='number')tempF=s.tempF;
   if(typeof s.psi==='number')psi=s.psi;
   if(s.modCfg)modCfg={...modCfg,...s.modCfg};
-  if(Array.isArray(s.selMods))selMods=new Set(s.selMods);
+  if(Array.isArray(s.selMods)){
+    // Validate restored mods against platform's available catalog
+    // to strip any stale mods that don't belong to this platform
+    selMods=new Set(s.selMods);
+    const catCheck=getModCatalog();
+    const validIds=new Set([...catCheck.power,...catCheck.reli,...catCheck.tac].map(m=>m.id));
+    selMods.forEach(id=>{if(!validIds.has(id))selMods.delete(id);});
+  }
   onPlatformChange(true); // skip mod clear — draft already has correct mods
   if(s.round){
     const rSel=document.getElementById('c-round');
@@ -3258,6 +3265,10 @@ function applyPresetState(p){
   psi=p.psi||800;
   modCfg={...(p.modCfg||{bore:0.688,barrelLen:11,customName:'',customDelta:0})};
   selMods=new Set(p.mods||[]);
+  // Validate mods against platform catalog — strip any that don't belong
+  const presetCat=getModCatalog();
+  const presetValidIds=new Set([...presetCat.power,...presetCat.reli,...presetCat.tac].map(m=>m.id));
+  selMods.forEach(id=>{if(!presetValidIds.has(id))selMods.delete(id);});
   // Update UI
   document.getElementById('c-launcher').value=platformKey;
   document.getElementById('c-custom-base-low').value=customBaseline.low;
@@ -4078,10 +4089,12 @@ function calcConfidence(loggedShots,roundVal,pKey,gType){
   // Confidence is never 100 — there's always modeling uncertainty.
   // Base starts at 88 (chrono-validated known platform) and goes down.
   let score=88;
-  // CO2 variance is inherent — always a penalty vs HPA
-  if(gType==='co2') score-=8;
-  // Specific poor CO2 platforms get extra penalty
-  if(gType==='co2'&&['fsc','x68','intru'].includes(pKey)) score-=10;
+  // CO2 depletion curve — single consolidated penalty (not double-stacked).
+  // Known-poor CO2 platforms get the larger hit; others get the generic one.
+  if(gType==='co2'){
+    if(['fsc','x68','intru'].includes(pKey)) score-=10; // platform-specific CO2 issues
+    else score-=8; // generic CO2 variance vs HPA
+  }
   // Chrono validation: logged shots BOOST confidence, no shots = penalty
   if(loggedShots>=5) score+=5;    // well-validated
   else if(loggedShots>=1) score+=2; // some validation
@@ -4292,6 +4305,13 @@ function calculateTIS(){
   f3+=getPlatformReliabilityMod(platformKey);
   f3+=getColdMod(gType,typeof tempF!=='undefined'?tempF:70,platformKey);
   f3+=feedMod;
+  // Reliability mods improve shot-to-shot consistency
+  if(typeof selMods!=='undefined'){
+    const reliIds=['oring','detent','boltspring','heatcore','lube'];
+    let rCnt=0;
+    selMods.forEach(id=>{if(reliIds.includes(id))rCnt++;});
+    f3+=rCnt*3;
+  }
   f3=Math.max(0,Math.min(100,f3));
 
   // Factor 4: Accuracy & Follow-Up (15%)
@@ -4423,8 +4443,10 @@ function calculateTIS(){
     if(validShots.length>=5) penList.push('Chrono-validated: '+validShots.length+' shots (+5)');
     else if(validShots.length>=1) penList.push('Partial chrono data: '+validShots.length+' shots (+2)');
     else penList.push('No chrono data — using stack estimate (−15)');
-    if(gType==='co2') penList.push('CO2 gas variance (−8)');
-    if(gType==='co2'&&['fsc','x68','intru'].includes(platformKey)) penList.push('Known CO2 consistency issues (−10)');
+    if(gType==='co2'){
+      if(['fsc','x68','intru'].includes(platformKey)) penList.push('CO2 depletion curve — known platform issues (−10)');
+      else penList.push('CO2 depletion curve (−8)');
+    }
     if(roundVal==='custom') penList.push('Unknown projectile (−10)');
     const reliMods=['oring','detent','boltspring','heatcore','lube'];
     let reliCount=0;
@@ -4448,7 +4470,10 @@ function calculateTIS(){
   if(reasonsEl){
     const reasons=[];
     if(f1<70) reasons.push('Energy penalty: '+adjustedJ.toFixed(0)+'J through clothing at '+dist+' ft is below the strong-effect threshold. Close distance or increase platform output.');
-    if(f3<60) reasons.push('Consistency penalty: '+gType.toUpperCase()+' gas on this platform shows significant shot-to-shot variance. Log chrono data to confirm.');
+    if(f3<60){
+      if(validShots.length>0) reasons.push('Consistency penalty: '+gType.toUpperCase()+' gas has inherent shot-to-shot variance. Your '+validShots.length+' logged shots help refine confidence, but the platform\'s gas system consistency ceiling remains a factor.');
+      else reasons.push('Consistency penalty: '+gType.toUpperCase()+' gas on this platform shows significant shot-to-shot variance. Log chrono data to confirm.');
+    }
     if(f4<50) reasons.push('Follow-up ceiling applied: '+adjustedJ.toFixed(0)+'J platforms are capped at limited effective follow-up shots.');
     if(conf<70) reasons.push('Confidence reduced: multiple uncertainty factors are stacking. Validate your setup with a chrono session.');
     if(platformKey==='hds68') reasons.push('HDS 68 follow-up score capped at 15 — 2-shot reload constraint overrides capacity.');
