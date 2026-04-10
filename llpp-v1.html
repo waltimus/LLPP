@@ -2455,7 +2455,7 @@ function applyLoadout(s){
   if(typeof s.psi==='number')psi=s.psi;
   if(s.modCfg)modCfg={...modCfg,...s.modCfg};
   if(Array.isArray(s.selMods))selMods=new Set(s.selMods);
-  onPlatformChange();
+  onPlatformChange(true); // skip mod clear — draft already has correct mods
   if(s.round){
     const rSel=document.getElementById('c-round');
     if(rSel){rSel.value=s.round;if(typeof onRoundChange==='function')onRoundChange();}
@@ -2813,16 +2813,20 @@ function getCurrentStockRange(){
   return [p.stockLow||0,p.stockHigh||0];
 }
 
-function onPlatformChange(){
+function onPlatformChange(skipModClear){
   platformKey=document.getElementById('c-launcher').value;
   const p=getCurrentPlatform();
-  // Clear selected power mods since bore/barrel may differ; keep reliability + tactical
-  const keep=new Set();
-  [...selMods].forEach(id=>{
-    const all=[...MODS_RELI,...MODS_TAC].find(m=>m.id===id);
-    if(all)keep.add(id);
-  });
-  selMods=keep;
+  // Clear selected power mods when user manually switches platforms
+  // (bore/barrel may differ). Skip when loading a preset — preset
+  // already has the correct mod set saved.
+  if(!skipModClear){
+    const keep=new Set();
+    [...selMods].forEach(id=>{
+      const all=[...MODS_RELI,...MODS_TAC].find(m=>m.id===id);
+      if(all)keep.add(id);
+    });
+    selMods=keep;
+  }
   // Version selector visibility
   const vwrap=document.getElementById('c-version-wrap');
   vwrap.style.display=p.versions?'block':'none';
@@ -3265,7 +3269,7 @@ function applyPresetState(p){
   document.getElementById('c-psi').value=psi;
   document.getElementById('c-psi-out').textContent=psi;
   if(p.fps)document.getElementById('c-fps').value=p.fps;
-  onPlatformChange();
+  onPlatformChange(true); // skip mod clear — preset already has correct mods
   if(typeof renderGasBottles==='function')renderGasBottles();
 }
 
