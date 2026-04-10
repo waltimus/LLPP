@@ -2847,7 +2847,11 @@ function onPlatformChange(skipModClear){
   const hpaTab=document.getElementById('gas-tab-hpa');
   co2Tab.classList.toggle('disabled',!co2Ok);
   hpaTab.classList.toggle('disabled',!hpaOk);
-  // Auto-pick a valid gas
+  // Auto-pick gas: respect platform's primaryGas on manual switches,
+  // fallback to whatever is available
+  if(!skipModClear && p.primaryGas){
+    gasType=p.primaryGas;
+  }
   if(gasType==='co2'&&!co2Ok)gasType='hpa';
   if(gasType==='hpa'&&!hpaOk)gasType='co2';
   // Platform bore → mod bore default
