@@ -591,6 +591,20 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 .tis-warning{margin-top:8px;padding:10px 14px;font-family:'Barlow Condensed',sans-serif;font-size:13px;line-height:1.4;}
 .tis-warning.amber{background:rgba(255,179,71,0.06);border:1px solid rgba(255,179,71,0.2);border-left:3px solid #ffb347;color:#ffb347;}
 .tis-warning.red{background:rgba(255,40,40,0.06);border:1px solid rgba(255,40,40,0.2);border-left:3px solid #ff4040;color:#ff6a6a;}
+/* Energy warning banners — prominent safety alerts */
+.energy-warn{margin-top:10px;padding:14px 16px;font-family:'Share Tech Mono',monospace;font-size:13px;line-height:1.7;letter-spacing:0.02em;position:relative;overflow:hidden;}
+.energy-warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;}
+.energy-warn-title{font-family:'Orbitron',monospace;font-size:12px;font-weight:700;letter-spacing:0.14em;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.energy-warn-body{font-size:13px;line-height:1.8;opacity:0.92;}
+.energy-warn.amber{background:rgba(255,179,71,0.06);border:1px solid rgba(255,179,71,0.2);border-left:4px solid #ffb347;color:#ffb347;}
+.energy-warn.amber::before{background:linear-gradient(90deg,transparent,rgba(255,179,71,0.3),transparent);}
+.energy-warn.red{background:rgba(255,40,40,0.08);border:1px solid rgba(255,40,40,0.25);border-left:4px solid #ff4040;color:#ff6a6a;}
+.energy-warn.red::before{background:linear-gradient(90deg,transparent,rgba(255,40,40,0.4),transparent);}
+.energy-warn.info{background:rgba(100,180,255,0.05);border:1px solid rgba(100,180,255,0.2);border-left:4px solid #64b4ff;color:#8ac8ff;}
+.energy-warn.info::before{background:linear-gradient(90deg,transparent,rgba(100,180,255,0.3),transparent);}
+.energy-warn ul{margin:8px 0 0 4px;padding:0;list-style:none;}
+.energy-warn ul li{padding:3px 0;position:relative;padding-left:14px;}
+.energy-warn ul li::before{content:'·';position:absolute;left:0;font-weight:700;}
 @media (max-width:860px){
   #tis-hero-active .card{min-width:0;}
 }
@@ -700,6 +714,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
           </div>
 
           <div class="chrono-note">Enter chrono data directly. Default UI value starts at 300 FPS.</div>
+          <div id="energy-warnings"></div>
         </div>
 
         <div class="section-frame range-frame">
@@ -2227,6 +2242,9 @@ function calcUpdate(){
   // Round-specific note
   updateRoundNote();
 
+  // Energy-level safety warnings
+  if(typeof renderEnergyWarnings==='function') renderEnergyWarnings(muzzle,sel.value);
+
   if(fps>0){
     updatePlacement(impact,muzzle,dist);
     renderResponse('c-response',impact);
@@ -3538,11 +3556,15 @@ function renderLog(){
   el.innerHTML=sessionLog.map(e=>{
     const impStr=e.impact>0?e.impact.toFixed(1)+'J':'?';
     const sc=e.impact>=50?'ibg':e.impact>=45?'ibw':'ibr';
+    // Energy-level warning badges for logged shots
+    let warnHtml='';
+    if(e.muzzle>=120) warnHtml='<div class="energy-warn red" style="margin-top:6px;padding:8px 10px;font-size:11px;"><div class="energy-warn-title" style="font-size:10px;">⛔ CRITICAL OUTPUT</div><div class="energy-warn-body" style="font-size:11px;">This shot was logged at '+e.muzzle.toFixed(0)+'J muzzle — above the 120J lethal threshold.</div></div>';
+    else if(e.muzzle>=80) warnHtml='<div class="energy-warn amber" style="margin-top:6px;padding:8px 10px;font-size:11px;"><div class="energy-warn-title" style="font-size:10px;">⚠ ELEVATED OUTPUT</div><div class="energy-warn-body" style="font-size:11px;">This shot was logged at '+e.muzzle.toFixed(0)+'J muzzle — above the 80J elevated consequence zone.</div></div>';
     return`<div class="log-entry">
       <div class="log-hdr"><span class="log-launcher">${e.launcher}</span><span class="log-time">${e.time}</span></div>
       <div class="log-meta">${e.round} · ${e.dist}ft · ${e.muzzle}J → <span class="ibadge ${sc}">${impStr}</span></div>
       <div class="log-meta">MEDIUM: ${e.medium} · MODS: ${e.mods}</div>
-      ${e.notes?'<div class="log-note">'+e.notes+'</div>':''}
+      ${e.notes?'<div class="log-note">'+e.notes+'</div>':''}${warnHtml}
     </div>`;
   }).join('');
 }
@@ -4097,19 +4119,56 @@ function bandColor(cls){
 function getTisWarnings(roundVal,impactJ,pKey){
   const warnings=[];
   const proj=PROJECTILE_DB[roundVal];
-  // Aluminum
+  // Aluminum round warning
   if(proj&&proj.cls==='kinetic-flagged'){
-    warnings.push({level:'amber',text:'Aluminum rounds are not bore-matched and will cause barrel scoring over time. Accuracy degrades with use. Rounds deform after several firings. Use with caution.'});
+    warnings.push({level:'amber',text:'⚠ BARREL WEAR AND ACCURACY RISK — Aluminum rounds are typically not bore-matched to .68 caliber platforms. Extended use will cause barrel scoring and permanent accuracy degradation. Rounds deform after repeated use, further reducing consistency. Use for training familiarization only. Not recommended for primary defensive loadout.'});
   }
-  // Pepperball above 25J
+  // Pepperball fragmentation above 25J
   if(proj&&proj.cls==='irritant-frangible'&&impactJ>25){
-    warnings.push({level:'red',text:'WARNING: Standard pepperball rounds risk fragmenting inside the barrel at outputs above 25J. This can damage your launcher and cause injury. Do not use standard pepperball rounds above 25J.'});
+    warnings.push({level:'red',text:'⛔ LAUNCHER DAMAGE RISK — Standard pepperball rounds are not rated for outputs above 25 joules. At your current configuration, these rounds risk fragmenting inside the barrel. This can cause permanent launcher damage and potential injury to the operator. Use Grimburg KinetiCS or equivalent hardened rounds if irritant delivery above 25J is required. KinetiCS rounds are rated to approximately 30J.'});
   }
-  // X-68 Gen1 reliability
-  if(pKey==='x68'){
+  // X-68 Gen1 reliability (only if no seal kit)
+  const hasSeals=typeof selMods!=='undefined'&&selMods.has('oring');
+  if(pKey==='x68'&&!hasSeals){
     warnings.push({level:'amber',text:'This platform has known O-ring reliability issues. Consider upgrading seals or moving to Gen2 hardware.'});
   }
   return warnings;
+}
+
+// --- Energy-level warnings (displayed on calculator tab + Score tab) ---
+function getEnergyWarnings(muzzleJ,roundVal){
+  const warns=[];
+  const proj=PROJECTILE_DB[roundVal];
+  // 80J+ amber
+  if(muzzleJ>=80&&muzzleJ<120){
+    warns.push({level:'amber',title:'⚠ ELEVATED CONSEQUENCE ZONE',body:'Your current configuration is operating at or above 80 joules. At this output level, impact consequences are significantly elevated. Shot placement discipline is critical. Avoid all head, neck, throat, and groin targeting under any circumstances. Misplaced shots at this energy level carry a meaningful risk of permanent injury. Train accordingly.'});
+  }
+  // 120J+ red
+  if(muzzleJ>=120){
+    warns.push({level:'red',title:'⛔ CRITICAL OUTPUT THRESHOLD',body:'Your current configuration is approaching documented lethal energy levels. Research places severe injury and fatality risk — including skull fracture, organ damage, and cardiac events — at approximately 120 joules of impact energy. At this output, this platform can no longer be reliably classified as less-lethal. Proceed only if you fully understand the legal, medical, and ethical consequences of deployment at this energy level. Head, neck, throat, spine, and groin strikes are potentially fatal at this output.'});
+  }
+  // Anatomy reference — persistent when either energy warning active
+  if(muzzleJ>=80){
+    warns.push({level:'info',title:'ℹ CRITICAL ANATOMY REFERENCE',body:'Regardless of joule output, the following areas carry elevated risk of permanent injury or death at any energy level:<ul><li>Temple and skull — fatal risk from 40J+</li><li>Throat and trachea — fatal risk from 25J+</li><li>Eyes — permanent injury or blindness at any energy level</li><li>Cardiac zone — commotio cordis risk is energy and timing dependent</li><li>Spine — paralysis risk at moderate to high energy levels</li></ul>These areas are never intentional targets. Center mass only.'});
+  }
+  // Pepperball fragmentation
+  if(proj&&proj.cls==='irritant-frangible'&&muzzleJ>25){
+    warns.push({level:'red',title:'⛔ LAUNCHER DAMAGE RISK',body:'Standard pepperball rounds are not rated for outputs above 25 joules. At your current configuration, these rounds risk fragmenting inside the barrel. This can cause permanent launcher damage and potential injury to the operator. Use Grimburg KinetiCS or equivalent hardened rounds if irritant delivery above 25J is required. KinetiCS rounds are rated to approximately 30J.'});
+  }
+  // Aluminum round
+  if(proj&&proj.cls==='kinetic-flagged'){
+    warns.push({level:'amber',title:'⚠ BARREL WEAR AND ACCURACY RISK',body:'Aluminum rounds are typically not bore-matched to .68 caliber platforms. Extended use will cause barrel scoring and permanent accuracy degradation. Rounds deform after repeated use, further reducing consistency. Use for training familiarization only. Not recommended for primary defensive loadout.'});
+  }
+  return warns;
+}
+
+function renderEnergyWarnings(muzzleJ,roundVal){
+  const el=document.getElementById('energy-warnings');
+  if(!el)return;
+  if(!muzzleJ||muzzleJ<=0){el.innerHTML='';return;}
+  const warns=getEnergyWarnings(muzzleJ,roundVal);
+  if(!warns.length){el.innerHTML='';return;}
+  el.innerHTML=warns.map(w=>'<div class="energy-warn '+w.level+'"><div class="energy-warn-title">'+w.title+'</div><div class="energy-warn-body">'+w.body+'</div></div>').join('');
 }
 
 // --- Main TIS calculation ---
@@ -4250,11 +4309,17 @@ function calculateTIS(){
   if(confEl){confEl.textContent=conf;confEl.style.color=bandColor(confBand.cls);}
   if(confBandEl){confBandEl.textContent=confBand.label;confBandEl.className=confBand.cls;}
 
-  // --- Warnings ---
+  // --- Warnings (Score tab — merge TIS + energy warnings) ---
   const warnEl=document.getElementById('tis-warnings');
   if(warnEl){
-    const warnings=getTisWarnings(roundVal,impactJ,platformKey);
-    warnEl.innerHTML=warnings.map(w=>'<div class="tis-warning '+w.level+'">'+w.text+'</div>').join('');
+    let wHtml='';
+    // Energy-level warnings (80J+, 120J+, anatomy, pepperball, aluminum)
+    const eWarns=getEnergyWarnings(muzzleJ,roundVal);
+    wHtml+=eWarns.map(w=>'<div class="energy-warn '+w.level+'"><div class="energy-warn-title">'+w.title+'</div><div class="energy-warn-body">'+w.body+'</div></div>').join('');
+    // Platform-specific TIS warnings
+    const tWarns=getTisWarnings(roundVal,impactJ,platformKey);
+    wHtml+=tWarns.map(w=>'<div class="tis-warning '+w.level+'">'+w.text+'</div>').join('');
+    warnEl.innerHTML=wHtml;
   }
 
   // --- Factor breakdown (Score tab) ---
