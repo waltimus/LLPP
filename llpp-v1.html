@@ -1027,9 +1027,9 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
           <div class="modal-section">
             <div class="modal-section-hdr">OUTPUT PRESSURE</div>
             <div class="gas-row">
-              <input type="range" id="c-psi" min="600" max="1200" value="800" step="10" oninput="onPsiChange()">
+              <input type="range" id="c-psi" min="600" max="1500" value="800" step="10" oninput="onPsiChange()">
               <div class="gas-val"><span id="c-psi-out">800</span> PSI</div>
-              <input type="number" id="c-psi-num" min="600" max="1200" step="10" value="800" oninput="onPsiNumChange()" style="width:90px;margin-left:8px;">
+              <input type="number" id="c-psi-num" min="600" max="1500" step="10" value="800" oninput="onPsiNumChange()" style="width:90px;margin-left:8px;">
             </div>
             <div class="gas-meta" id="c-hpa-meta">Stock baseline — 0J delta vs 800 PSI reference. 1050 PSI typically adds +30–40 FPS.</div>
             <div id="c-hpa-warn" class="sub-note danger" style="display:none;"></div>
@@ -1582,7 +1582,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
         <p>Poor CO2 platform (FSC, X-68 Gen1): <em>−10 additional</em></p>
         <p>No chrono input (using manufacturer spec): <em>−15</em></p>
         <p>Unknown/custom projectile: <em>−10</em></p>
-        <p>Stacked power mods (3+ power mods): <em>−12</em> (tactical mods like optics, lights, grips have no penalty)</p>
+        <p>HPA above 1200 PSI: <em>−12</em> (outside the tested operating envelope — seals, gas delivery, and output become unpredictable)</p>
         <p>Gen1 reliability flag (no seal kit): <em>−12</em></p>
         <p>Cold weather + CO2: <em>−8</em></p>
         <p>Extended range (50+ ft): <em>−5</em></p>
@@ -4030,20 +4030,17 @@ function calcConfidence(fps,roundVal,pKey,gType){
   if(!fps||fps<=0) score-=15;
   // Unknown/custom projectile
   if(roundVal==='custom') score-=10;
-  // Mod stack: reliability mods BOOST confidence, unverified power mods penalize
+  // Mod stack: reliability mods BOOST confidence, tactical mods ignored
   if(typeof selMods!=='undefined'){
     const reliMods=['oring','detent','boltspring','heatcore','lube'];
-    const tacMods=['sights','magnifier','light','laser','foregrip','pgrip','rail','stockup','buttstock','carbinekit','boxmag','shroud','suppressor'];
-    let reliCount=0,powerCount=0;
-    selMods.forEach(id=>{
-      if(reliMods.includes(id)) reliCount++;
-      else if(!tacMods.includes(id)) powerCount++; // only power mods count
-    });
+    let reliCount=0;
+    selMods.forEach(id=>{if(reliMods.includes(id)) reliCount++;});
     // Each reliability mod adds +3 confidence (verified improvement)
     score+=reliCount*3;
-    // Only stacked power mods penalize — tactical mods have zero ballistic effect
-    if(powerCount>=3) score-=12;
   }
+  // HPA PSI — above 1200 PSI you're outside the tested envelope
+  const curPsi=typeof psi!=='undefined'?psi:800;
+  if(gType==='hpa'&&curPsi>1200) score-=12;
   // Cold weather + CO2 = compounding uncertainty
   if(typeof tempF!=='undefined'&&tempF<55&&gType==='co2') score-=8;
   // Custom build = no established baseline
@@ -4366,14 +4363,11 @@ function calculateTIS(){
     if(gType==='co2'&&['fsc','x68','intru'].includes(platformKey)) penList.push('Known CO2 consistency issues (−10)');
     if(roundVal==='custom') penList.push('Unknown projectile (−10)');
     const reliMods=['oring','detent','boltspring','heatcore','lube'];
-    const tacMods=['sights','magnifier','light','laser','foregrip','pgrip','rail','stockup','buttstock','carbinekit','boxmag','shroud','suppressor'];
-    let reliCount=0,powerModCount=0;
-    if(typeof selMods!=='undefined') selMods.forEach(id=>{
-      if(reliMods.includes(id)) reliCount++;
-      else if(!tacMods.includes(id)) powerModCount++;
-    });
+    let reliCount=0;
+    if(typeof selMods!=='undefined') selMods.forEach(id=>{if(reliMods.includes(id)) reliCount++;});
     if(reliCount>0) penList.push('Reliability mods installed (+'+reliCount*3+')');
-    if(powerModCount>=3) penList.push('Stacked power mods (−12)');
+    const curPsi=typeof psi!=='undefined'?psi:800;
+    if(gType==='hpa'&&curPsi>1200) penList.push('HPA above 1200 PSI (−12)');
     const hasSeals=typeof selMods!=='undefined'&&selMods.has('oring');
     if(platformKey==='x68'&&!hasSeals) penList.push('Gen1 reliability flag (−12)');
     if(platformKey==='x68'&&hasSeals) penList.push('Gen1 seal kit installed — penalty removed');
