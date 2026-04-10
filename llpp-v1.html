@@ -614,8 +614,8 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 
 <div class="topbar">
   <div>
-    <div class="brand">[SLATE]</div>
-    <div class="brand-sub">SYSTEM FOR LESS-LETHAL ASSESSMENT &amp; TRAINING EVALUATION · v3.1</div>
+    <div class="brand">[S.L.A.T.E.]</div>
+    <div class="brand-sub">[SYSTEM FOR LESS-LETHAL ASSESSMENT &amp; TRAINING EVALUATION] · v3.1</div>
   </div>
   <div style="text-align:right;">
     <div id="live-readout" title="muzzle / impact" style="font-family:'Orbitron',monospace;font-size:22px;font-weight:900;color:var(--pip);text-shadow:0 0 18px rgba(197,255,0,0.4);letter-spacing:0.04em;line-height:1;">↑ — &nbsp; ↓ —</div>
@@ -1619,9 +1619,9 @@ hdx68:      {name:'Umarex HDX 68',                 platformClass:'shotgun',  bor
 hdb68:      {name:'Umarex HDB 68',                 platformClass:'rifle',    bore:0.687, stockBarrel:14, mag:18, stockLow:11, stockHigh:16, gas:['co2','hpa'], note:'Semi-auto .68 cal tactical carbine. High capacity (up to 18 rounds).'},
 tc68:       {name:'Umarex TC68',                   platformClass:'rifle',    bore:0.687, stockBarrel:14, mag:15, stockLow:7,  stockHigh:20, gas:['co2','hpa'], co2Options:['12g-dual','88g'], note:'.68 cal training carbine. 2×12g CO2, 88g CO2, or HPA compatible. 7-20J stock depending on gas/setup.'},
 x68:        {name:'NXWerks Pistelle X-68',         platformClass:'pistol',   bore:0.687, stockBarrel:6,  mag:7,  stockLow:42, stockHigh:45, gas:['co2','hpa']},
-x68g2:      {name:'DI Pistelle X-68 Gen 2',        platformClass:'pistol',   bore:0.687, stockBarrel:6,  mag:7,  stockLow:42, stockHigh:45, gas:['co2','hpa']},
+x68g2:      {name:'Defense Innovations Pistelle X-68 Gen 2', platformClass:'pistol', bore:0.687, stockBarrel:6, mag:7, stockLow:42, stockHigh:45, gas:['co2','hpa']},
 fsc:        {name:'FSC .68 Pistol',                platformClass:'pistol',   bore:0.686, stockBarrel:4,  mag:8,  stockLow:20, stockHigh:22, gas:['co2','hpa']},
-di68:       {name:'DI 68',                         platformClass:'rifle',    bore:0.687, stockBarrel:14, mag:20, stockLow:35, stockHigh:45, gas:['co2','hpa']},
+di68:       {name:'Defense Innovations DI 68',      platformClass:'rifle',    bore:0.687, stockBarrel:14, mag:20, stockLow:35, stockHigh:45, gas:['co2','hpa']},
 intru:      {name:'Mercury Rise Intrubuster Gen 2',platformClass:'rifle',    bore:0.687, stockBarrel:14, mag:20, stockLow:40, stockHigh:45, gas:['co2','hpa']},
 milsig_t17: {name:'Milsig T17',                    platformClass:'rifle',    bore:0.687, stockBarrel:14, mag:18, stockLow:16, stockHigh:20, gas:['hpa','co2'], primaryGas:'hpa', note:'Gen 3 training carbine. HPA-primary. Box mag compatible. CO2 conversion available via adapter.'},
 milsig_m17g3:{name:'Milsig M17 G3',                platformClass:'rifle',    bore:0.687, stockBarrel:14, mag:18, stockLow:16, stockHigh:20, gas:['hpa','co2'], primaryGas:'hpa', note:'Gen 3 service rifle — separate platform from T17. HPA-primary. Box mag compatible.'},
@@ -2680,7 +2680,7 @@ function getPlatformReliabilityBase(){
     case 'milsig_m17g3':return 78; // service rifle
     case 'milsig_t17':  return 74; // training carbine
     case 'intru':       return 64;
-    case 'x68g2':       return 58;
+    case 'x68g2':       return 66; // Gen2 upgraded O-rings — significantly better than Gen1
     case 'di68':        return 56;
     case 'm17':         return 54;
     case 'cqmf':        return 52;
@@ -3801,7 +3801,7 @@ function updateHeroPanel(){
   renderWeaponVisual();
   // Action button labels
   const bhP=document.getElementById('bh-platform-val');
-  if(bhP)bhP.textContent=p?p.name.replace(/^(Umarex|Valken|NXWerks|DI|Mercury Rise|Milsig)\s*/i,''):'—';
+  if(bhP)bhP.textContent=p?p.name.replace(/^(Umarex|Valken|NXWerks|Defense Innovations|DI|Mercury Rise|Milsig)\s*/i,''):'—';
   const bhM=document.getElementById('bh-mods-val');
   if(bhM){
     const n=selMods.size;
@@ -4152,7 +4152,7 @@ function calculateTIS(){
   // --- Summary statement ---
   const summEl=document.getElementById('tis-summary');
   if(summEl){
-    const pName=p.name.replace(/^(Umarex|Valken|NXWerks|DI|Mercury Rise|Milsig)\s*/i,'');
+    const pName=p.name.replace(/^(Umarex|Valken|NXWerks|Defense Innovations|DI|Mercury Rise|Milsig)\s*/i,'');
     const projName=proj?proj.name:'your loaded projectile';
     const gasWord=gType==='hpa'?'HPA':'CO2';
     const distFt=dist;
