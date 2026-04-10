@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>LLBC — Less Lethal Ballistics Calculator</title>
+<title>[SLATE] System for Less-lethal Assessment & Training Evaluation</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -561,7 +561,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 
 <div class="topbar">
   <div>
-    <div class="brand">LLBC</div>
+    <div class="brand">[SLATE]</div>
     <div class="brand-sub">LESS LETHAL BALLISTICS CALCULATOR · FIELD PLATFORM v3.1</div>
   </div>
   <div style="text-align:right;">
@@ -1018,7 +1018,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
       <div class="modal-hdr">
         <div>
           <div class="modal-title" style="color:#ff6a6a;">⚠ BEFORE YOU PROCEED</div>
-          <div class="modal-sub">Less-Lethal Ballistics Calculator · Acknowledgement required</div>
+          <div class="modal-sub">[SLATE] System for Less-lethal Assessment &amp; Training Evaluation · Disclaimer v<span id="disclaimer-ver">1.0</span></div>
         </div>
       </div>
       <div class="modal-body">
@@ -1279,7 +1279,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
   <!-- DOCTRINE & FIELD CAVEATS -->
   <div class="doc-card">
     <div class="doc-hdr-row" onclick="toggleDoctrine()">
-      <span>◆ DOCTRINE &amp; FIELD CAVEATS · LLBC ZONE THRESHOLD TABLE v1.0</span>
+      <span>◆ DOCTRINE &amp; FIELD CAVEATS · SLATE ZONE THRESHOLD TABLE v1.0</span>
       <span id="doc-toggle">▼</span>
     </div>
     <div id="doctrine-body" style="display:none;">
@@ -1490,7 +1490,7 @@ m17:        {name:'Valken M17',                    platformClass:'rifle',    bor
 cqmf:       {name:'Valken CQMF',                   platformClass:'rifle',    bore:0.687, stockBarrel:8,  mag:18, stockLow:10, stockHigh:20, gas:['hpa','co2'], primaryGas:'hpa', note:'HPA-primary. Same platform as M17, shorter barrel. Box mag compatible.'},
 hdr68:      {name:'Umarex HDR 68',                 platformClass:'revolver', bore:0.687, stockBarrel:6,  mag:5,  stockLow:7,  stockHigh:16, gas:['co2'], belowFloor:true, note:'Revolver. Highest mechanical reliability in the family but very low capacity (5 rounds). HPA conversion available via platform-specific mod.'},
 hds68:      {name:'Umarex HDS 68',                 platformClass:'shotgun',  bore:0.687, stockBarrel:6,  mag:2,  stockLow:7,  stockHigh:16, gas:['co2'], note:'Compact double-barrel less-lethal shotgun. Low energy, short barrel. 2-round capacity.'},
-hdx68:      {name:'Umarex HDX 68',                 platformClass:'shotgun',  bore:0.687, stockBarrel:10, mag:18, versions:true, gas:['co2'], note:'Pump shotgun — select version below (standard 16J or performance 40J). High capacity.'},
+hdx68:      {name:'Umarex HDX 68',                 platformClass:'shotgun',  bore:0.687, stockBarrel:10, mag:18, versions:'hdx', gas:['co2'], note:'Pump shotgun — select version below (standard 16J or performance 40J). High capacity.'},
 hdb68:      {name:'Umarex HDB 68',                 platformClass:'rifle',    bore:0.687, stockBarrel:14, mag:18, stockLow:11, stockHigh:16, gas:['co2','hpa'], note:'Semi-auto .68 cal tactical carbine. High capacity (up to 18 rounds).'},
 tc68:       {name:'Umarex TC68',                   platformClass:'rifle',    bore:0.687, stockBarrel:14, mag:15, stockLow:7,  stockHigh:20, gas:['co2','hpa'], co2Options:['12g-dual','88g'], note:'.68 cal training carbine. 2×12g CO2, 88g CO2, or HPA compatible. 7-20J stock depending on gas/setup.'},
 x68:        {name:'NXWerks Pistelle X-68',         platformClass:'pistol',   bore:0.687, stockBarrel:6,  mag:7,  stockLow:42, stockHigh:45, gas:['co2','hpa']},
@@ -1504,9 +1504,11 @@ custom:     {name:'Custom / Other',                platformClass:'other',    bor
 };
 
 // HDX 68 has two power tiers depending on the purchased variant.
-const HDS_VERSIONS={
-  std: {label:'Standard — 16J',    stockLow:14, stockHigh:16},
-  perf:{label:'Performance — 40J', stockLow:36, stockHigh:40}
+const PLATFORM_VERSIONS={
+  hdx:{
+    std: {label:'Standard — 16J',    stockLow:14, stockHigh:16},
+    perf:{label:'Performance — 40J', stockLow:36, stockHigh:40}
+  }
 };
 
 // HDS 68 / HDX 68 share a Standard / Performance version selector.
@@ -2078,8 +2080,8 @@ function clearPlacement(){
 // ============================================================
 // PROMPT 2 — Platform / Gas / Mods / Presets / Quick Log state
 // ============================================================
-const LS_PRESETS='llbc_presets_v1';
-const LS_ACTIVE='llbc_active_preset_v1';
+const LS_PRESETS='slate_presets_v1';
+const LS_ACTIVE='slate_active_preset_v1';
 
 // Runtime state
 let platformKey='x68';
@@ -2092,9 +2094,10 @@ let modCfg={bore:0.687,barrelLen:11,customName:'',customDelta:0};
 let presets=[];
 let activePresetId=null;
 let equippedPlatform=null;           // platformKey currently "equipped" (locked-in). null = browsing.
-const LS_EQUIPPED='llbc_equipped_v1';
-const LS_LOADOUT ='llbc_loadout_v1';
-const LS_DISCLAIMER='llbc_disclaimer_v1';
+const LS_EQUIPPED='slate_equipped_v1';
+const LS_LOADOUT ='slate_loadout_v1';
+const LS_DISCLAIMER='slate_disclaimer';
+const DISCLAIMER_VERSION='1.0';
 
 // -------------------- EQUIP SYSTEM --------------------
 // The equip system treats platform selection like a game loadout: you browse
@@ -2234,7 +2237,7 @@ function applyLoadout(s){
 function exportLoadout(){
   const data=captureLoadout();
   const p=PLATFORMS[platformKey];
-  const name='llbc-loadout-'+(p?p.name.replace(/[^a-z0-9]+/gi,'-').toLowerCase():'weapon')+'-'+new Date().toISOString().slice(0,10)+'.json';
+  const name='slate-loadout-'+(p?p.name.replace(/[^a-z0-9]+/gi,'-').toLowerCase():'weapon')+'-'+new Date().toISOString().slice(0,10)+'.json';
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
@@ -2978,7 +2981,7 @@ function loadPresetsFromStorage(){
   try{activePresetId=localStorage.getItem(LS_ACTIVE)||null;}catch(e){activePresetId=null;}
   // Load session log from storage (persist across reloads)
   try{
-    const raw=localStorage.getItem('llbc_session_log_v1');
+    const raw=localStorage.getItem('slate_session_log_v1');
     if(raw)sessionLog=JSON.parse(raw);
   }catch(e){}
 }
@@ -2989,7 +2992,7 @@ function savePresetsToStorage(){
 }
 
 function saveSessionLog(){
-  try{localStorage.setItem('llbc_session_log_v1',JSON.stringify(sessionLog));}catch(e){}
+  try{localStorage.setItem('slate_session_log_v1',JSON.stringify(sessionLog));}catch(e){}
 }
 
 function capturePresetState(){
@@ -3727,14 +3730,14 @@ function initApp(){
   updateDistanceMarker();
   updateHeroPanel();
   updateEquipUI();
-  // Show disclaimer gate on first load
+  // Show disclaimer gate on first load or when disclaimer version changes
   try{
     const agreed=localStorage.getItem(LS_DISCLAIMER);
-    if(!agreed)openModal('modal-disclaimer');
+    if(!agreed||agreed!==DISCLAIMER_VERSION)openModal('modal-disclaimer');
   }catch(e){openModal('modal-disclaimer');}
 }
 function acceptDisclaimer(){
-  try{localStorage.setItem(LS_DISCLAIMER,new Date().toISOString());}catch(e){}
+  try{localStorage.setItem(LS_DISCLAIMER,DISCLAIMER_VERSION);}catch(e){}
   closeModal('modal-disclaimer');
 }
 initApp();
