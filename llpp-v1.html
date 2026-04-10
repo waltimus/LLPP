@@ -2816,16 +2816,10 @@ function getCurrentStockRange(){
 function onPlatformChange(skipModClear){
   platformKey=document.getElementById('c-launcher').value;
   const p=getCurrentPlatform();
-  // Clear selected power mods when user manually switches platforms
-  // (bore/barrel may differ). Skip when loading a preset — preset
-  // already has the correct mod set saved.
+  // Clear ALL mods when user manually switches platforms.
+  // Skip when loading a preset — preset has the correct mod set saved.
   if(!skipModClear){
-    const keep=new Set();
-    [...selMods].forEach(id=>{
-      const all=[...MODS_RELI,...MODS_TAC].find(m=>m.id===id);
-      if(all)keep.add(id);
-    });
-    selMods=keep;
+    selMods=new Set();
   }
   // Version selector visibility
   const vwrap=document.getElementById('c-version-wrap');
