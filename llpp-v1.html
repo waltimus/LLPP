@@ -1580,7 +1580,9 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
         <p><strong>Penalties (reduce confidence):</strong></p>
         <p>CO2 gas system: <em>−8</em> (inherent shot-to-shot variance vs HPA)</p>
         <p>Poor CO2 platform (FSC, X-68 Gen1): <em>−10 additional</em></p>
-        <p>No chrono input (using manufacturer spec): <em>−15</em></p>
+        <p>No logged chrono shots (using stack estimate): <em>−15</em></p>
+        <p>1-4 logged shots (partial validation): <em>+2</em></p>
+        <p>5+ logged shots (chrono-validated): <em>+5</em></p>
         <p>Unknown/custom projectile: <em>−10</em></p>
         <p>HPA above 1200 PSI: <em>−12</em> (outside the tested operating envelope — seals, gas delivery, and output become unpredictable)</p>
         <p>Gen1 reliability flag (no seal kit): <em>−12</em></p>
@@ -3398,6 +3400,7 @@ function quickLogShot(){
   renderQuickLogAuto();
   renderLog();
   updateCharts();
+  if(typeof calculateTIS==='function') calculateTIS();
 }
 
 function onLauncherChange(){populateRounds();}
@@ -4018,7 +4021,7 @@ function getContextPenalty(clothing,moving,dist){
 }
 
 // --- Confidence rating ---
-function calcConfidence(fps,roundVal,pKey,gType){
+function calcConfidence(loggedShots,roundVal,pKey,gType){
   // Confidence is never 100 — there's always modeling uncertainty.
   // Base starts at 88 (chrono-validated known platform) and goes down.
   let score=88;
@@ -4026,8 +4029,10 @@ function calcConfidence(fps,roundVal,pKey,gType){
   if(gType==='co2') score-=8;
   // Specific poor CO2 platforms get extra penalty
   if(gType==='co2'&&['fsc','x68','intru'].includes(pKey)) score-=10;
-  // No chrono = using manufacturer spec, not measured
-  if(!fps||fps<=0) score-=15;
+  // Chrono validation: logged shots BOOST confidence, no shots = penalty
+  if(loggedShots>=5) score+=5;    // well-validated
+  else if(loggedShots>=1) score+=2; // some validation
+  else score-=15;                  // no chrono data at all
   // Unknown/custom projectile
   if(roundVal==='custom') score-=10;
   // Mod stack: reliability mods BOOST confidence, tactical mods ignored
@@ -4178,29 +4183,30 @@ function calculateTIS(){
   const heroActive=document.getElementById('tis-hero-active');
   const inlineEl=document.getElementById('tis-inline');
 
-  // Null state — no platform or no FPS
+  // Null state — no platform selected
   if(!p||!platformKey||platformKey==='custom'){
-    setTisNull(true);
-    return;
-  }
-  const rawFps=document.getElementById('c-fps').value;
-  const fps=rawFps===''||rawFps==null?0:(parseInt(rawFps)||0);
-  if(fps<=0){
     setTisNull(true);
     return;
   }
   setTisNull(false);
 
+  // Energy source: platform mod stack baseline, refined by logged shots
+  const stack=computeModStack();
+  let muzzleJ=stack.mid||0;
+
+  // If active preset has logged shots, use their average muzzle energy
+  const activeP=presets.find(x=>x.id===activePresetId);
+  const loggedShots=(activeP&&activeP.shots)?activeP.shots:[];
+  const validShots=loggedShots.filter(s=>s.muzzle>0);
+  if(validShots.length>0){
+    const avgMuzzle=validShots.reduce((a,s)=>a+s.muzzle,0)/validShots.length;
+    // Blend: logged data overrides stack estimate when available
+    muzzleJ=avgMuzzle;
+  }
+
   const sel=document.getElementById('c-round');
   const roundVal=sel?sel.value:'';
-  let mass;
-  if(roundVal==='custom'){
-    mass=parseFloat(document.getElementById('c-custom-mass').value)||7.7;
-  } else {
-    mass=parseFloat(roundVal.split('|')[0])||7.7;
-  }
   const dist=parseInt(document.getElementById('c-dist').value)||15;
-  const muzzleJ=fpsToJoules(fps,mass);
   const impactJ=calcImpact(muzzleJ,dist);
 
   // Clothing
@@ -4249,7 +4255,7 @@ function calculateTIS(){
 
   // IPS & Confidence
   const ips=calcIPS(impactJ,roundVal);
-  const conf=calcConfidence(fps,roundVal,platformKey,gType);
+  const conf=calcConfidence(validShots.length,roundVal,platformKey,gType);
 
   const tisBand=getTisBand(tis);
   const ipsBand=getIpsBand(ips);
@@ -4286,7 +4292,8 @@ function calculateTIS(){
   if(launcherSub){
     const gasLbl=(gType==='co2')?(gasSize.toUpperCase()+' CO2'):('HPA '+gasSizeHPA.toUpperCase());
     const bore=(p.bore||0.688).toFixed(3);
-    launcherSub.textContent=gasLbl+' · '+bore+' BORE · '+Math.round(impactJ)+'J @ '+dist+'ft';
+    const src=validShots.length>0?('CHRONO AVG '+Math.round(muzzleJ)+'J / '+validShots.length+' shots'):('EST '+Math.round(muzzleJ)+'J');
+    launcherSub.textContent=gasLbl+' · '+bore+' BORE · '+src;
   }
   if(launcherMods){
     if(selMods.size===0){
@@ -4345,7 +4352,8 @@ function calculateTIS(){
     }
 
     let html='';
-    html+=factorRow('Impact Energy at Distance (35%)',f1,100,'Post-clothing: '+adjustedJ.toFixed(1)+'J at '+dist+' ft',f1>=65?'var(--pip)':f1>=45?'#e09940':'#e02020');
+    const srcNote=validShots.length>0?('chrono avg '+Math.round(muzzleJ)+'J → '):('stack est '+Math.round(muzzleJ)+'J → ');
+    html+=factorRow('Impact Energy at Distance (35%)',f1,100,srcNote+adjustedJ.toFixed(1)+'J post-clothing at '+dist+' ft',f1>=65?'var(--pip)':f1>=45?'#e09940':'#e02020');
     html+=factorRow('Projectile Behavior (20%)',f2,100,projName+(feedMod?(' · feed modifier: '+feedMod):''),f2>=70?'var(--pip)':f2>=50?'#e09940':'#e02020');
     html+=factorRow('Platform Consistency (20%)',f3,100,gasLabel+(getColdMod(gType,tempF,platformKey)<0?' · cold penalty applied':''),f3>=70?'var(--pip)':f3>=50?'#e09940':'#e02020');
     html+=factorRow('Accuracy & Follow-Up (15%)',f4,100,followLabel+(platformKey==='hds68'?' · HDS 2-shot cap':''),f4>=70?'var(--pip)':f4>=50?'#e09940':'#e02020');
@@ -4359,6 +4367,9 @@ function calculateTIS(){
 
     // Confidence penalties & boosts
     const penList=[];
+    if(validShots.length>=5) penList.push('Chrono-validated: '+validShots.length+' shots (+5)');
+    else if(validShots.length>=1) penList.push('Partial chrono data: '+validShots.length+' shots (+2)');
+    else penList.push('No chrono data — using stack estimate (−15)');
     if(gType==='co2') penList.push('CO2 gas variance (−8)');
     if(gType==='co2'&&['fsc','x68','intru'].includes(platformKey)) penList.push('Known CO2 consistency issues (−10)');
     if(roundVal==='custom') penList.push('Unknown projectile (−10)');
@@ -4397,7 +4408,8 @@ function calculateTIS(){
     const pName=p.name.replace(/^(Umarex|Valken|NXWerks|Defense Innovations|DI|Mercury Rise|Milsig)\s*/i,'');
     const projName=proj?proj.name:'your loaded projectile';
     const gasWord=gType==='hpa'?'HPA':'CO2';
-    summEl.textContent='Your '+pName+' loaded with '+projName+' running '+gasWord+' at '+dist+' ft is projected to deliver '+tisBand.label.toLowerCase()+' immediate disruption with '+ipsBand.label.toLowerCase()+' injury consequence. Confidence is '+confBand.label.toLowerCase()+(conf<70?' — log a chrono session to validate your actual output.':'.');
+    const energySrc=validShots.length>0?('chrono-validated at '+Math.round(muzzleJ)+'J avg'):('estimated at '+Math.round(muzzleJ)+'J from mod stack');
+    summEl.textContent='Your '+pName+' loaded with '+projName+' running '+gasWord+', '+energySrc+', at '+dist+' ft is projected to deliver '+tisBand.label.toLowerCase()+' immediate disruption with '+ipsBand.label.toLowerCase()+' injury consequence. Confidence is '+confBand.label.toLowerCase()+(conf<70?' — log chrono shots to validate your actual output.':'.');
   }
 }
 
