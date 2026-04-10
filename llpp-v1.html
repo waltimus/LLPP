@@ -565,7 +565,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 .tis-inline::before{top:-1px;left:-1px;border-width:2px 0 0 2px;}
 .tis-inline::after{bottom:-1px;right:-1px;border-width:0 2px 2px 0;}
 .tis-inline-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.14em;color:var(--muted);}
-.tis-inline-score{font-family:'Orbitron',monospace;font-size:22px;font-weight:900;line-height:1;letter-spacing:-0.02em;transition:color 0.3s;}
+.tis-inline-score{font-family:'Orbitron',monospace;font-size:32px;font-weight:900;line-height:1;letter-spacing:-0.02em;transition:color 0.3s;}
 .tis-inline-band{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.08em;}
 .tis-inline-bar{width:40px;height:3px;background:rgba(255,255,255,0.04);border-radius:2px;overflow:hidden;}
 .tis-inline-bar-fill{height:100%;width:0%;border-radius:2px;transition:width 0.6s ease,background 0.3s;}
@@ -586,6 +586,18 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 .tis-warning{margin-top:8px;padding:10px 14px;font-family:'Barlow Condensed',sans-serif;font-size:13px;line-height:1.4;}
 .tis-warning.amber{background:rgba(255,179,71,0.06);border:1px solid rgba(255,179,71,0.2);border-left:3px solid #ffb347;color:#ffb347;}
 .tis-warning.red{background:rgba(255,40,40,0.06);border:1px solid rgba(255,40,40,0.2);border-left:3px solid #ff4040;color:#ff6a6a;}
+@media (max-width:860px){
+  #tis-hero-active .card{min-width:0;}
+}
+@media (max-width:720px){
+  #score [style*="grid-template-columns: 1fr 1fr 1fr 1fr"],
+  #score [style*="grid-template-columns:1fr 1fr 1fr 1fr"]{grid-template-columns:1fr 1fr !important;}
+  #score [style*="grid-template-columns: 1fr 2fr"],
+  #score [style*="grid-template-columns:1fr 2fr"]{grid-template-columns:1fr !important;}
+}
+@media (max-width:480px){
+  #score [style*="grid-template-columns:1fr 1fr 1fr 1fr"]{grid-template-columns:1fr !important;}
+}
 </style>
 </head>
 <body>
@@ -1426,84 +1438,134 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 <!-- INFORMATION -->
 <!-- SCORE DETAIL TAB -->
 <div id="score" class="panel">
-  <div class="card">
-    <div class="section-title" style="font-size:18px;">THREAT INTERRUPTION SCORE</div>
-    <div class="section-subtitle">How likely your current configuration is to produce immediate behavioral disruption</div>
+  <div id="tis-hero-null" class="card" style="text-align:center;padding:30px 20px;font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--muted);letter-spacing:0.06em;line-height:1.8;">
+    Select a launcher and enter chronograph FPS to see your Threat Interruption Score.
   </div>
+  <div id="tis-hero-active" style="display:none;">
 
-  <!-- Big score display -->
-  <div class="card" id="tis-hero-card" style="text-align:center;padding:24px 20px;">
-    <div id="tis-hero-null" style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:0.06em;padding:20px 0;">Select a launcher and enter chronograph FPS to see your Threat Interruption Score.</div>
-    <div id="tis-hero-active" style="display:none;">
-      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.14em;margin-bottom:4px;">THREAT INTERRUPTION SCORE</div>
-      <div id="tis-hero-score" style="font-family:'Orbitron',monospace;font-size:72px;font-weight:900;line-height:1;letter-spacing:-0.02em;transition:color 0.3s;">—</div>
-      <div id="tis-hero-band" style="font-family:'Share Tech Mono',monospace;font-size:14px;letter-spacing:0.12em;margin-top:6px;">—</div>
-      <div style="height:6px;margin:12px auto 0;max-width:300px;background:rgba(255,255,255,0.04);border-radius:3px;overflow:hidden;">
-        <div id="tis-hero-bar-fill" style="height:100%;width:0%;border-radius:3px;transition:width 0.6s ease,background 0.3s;"></div>
+    <!-- ROW 1: Launcher Profile + Score Cards -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:12px;">
+
+      <!-- Launcher Profile -->
+      <div class="card" style="padding:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.12em;margin-bottom:8px;">EQUIPPED LAUNCHER</div>
+        <img id="tis-launcher-img" src="" style="max-height:100px;max-width:100%;object-fit:contain;display:none;filter:drop-shadow(0 0 8px rgba(197,255,0,0.15));margin-bottom:8px;">
+        <div id="tis-launcher-name" style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700;color:var(--pip);letter-spacing:0.06em;text-align:center;line-height:1.2;">—</div>
+        <div id="tis-launcher-sub" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);margin-top:4px;text-align:center;">—</div>
+        <div id="tis-launcher-mods" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text);margin-top:6px;text-align:center;"></div>
       </div>
-      <div style="font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:0.04em;margin-top:10px;opacity:0.7;">Scores are modeled estimates, not guarantees. Human response to less-lethal impact is highly variable.</div>
+
+      <!-- TIS Hero Score -->
+      <div class="card" style="padding:20px 16px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.14em;margin-bottom:6px;">THREAT INTERRUPTION</div>
+        <div id="tis-hero-score" style="font-family:'Orbitron',monospace;font-size:80px;font-weight:900;line-height:1;letter-spacing:-0.02em;transition:color 0.3s;">—</div>
+        <div id="tis-hero-band" style="font-family:'Share Tech Mono',monospace;font-size:14px;letter-spacing:0.12em;margin-top:6px;">—</div>
+        <div style="height:6px;margin:10px auto 0;width:80%;background:rgba(255,255,255,0.04);border-radius:3px;overflow:hidden;">
+          <div id="tis-hero-bar-fill" style="height:100%;width:0%;border-radius:3px;transition:width 0.6s ease,background 0.3s;"></div>
+        </div>
+      </div>
+
+      <!-- Injury Potential -->
+      <div class="card" style="padding:20px 16px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;" onclick="openModal('modal-ips-info')">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.14em;margin-bottom:6px;">INJURY POTENTIAL <span style="border:1px solid rgba(197,255,0,0.2);border-radius:50%;width:14px;height:14px;display:inline-block;text-align:center;line-height:14px;font-size:9px;cursor:pointer;vertical-align:middle;">i</span></div>
+        <div id="ips-score" style="font-family:'Orbitron',monospace;font-size:56px;font-weight:900;line-height:1;transition:color 0.3s;">—</div>
+        <div id="ips-band" style="font-family:'Share Tech Mono',monospace;font-size:13px;letter-spacing:0.1em;margin-top:6px;">—</div>
+      </div>
+
+      <!-- Confidence -->
+      <div class="card" style="padding:20px 16px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;" onclick="openModal('modal-conf-info')">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.14em;margin-bottom:6px;">CONFIDENCE <span style="border:1px solid rgba(197,255,0,0.2);border-radius:50%;width:14px;height:14px;display:inline-block;text-align:center;line-height:14px;font-size:9px;cursor:pointer;vertical-align:middle;">i</span></div>
+        <div id="conf-score" style="font-family:'Orbitron',monospace;font-size:56px;font-weight:900;line-height:1;transition:color 0.3s;">—</div>
+        <div id="conf-band" style="font-family:'Share Tech Mono',monospace;font-size:13px;letter-spacing:0.1em;margin-top:6px;">—</div>
+      </div>
+    </div>
+
+    <!-- ROW 2: Scenario Context (compact) + Assessment -->
+    <div style="display:grid;grid-template-columns:1fr 2fr;gap:12px;margin-bottom:12px;">
+      <div class="card" style="padding:16px 18px;">
+        <div class="section-title" style="font-size:13px;margin-bottom:10px;">SCENARIO CONTEXT</div>
+        <div style="margin-bottom:10px;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.08em;margin-bottom:4px;">CLOTHING ASSUMPTION</div>
+          <select id="tis-clothing" onchange="calcUpdate()" style="font-family:'Share Tech Mono',monospace;font-size:12px;background:#03050a;color:var(--bright);border:1px solid var(--border);padding:8px 10px;width:100%;">
+            <option value="summer">Summer — Hoodie (x0.92)</option>
+            <option value="spring">Spring/Fall — Hoodie + Jacket (x0.85)</option>
+            <option value="winter">Winter — Heavy Coat (x0.78)</option>
+          </select>
+        </div>
+        <div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.08em;margin-bottom:4px;">TARGET MOVEMENT</div>
+          <select id="tis-movement" onchange="calcUpdate()" style="font-family:'Share Tech Mono',monospace;font-size:12px;background:#03050a;color:var(--bright);border:1px solid var(--border);padding:8px 10px;width:100%;">
+            <option value="stationary">Stationary</option>
+            <option value="moving">Moving</option>
+          </select>
+        </div>
+      </div>
+      <div class="card" style="padding:16px 18px;">
+        <div class="section-title" style="font-size:13px;margin-bottom:10px;">ASSESSMENT</div>
+        <div id="tis-summary" style="font-family:'Barlow Condensed',sans-serif;font-size:16px;color:var(--bright);line-height:1.65;"></div>
+        <div id="tis-reasons" style="margin-top:12px;font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--muted);line-height:1.7;"></div>
+      </div>
+    </div>
+
+    <!-- ROW 3: Factor Breakdown -->
+    <div class="card" style="padding:16px 18px;">
+      <div class="section-title" style="font-size:13px;margin-bottom:12px;">FACTOR BREAKDOWN</div>
+      <div id="tis-detail-body" style="font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--bright);line-height:1.7;"></div>
+    </div>
+
+    <!-- ROW 4: Warnings -->
+    <div id="tis-warnings"></div>
+
+    <!-- Footer disclaimer -->
+    <div style="text-align:center;padding:12px 0 4px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.04em;opacity:0.6;">
+      Scores are modeled estimates, not guarantees. Human response to less-lethal impact is highly variable. Educational and training use only.
     </div>
   </div>
+</div>
 
-  <!-- Context inputs -->
-  <div class="card" style="padding:14px 18px;">
-    <div class="section-title" style="font-size:12px;margin-bottom:8px;">SCENARIO CONTEXT</div>
-    <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;">
+<!-- IPS Info Modal -->
+<div class="modal-backdrop" id="modal-ips-info">
+  <div class="modal-panel" style="max-width:520px;">
+    <div class="modal-hdr">
       <div>
-        <div class="lbl">Clothing Assumption</div>
-        <select id="tis-clothing" onchange="calcUpdate()" style="font-family:'Share Tech Mono',monospace;font-size:11px;background:#03050a;color:var(--bright);border:1px solid var(--border);padding:6px 10px;min-width:200px;">
-          <option value="summer">Summer — Hoodie (x0.92)</option>
-          <option value="spring">Spring/Fall — Hoodie + Jacket (x0.85)</option>
-          <option value="winter">Winter — Heavy Coat (x0.78)</option>
-        </select>
+        <div class="modal-title">INJURY POTENTIAL SCORE</div>
+        <div class="modal-sub">What it measures</div>
       </div>
+      <button class="modal-close" onclick="closeModal('modal-ips-info')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="disclaimer-body" style="font-size:14px;">
+        <p>The Injury Potential Score (IPS) estimates the <strong>consequence severity</strong> if impact occurs at the current energy level and projectile type. A higher score means greater risk of injury.</p>
+        <p>It is driven primarily by <strong>retained energy at distance</strong> (post-clothing adjustment) and modified by projectile class — aluminum rounds concentrate force and score higher, while frangible irritant rounds score lower on kinetic injury.</p>
+        <p><strong>This is not a lethality index.</strong> It reflects the probability of bruising, fracture, soft tissue damage, and pain compliance at the delivered energy level. Use it alongside TIS to understand the full picture: high TIS with low IPS is the ideal outcome.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Confidence Info Modal -->
+<div class="modal-backdrop" id="modal-conf-info">
+  <div class="modal-panel" style="max-width:520px;">
+    <div class="modal-hdr">
       <div>
-        <div class="lbl">Target Movement</div>
-        <select id="tis-movement" onchange="calcUpdate()" style="font-family:'Share Tech Mono',monospace;font-size:11px;background:#03050a;color:var(--bright);border:1px solid var(--border);padding:6px 10px;min-width:140px;">
-          <option value="stationary">Stationary</option>
-          <option value="moving">Moving</option>
-        </select>
+        <div class="modal-title">CONFIDENCE RATING</div>
+        <div class="modal-sub">How reliable are these scores?</div>
       </div>
+      <button class="modal-close" onclick="closeModal('modal-conf-info')">&times;</button>
     </div>
-  </div>
-
-  <!-- Factor breakdown -->
-  <div class="card" style="padding:14px 18px;">
-    <div class="section-title" style="font-size:12px;margin-bottom:10px;">FACTOR BREAKDOWN</div>
-    <div id="tis-detail-body" style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--bright);line-height:1.6;"></div>
-  </div>
-
-  <!-- Sub-scores -->
-  <div style="display:flex;gap:12px;flex-wrap:wrap;">
-    <div class="card" style="flex:1;min-width:180px;padding:14px 18px;text-align:center;">
-      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.12em;">INJURY POTENTIAL</div>
-      <div id="ips-score" style="font-family:'Orbitron',monospace;font-size:36px;font-weight:900;line-height:1.1;margin-top:4px;">—</div>
-      <div id="ips-band" style="font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:0.1em;margin-top:2px;">—</div>
-    </div>
-    <div class="card" style="flex:1;min-width:180px;padding:14px 18px;text-align:center;">
-      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.12em;">CONFIDENCE</div>
-      <div id="conf-score" style="font-family:'Orbitron',monospace;font-size:36px;font-weight:900;line-height:1.1;margin-top:4px;">—</div>
-      <div id="conf-band" style="font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:0.1em;margin-top:2px;">—</div>
-    </div>
-  </div>
-
-  <!-- Warnings -->
-  <div id="tis-warnings"></div>
-
-  <!-- Plain-English summary -->
-  <div class="card" style="padding:14px 18px;">
-    <div class="section-title" style="font-size:12px;margin-bottom:8px;">ASSESSMENT</div>
-    <div id="tis-summary" style="font-family:'Barlow Condensed',sans-serif;font-size:14px;color:var(--bright);line-height:1.6;"></div>
-    <div id="tis-reasons" style="margin-top:10px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);line-height:1.6;"></div>
-  </div>
-
-  <!-- What is TIS -->
-  <div class="card" style="padding:14px 18px;">
-    <div class="section-title" style="font-size:12px;margin-bottom:8px;">WHAT IS THE THREAT INTERRUPTION SCORE?</div>
-    <div class="disclaimer-body" style="font-size:13px;">
-      <p>The Threat Interruption Score (TIS) is a weighted estimate of how likely your current launcher configuration is to produce an <strong>immediate, observable disruption of threatening behavior</strong> at your selected engagement distance.</p>
-      <p>It accounts for impact energy, projectile behavior, platform consistency, follow-up capability, and real-world contextual variables. <strong>It is a projected likelihood, not a guarantee.</strong></p>
-      <p>Human response to less-lethal impact is highly variable and depends on pain tolerance, adrenaline, intoxication, clothing, body mass, and shot placement. Always train with your platform and understand the law in your jurisdiction.</p>
+    <div class="modal-body">
+      <div class="disclaimer-body" style="font-size:14px;">
+        <p>Confidence measures <strong>how much the system trusts its own output</strong> given the information you've provided. It starts at 88 (never 100 — there is always modeling uncertainty) and applies penalties for each source of unknown.</p>
+        <p><strong>Common penalties:</strong></p>
+        <p>CO2 gas system: <em>−8</em> (inherent shot-to-shot variance vs HPA)</p>
+        <p>Poor CO2 platform (FSC, X-68 Gen1): <em>−10 additional</em></p>
+        <p>No chrono input (using manufacturer spec): <em>−15</em></p>
+        <p>Unknown/custom projectile: <em>−10</em></p>
+        <p>Heavy mod stack (3+ mods): <em>−12</em></p>
+        <p>Cold weather + CO2: <em>−8</em></p>
+        <p>Extended range (50+ ft): <em>−5</em></p>
+        <p style="margin-top:12px;"><strong>How to improve your confidence:</strong> Log real chrono data, use a known projectile, run HPA if possible, and stay within your platform's effective envelope.</p>
+      </div>
     </div>
   </div>
 </div>
@@ -4128,6 +4190,34 @@ function calculateTIS(){
   if(heroBand){heroBand.textContent=tisBand.label;heroBand.className=tisBand.cls;}
   if(heroBar){heroBar.style.width=tis+'%';heroBar.style.background=bandColor(tisBand.cls);}
 
+  // --- Launcher Profile (Score tab) ---
+  const launcherImg=document.getElementById('tis-launcher-img');
+  const launcherName=document.getElementById('tis-launcher-name');
+  const launcherSub=document.getElementById('tis-launcher-sub');
+  const launcherMods=document.getElementById('tis-launcher-mods');
+  if(launcherName) launcherName.textContent=p.name;
+  if(launcherImg){
+    let imgSrc=PLATFORM_IMAGES[platformKey]||'';
+    if(!imgSrc&&(platformKey==='m17g3'||platformKey==='t17')) imgSrc=PLATFORM_IMAGES.milsig||PLATFORM_IMAGES.m17||'';
+    if(imgSrc){launcherImg.src=imgSrc;launcherImg.style.display='block';}
+    else{launcherImg.removeAttribute('src');launcherImg.style.display='none';}
+  }
+  if(launcherSub){
+    const gasLbl=(gType==='co2')?(gasSize.toUpperCase()+' CO2'):('HPA '+gasSizeHPA.toUpperCase());
+    const bore=(p.bore||0.688).toFixed(3);
+    launcherSub.textContent=gasLbl+' · '+bore+' BORE · '+Math.round(impactJ)+'J @ '+dist+'ft';
+  }
+  if(launcherMods){
+    if(selMods.size===0){
+      launcherMods.textContent='STOCK — no mods';
+    }else{
+      const allMods=[...MODS_POWER,...MODS_RELI,...MODS_TAC,...HDR68_MODS];
+      const names=[];
+      selMods.forEach(id=>{const m=allMods.find(x=>x.id===id);if(m)names.push(m.name);});
+      launcherMods.textContent=names.length?names.join(' · '):(selMods.size+' mods');
+    }
+  }
+
   // --- IPS & Confidence sub-scores ---
   const ipsEl=document.getElementById('ips-score');
   const ipsBandEl=document.getElementById('ips-band');
@@ -4221,6 +4311,14 @@ function setTisNull(isNull){
   if(isNull){
     if(inScore){inScore.textContent='—';inScore.className='tis-inline-score';}
     if(inBand){inBand.textContent='—';inBand.className='tis-inline-band';}
+    const li=document.getElementById('tis-launcher-img');
+    const ln=document.getElementById('tis-launcher-name');
+    const ls=document.getElementById('tis-launcher-sub');
+    const lm=document.getElementById('tis-launcher-mods');
+    if(li){li.removeAttribute('src');li.style.display='none';}
+    if(ln)ln.textContent='—';
+    if(ls)ls.textContent='—';
+    if(lm)lm.textContent='';
   }
 }
 
