@@ -797,7 +797,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
        HERO PANEL — cinematic console layout
        ============================================================ -->
   <div class="hero-panel">
-    <div class="hero-panel-header">WEAPON · LIVE CHRONOGRAPH</div>
+    <div class="hero-panel-header">LAUNCHER · LIVE CHRONOGRAPH</div>
     <div class="hero-panel-sub">Equipped launcher, real-time output, and engagement distance</div>
     <div class="hero-weapon-name" id="hero-weapon" style="display:none;">SELECT A PLATFORM</div>
     <div class="hero-weapon-sub" id="hero-weapon-sub" style="text-align:center;font-size:11px;">— · — · —</div>
@@ -952,7 +952,15 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
   <div id="c-status" style="display:none;"></div>
   <div id="c-bar" style="display:none;"></div>
   <div id="c-dmg" style="display:none;">—</div>
+</div>
 
+<!-- ============================================================
+     MODAL STACK — lifted out of the calc panel so every modal is
+     reachable from any tab. A modal inside a display:none panel
+     cannot open, which is why Impact Profile info dialogs were
+     not firing from the Placement tab.
+     ============================================================ -->
+<div class="modal-layer">
   <!-- ============================================================
        MODAL · LOG SHOT — moved out of the main calculator panel
        to keep the main console compact (Star Trek feel).
