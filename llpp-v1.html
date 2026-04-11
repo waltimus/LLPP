@@ -459,9 +459,11 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 .visual-shell.is-equipped{border-color:rgba(197,255,0,0.55);box-shadow:inset 0 0 38px rgba(197,255,0,0.12);}
 @keyframes equippedBannerPulse{0%,100%{box-shadow:0 0 20px rgba(197,255,0,0.55),inset 0 0 12px rgba(255,255,255,0.18);}50%{box-shadow:0 0 36px rgba(197,255,0,0.9),inset 0 0 18px rgba(255,255,255,0.26);}}
 @media (max-width:600px){.equipped-banner{font-size:14px;padding:7px 18px;letter-spacing:0.22em;}}
-.session-switcher{width:100%;padding:10px 12px;background:rgba(0,200,255,0.06);border:1px solid rgba(0,200,255,0.3);color:var(--bright);font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:0.06em;cursor:pointer;}
-.session-switcher:hover{border-color:rgba(0,200,255,0.55);}
-.session-switcher:focus{outline:none;border-color:var(--pip);box-shadow:0 0 10px rgba(197,255,0,0.3);}
+.session-switcher{width:100%;padding:14px 44px 14px 16px;background:#0b0c0e;background-image:linear-gradient(180deg,rgba(0,200,255,0.08),rgba(0,0,0,0.55)),url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='8' viewBox='0 0 14 8'><path d='M1 1l6 6 6-6' stroke='%23c5ff00' stroke-width='2' fill='none' stroke-linecap='square'/></svg>");background-repeat:no-repeat,no-repeat;background-position:0 0,right 14px center;background-size:auto,14px 8px;border:1px solid rgba(0,200,255,0.4);color:var(--pip);font-family:'Orbitron',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;appearance:none;-webkit-appearance:none;-moz-appearance:none;color-scheme:dark;text-shadow:0 0 8px rgba(197,255,0,0.35);}
+.session-switcher:hover{border-color:rgba(197,255,0,0.55);background-color:#101214;}
+.session-switcher:focus{outline:none;border-color:var(--pip);box-shadow:0 0 12px rgba(197,255,0,0.35);}
+.session-switcher option{background:#0b0c0e;color:var(--bright);font-family:'Share Tech Mono',monospace;font-size:14px;font-weight:400;padding:8px;letter-spacing:0.06em;text-transform:none;}
+.session-switcher optgroup{background:#15181c;color:var(--cyan);font-family:'Orbitron',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;}
 .visual-meta-text{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.1em;color:var(--muted);}
 .scan-sweep{position:absolute;inset:-20% 0 auto 0;height:50%;background:linear-gradient(180deg,rgba(197,255,0,0),rgba(197,255,0,0.10),rgba(197,255,0,0));mix-blend-mode:screen;opacity:0.7;animation:scanSweep 5.5s linear infinite;z-index:1;pointer-events:none;}
 @keyframes scanSweep{0%{transform:translateY(-120%);}100%{transform:translateY(260%);}}
