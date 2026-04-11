@@ -610,6 +610,65 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 .tis-status-pred{color:#ffb86b;background:rgba(255,184,107,0.08);border-color:rgba(255,184,107,0.3);}
 .tis-status-partial{color:#ffe066;background:rgba(255,224,102,0.08);border-color:rgba(255,224,102,0.3);}
 .tis-status-verif{color:var(--pip);background:rgba(197,255,0,0.08);border-color:rgba(197,255,0,0.35);}
+
+/* ============================================================
+   TOPBAR EQUIPPED-LAUNCHER STRIP
+   Persistent at-a-glance loadout readout, top-right of topbar.
+   ============================================================ */
+.topbar-loadout{display:flex;align-items:center;gap:12px;cursor:pointer;padding:4px 10px;border:1px solid rgba(197,255,0,0.15);background:rgba(197,255,0,0.03);border-radius:3px;transition:background 0.15s,border-color 0.15s;min-height:44px;}
+.topbar-loadout:hover{background:rgba(197,255,0,0.06);border-color:rgba(197,255,0,0.28);}
+.tl-thumb{width:52px;height:34px;object-fit:contain;filter:drop-shadow(0 0 4px rgba(197,255,0,0.2));flex-shrink:0;}
+.tl-thumb-empty{width:52px;height:34px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:0.1em;border:1px dashed rgba(197,255,0,0.15);}
+.tl-body{display:flex;flex-direction:column;gap:2px;min-width:0;max-width:180px;}
+.tl-name{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;color:var(--pip);letter-spacing:0.08em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.1;}
+.tl-meta{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.08em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.1;}
+.tl-energy{display:flex;flex-direction:column;align-items:flex-end;gap:2px;padding-left:10px;border-left:1px solid rgba(197,255,0,0.12);}
+.tl-energy-val{font-family:'Orbitron',monospace;font-size:13px;font-weight:700;color:var(--pip);letter-spacing:0.04em;text-shadow:0 0 10px rgba(197,255,0,0.3);line-height:1;white-space:nowrap;}
+.tl-tis{display:flex;align-items:center;gap:6px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.1em;line-height:1;}
+.tl-tis-score{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:900;letter-spacing:0.02em;}
+.tl-tis-band{color:var(--muted);font-size:8px;}
+@media (max-width:900px){
+  .tl-body{max-width:120px;}
+  .tl-thumb,.tl-thumb-empty{display:none;}
+}
+@media (max-width:640px){
+  .tl-body{display:none;}
+  .topbar-loadout{padding:4px 8px;}
+}
+
+/* ============================================================
+   CURRENT BUILD CONSEQUENCE SUMMARY CARD
+   Prominent top-of-calculator card with TIS / IPS / Confidence.
+   ============================================================ */
+.build-summary{border:1px solid rgba(197,255,0,0.3);background:linear-gradient(180deg,rgba(12,16,20,0.95),rgba(6,8,12,0.92));padding:18px 22px 16px;margin-bottom:14px;position:relative;}
+.build-summary::before{content:'';position:absolute;top:-1px;left:-1px;width:16px;height:16px;border-top:2px solid var(--pip);border-left:2px solid var(--pip);box-shadow:-2px -2px 14px rgba(197,255,0,0.25);}
+.build-summary::after{content:'';position:absolute;bottom:-1px;right:-1px;width:16px;height:16px;border-bottom:2px solid var(--pip);border-right:2px solid var(--pip);box-shadow:2px 2px 14px rgba(197,255,0,0.25);}
+.bs-header{font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700;color:var(--pip);letter-spacing:0.22em;text-align:center;text-shadow:0 0 18px rgba(197,255,0,0.4);margin-bottom:6px;}
+.bs-substring{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.1em;text-align:center;margin-bottom:16px;text-transform:uppercase;}
+.bs-tiles{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px;}
+.bs-tile{background:rgba(0,0,0,0.35);border:1px solid rgba(197,255,0,0.08);padding:14px 14px 12px;position:relative;}
+.bs-tile-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.14em;margin-bottom:6px;}
+.bs-tile-score{font-family:'Orbitron',monospace;font-size:48px;font-weight:900;line-height:1;letter-spacing:-0.02em;display:flex;align-items:baseline;gap:6px;}
+.bs-tile-max{font-family:'Share Tech Mono',monospace;font-size:13px;font-weight:400;color:var(--muted);letter-spacing:0.06em;}
+.bs-tile-bar{height:6px;margin:10px 0 8px;background:rgba(255,255,255,0.04);border-radius:3px;overflow:hidden;}
+.bs-tile-bar-fill{height:100%;width:0%;border-radius:3px;transition:width 0.6s ease,background 0.3s;}
+.bs-tile-note{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text);letter-spacing:0.04em;line-height:1.3;min-height:26px;}
+.bs-caveat{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:0.08em;color:#ffb86b;background:rgba(255,184,107,0.06);border-left:3px solid #ffb86b;padding:8px 12px;margin-bottom:12px;line-height:1.4;text-transform:uppercase;display:none;}
+.bs-caveat.active{display:block;}
+.bs-caveat-label{color:#ffb86b;font-weight:700;letter-spacing:0.12em;margin-right:6px;}
+.bs-factors-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:0.08em;color:var(--muted);text-transform:uppercase;padding-top:10px;border-top:1px solid rgba(197,255,0,0.08);}
+.bs-factors-label{color:var(--pip);letter-spacing:0.14em;font-weight:700;}
+.bs-factors-list{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.bs-factor{display:inline-flex;align-items:center;gap:5px;}
+.bs-factor-name{color:var(--muted);}
+.bs-factor-val{color:var(--bright);font-weight:700;font-family:'Orbitron',monospace;}
+.bs-status-row{display:flex;justify-content:center;margin-top:10px;}
+@media (max-width:860px){
+  .bs-tiles{grid-template-columns:1fr;}
+  .bs-tile-score{font-size:38px;}
+  .bs-header{font-size:12px;}
+}
+
 @media (max-width:860px){
   #tis-hero-active .card{min-width:0;}
 }
@@ -631,9 +690,24 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
     <div class="brand">[S.L.A.T.E.]</div>
     <div class="brand-sub">[SYSTEM FOR LESS-LETHAL ASSESSMENT &amp; TRAINING EVALUATION] · v3.1</div>
   </div>
-  <div style="text-align:right;">
-    <div id="live-readout" title="muzzle / impact" style="font-family:'Orbitron',monospace;font-size:22px;font-weight:900;color:var(--pip);text-shadow:0 0 18px rgba(197,255,0,0.4);letter-spacing:0.04em;line-height:1;">↑ — &nbsp; ↓ —</div>
-    <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.12em;margin-top:4px;">MUZZLE / TARGET</div>
+  <div id="topbar-loadout" class="topbar-loadout" onclick="showTab('score')" title="Equipped loadout — click for full score breakdown" style="display:none;">
+    <img id="tl-thumb" class="tl-thumb" alt="">
+    <div class="tl-body">
+      <div class="tl-name" id="tl-name">—</div>
+      <div class="tl-meta" id="tl-meta">—</div>
+    </div>
+    <div class="tl-energy">
+      <div class="tl-energy-val" id="live-readout">↑ — &nbsp; ↓ —</div>
+      <div class="tl-tis">
+        <span>TIS</span>
+        <span class="tl-tis-score" id="tl-tis">—</span>
+        <span class="tl-tis-band" id="tl-tis-band">—</span>
+      </div>
+    </div>
+  </div>
+  <div id="topbar-loadout-empty" style="text-align:right;">
+    <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.14em;">NO WEAPON EQUIPPED</div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.08em;margin-top:3px;">Select a platform to begin</div>
   </div>
 </div>
 
@@ -647,6 +721,50 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 
 <!-- CALCULATOR -->
 <div id="calc" class="panel active">
+
+  <!-- ============================================================
+       CURRENT BUILD CONSEQUENCE SUMMARY
+       Prominent top-of-calculator headline card showing TIS / IPS /
+       Confidence at a glance, with build string + primary caveat.
+       ============================================================ -->
+  <div id="build-summary" class="build-summary" style="display:none;">
+    <div class="bs-header">CURRENT BUILD CONSEQUENCE SUMMARY</div>
+    <div id="bs-substring" class="bs-substring">— / — / —</div>
+    <div class="bs-tiles">
+      <div class="bs-tile">
+        <div class="bs-tile-label">THREAT INTERRUPTION</div>
+        <div class="bs-tile-score"><span id="bs-tis">—</span><span class="bs-tile-max">/100</span></div>
+        <div class="bs-tile-bar"><div id="bs-tis-bar" class="bs-tile-bar-fill"></div></div>
+        <div id="bs-tis-note" class="bs-tile-note">—</div>
+      </div>
+      <div class="bs-tile">
+        <div class="bs-tile-label">INJURY POTENTIAL</div>
+        <div class="bs-tile-score"><span id="bs-ips">—</span><span class="bs-tile-max">/100</span></div>
+        <div class="bs-tile-bar"><div id="bs-ips-bar" class="bs-tile-bar-fill"></div></div>
+        <div id="bs-ips-note" class="bs-tile-note">—</div>
+      </div>
+      <div class="bs-tile">
+        <div class="bs-tile-label">CONFIDENCE</div>
+        <div class="bs-tile-score"><span id="bs-conf">—</span><span class="bs-tile-max">/100</span></div>
+        <div class="bs-tile-bar"><div id="bs-conf-bar" class="bs-tile-bar-fill"></div></div>
+        <div id="bs-conf-note" class="bs-tile-note">—</div>
+      </div>
+    </div>
+    <div id="bs-caveat" class="bs-caveat"><span class="bs-caveat-label">PRIMARY CAVEAT:</span><span id="bs-caveat-text">—</span></div>
+    <div class="bs-factors-row">
+      <span class="bs-factors-label">WHY THIS RATING?</span>
+      <span class="bs-factors-list">
+        <span class="bs-factor"><span class="bs-factor-name">Energy</span><span class="bs-factor-val" id="bs-f1">—</span></span>
+        <span class="bs-factor"><span class="bs-factor-name">Projectile</span><span class="bs-factor-val" id="bs-f2">—</span></span>
+        <span class="bs-factor"><span class="bs-factor-name">Stability</span><span class="bs-factor-val" id="bs-f3">—</span></span>
+        <span class="bs-factor"><span class="bs-factor-name">Follow-up</span><span class="bs-factor-val" id="bs-f4">—</span></span>
+        <span class="bs-factor"><span class="bs-factor-name">Distance</span><span class="bs-factor-val" id="bs-f5">—</span></span>
+      </span>
+    </div>
+    <div class="bs-status-row">
+      <div id="bs-status" class="tis-status tis-status-pred" title="">PREDICTED / UNVERIFIED</div>
+    </div>
+  </div>
 
   <!-- ============================================================
        HERO PANEL — cinematic console layout
@@ -4611,6 +4729,152 @@ function calculateTIS(){
     reasonsEl.innerHTML=reasons.length?reasons.map(r=>'<div style="margin-bottom:4px;">• '+r+'</div>').join(''):'<div style="color:var(--pip);">All factors within acceptable range.</div>';
   }
 
+  // --- CURRENT BUILD CONSEQUENCE SUMMARY card (top of Calculator tab) ---
+  // Build-summary uses "higher-is-better" coloring (green = good) rather than
+  // the Score tab's severity coloring. TIS & Confidence are "high is good"
+  // (operator wants high); IPS is "low is good" (subject safety) so the scale
+  // is inverted for it. 4-band scale maps to green/yellow/orange/red.
+  function bsScoreColor(score,dir){
+    const s=(dir==='low')?(100-score):score;
+    if(s>=70) return 'var(--pip)';       // green — strong
+    if(s>=50) return '#ffe066';          // yellow — moderate
+    if(s>=25) return '#ffb86b';          // orange — limited
+    return '#e02020';                     // red — minimal/bad
+  }
+  const bsEl=document.getElementById('build-summary');
+  if(bsEl){
+    bsEl.style.display='block';
+    // Build string: PLATFORM / GAS / ROUND / IMPACT / DIST / MOD COUNT
+    const pShort=p.name.replace(/^(Umarex|Valken|NXWerks|Defense Innovations|DI|Mercury Rise|Milsig)\s*/i,'').toUpperCase();
+    const gasShort=gType==='hpa'?'HPA':'CO2';
+    const roundShort=(proj?proj.name:roundVal||'—').toUpperCase();
+    const modCount=(typeof selMods!=='undefined')?selMods.size:0;
+    const modStr=modCount>0?(modCount+' MOD'+(modCount===1?'':'S')):'STOCK';
+    const subText=[pShort,gasShort,roundShort,adjustedJ.toFixed(1)+'J IMPACT',dist+' FT',modStr].join(' / ');
+    const subEl=document.getElementById('bs-substring');
+    if(subEl) subEl.textContent=subText;
+
+    // Tile: TIS (higher = better, green scale)
+    const bsTisEl=document.getElementById('bs-tis');
+    const bsTisBar=document.getElementById('bs-tis-bar');
+    const bsTisNote=document.getElementById('bs-tis-note');
+    const tisColor=bsScoreColor(tis,'high');
+    if(bsTisEl){bsTisEl.textContent=tis;bsTisEl.style.color=tisColor;}
+    if(bsTisBar){bsTisBar.style.width=tis+'%';bsTisBar.style.background=tisColor;}
+    if(bsTisNote){
+      let n;
+      if(tis>=85) n='Severe disruption — rapid incapacitation likely';
+      else if(tis>=70) n='Strong immediate disruption likely';
+      else if(tis>=50) n='Moderate disruption — outcome varies by placement';
+      else if(tis>=25) n='Limited disruption — not a reliable stopper';
+      else n='Minimal disruption — insufficient energy to interrupt';
+      bsTisNote.textContent=n;
+    }
+
+    // Tile: IPS (lower = better for subject; invert scale so high IPS = red)
+    const bsIpsEl=document.getElementById('bs-ips');
+    const bsIpsBar=document.getElementById('bs-ips-bar');
+    const bsIpsNote=document.getElementById('bs-ips-note');
+    const ipsColor=bsScoreColor(ips,'low');
+    if(bsIpsEl){bsIpsEl.textContent=ips;bsIpsEl.style.color=ipsColor;}
+    if(bsIpsBar){bsIpsBar.style.width=ips+'%';bsIpsBar.style.background=ipsColor;}
+    if(bsIpsNote){
+      let n;
+      if(ips>=85) n='Extreme — risk of permanent injury';
+      else if(ips>=70) n='High consequence if impact occurs';
+      else if(ips>=50) n='Elevated consequence if impact occurs';
+      else if(ips>=25) n='Low-to-moderate consequence range';
+      else n='Minimal injury risk at this energy';
+      bsIpsNote.textContent=n;
+    }
+
+    // Tile: Confidence (higher = more trustworthy, green scale)
+    const bsConfEl=document.getElementById('bs-conf');
+    const bsConfBar=document.getElementById('bs-conf-bar');
+    const bsConfNote=document.getElementById('bs-conf-note');
+    const confColor=bsScoreColor(conf,'high');
+    if(bsConfEl){bsConfEl.textContent=conf;bsConfEl.style.color=confColor;}
+    if(bsConfBar){bsConfBar.style.width=conf+'%';bsConfBar.style.background=confColor;}
+    if(bsConfNote){
+      let n;
+      if(conf>=85) n='Well-validated — chrono data drives the score';
+      else if(conf>=70) n='Partial validation — some modeled input';
+      else if(conf>=50) n='Some modeled assumptions active';
+      else if(conf>=25) n='Score is mostly modeled — log shots to refine';
+      else n='Unverified — score is purely predicted';
+      bsConfNote.textContent=n;
+    }
+
+    // Primary caveat — single top issue (not a warning spam list)
+    const bsCaveat=document.getElementById('bs-caveat');
+    const bsCaveatText=document.getElementById('bs-caveat-text');
+    if(bsCaveat&&bsCaveatText){
+      let caveat='';
+      if(muzzleJ>=120) caveat='Critical output zone — '+Math.round(muzzleJ)+'J muzzle exceeds lethal threshold. Training use only.';
+      else if(muzzleJ>=80) caveat='Elevated output — '+Math.round(muzzleJ)+'J muzzle. Shot placement discipline is critical — avoid head/neck/groin.';
+      else if(roundVal==='custom'&&(document.getElementById('c-custom-shape')||{}).value==='shaped') caveat='Shaped projectile + modified setup reduce tolerance to close-range / sensitive-area impacts.';
+      else if(f1<40) caveat='Impact energy is below the disruption threshold at this distance — effective range is limited.';
+      else if(f3<45) caveat=gType.toUpperCase()+' variance on this platform is high — expect inconsistent shot-to-shot output.';
+      else if(conf<40) caveat='Confidence is low — multiple uncertainty factors are stacking. Chrono-validate before relying on this score.';
+      else if(validShots.length===0) caveat='No chrono data logged — score is fully predicted. Log shots to build a verified baseline.';
+      else caveat='';
+      if(caveat){
+        bsCaveatText.textContent=caveat;
+        bsCaveat.classList.add('active');
+      } else {
+        bsCaveat.classList.remove('active');
+      }
+    }
+
+    // Factor breakdown (renamed for clarity: Stability = Consistency, Distance = Context)
+    const bsF1=document.getElementById('bs-f1');
+    const bsF2=document.getElementById('bs-f2');
+    const bsF3=document.getElementById('bs-f3');
+    const bsF4=document.getElementById('bs-f4');
+    const bsF5=document.getElementById('bs-f5');
+    if(bsF1) bsF1.textContent=f1;
+    if(bsF2) bsF2.textContent=f2;
+    if(bsF3) bsF3.textContent=f3;
+    if(bsF4) bsF4.textContent=f4;
+    if(bsF5) bsF5.textContent=f5;
+
+    // Verification status badge
+    const bsStatus=document.getElementById('bs-status');
+    if(bsStatus){
+      bsStatus.textContent=tisStatus.label;
+      bsStatus.className='tis-status '+tisStatus.cls;
+      bsStatus.title=tisStatus.note;
+    }
+  }
+
+  // --- Topbar equipped-launcher strip ---
+  const tlStrip=document.getElementById('topbar-loadout');
+  const tlEmpty=document.getElementById('topbar-loadout-empty');
+  if(tlStrip&&tlEmpty){
+    tlStrip.style.display='flex';
+    tlEmpty.style.display='none';
+    const tlThumb=document.getElementById('tl-thumb');
+    if(tlThumb){
+      let imgSrc=PLATFORM_IMAGES[platformKey]||'';
+      if(!imgSrc&&(platformKey==='m17g3'||platformKey==='t17')) imgSrc=PLATFORM_IMAGES.milsig||PLATFORM_IMAGES.m17||'';
+      if(imgSrc){tlThumb.src=imgSrc;tlThumb.style.display='';}
+      else{tlThumb.removeAttribute('src');tlThumb.style.display='none';}
+    }
+    const tlNameEl=document.getElementById('tl-name');
+    if(tlNameEl) tlNameEl.textContent=p.name.replace(/^(Umarex|Valken|NXWerks|Defense Innovations|DI|Mercury Rise|Milsig)\s*/i,'');
+    const tlMetaEl=document.getElementById('tl-meta');
+    if(tlMetaEl){
+      const gasLbl=(gType==='co2')?(gasSize.toUpperCase()+' CO2'):('HPA '+gasSizeHPA.toUpperCase());
+      const modCnt=(typeof selMods!=='undefined')?selMods.size:0;
+      tlMetaEl.textContent=gasLbl+' · '+(modCnt>0?(modCnt+' mods'):'stock');
+    }
+    const tlTisEl=document.getElementById('tl-tis');
+    const tlBandEl=document.getElementById('tl-tis-band');
+    const tlColor=bsScoreColor(tis,'high');
+    if(tlTisEl){tlTisEl.textContent=tis;tlTisEl.style.color=tlColor;}
+    if(tlBandEl){tlBandEl.textContent=tisBand.label;tlBandEl.style.color=tlColor;}
+  }
+
   // --- Summary ---
   const summEl=document.getElementById('tis-summary');
   if(summEl){
@@ -4629,6 +4893,13 @@ function setTisNull(isNull){
   const inBand=document.getElementById('tis-band');
   if(heroNull)heroNull.style.display=isNull?'block':'none';
   if(heroActive)heroActive.style.display=isNull?'none':'block';
+  // Build summary card + topbar loadout strip follow the null state too
+  const bs=document.getElementById('build-summary');
+  if(bs) bs.style.display=isNull?'none':'block';
+  const tlStrip=document.getElementById('topbar-loadout');
+  const tlEmpty=document.getElementById('topbar-loadout-empty');
+  if(tlStrip) tlStrip.style.display=isNull?'none':'flex';
+  if(tlEmpty) tlEmpty.style.display=isNull?'block':'none';
   if(isNull){
     if(inScore){inScore.textContent='—';inScore.className='tis-inline-score';}
     if(inBand){inBand.textContent='—';inBand.className='tis-inline-band';}
