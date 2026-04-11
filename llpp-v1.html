@@ -145,6 +145,22 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;background:var(--pip)
 .profile-sub{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.08em;color:var(--muted);margin-top:-4px;margin-bottom:10px;}
 .profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px;}
 .profile-cell{padding:8px 10px;background:rgba(197,255,0,0.03);border:1px solid rgba(197,255,0,0.10);border-left:3px solid var(--ip-c,rgba(197,255,0,0.35));transition:all 0.25s;}
+.profile-cell-click{cursor:pointer;}
+.profile-cell-click:hover{background:rgba(0,200,255,0.08);border-color:rgba(0,200,255,0.35);}
+.profile-cell .cell-i{display:inline-flex;align-items:center;justify-content:center;width:11px;height:11px;border-radius:50%;border:1px solid rgba(0,200,255,0.4);color:var(--cyan);font-size:8px;font-style:italic;font-family:'Orbitron',sans-serif;margin-left:4px;vertical-align:middle;line-height:1;}
+.profile-cell-click:hover .cell-i{background:rgba(0,200,255,0.2);box-shadow:0 0 6px rgba(0,200,255,0.4);}
+.harm-body{font-family:'Share Tech Mono',monospace;font-size:12px;line-height:1.7;color:var(--text);letter-spacing:0.02em;}
+.harm-body p{margin:0 0 9px;}
+.harm-body strong{color:var(--bright);}
+.harm-body .harm-k{display:block;font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.14em;color:var(--pip);text-transform:uppercase;margin:10px 0 4px;text-shadow:0 0 10px rgba(197,255,0,0.25);}
+.harm-body .harm-k:first-child{margin-top:0;}
+.lethal-card{border-color:rgba(255,60,60,0.38)!important;background:linear-gradient(180deg,rgba(80,0,0,0.25),rgba(0,0,0,0.35))!important;}
+.lethal-card::before{background:linear-gradient(90deg,transparent,rgba(255,60,60,0.8),transparent)!important;}
+.never-target-static{color:#ff2d2d;letter-spacing:0.18em;font-weight:900;text-shadow:0 0 12px rgba(255,30,30,0.55);}
+.lethal-grid{display:grid;grid-template-columns:1fr;gap:10px;}
+.lethal-row{padding:10px 12px;background:rgba(40,0,0,0.4);border:1px solid rgba(255,60,60,0.28);border-left:3px solid #ff2d2d;}
+.lethal-name{font-family:'Orbitron',sans-serif;font-size:12px;font-weight:800;letter-spacing:0.1em;color:#ffd4d4;text-shadow:0 0 8px rgba(255,30,30,0.35);margin-bottom:6px;}
+.lethal-desc{font-family:'Share Tech Mono',monospace;font-size:11px;line-height:1.65;color:#ffb3b3;letter-spacing:0.02em;}
 .profile-cell[data-sev="good"]{--ip-c:#9cff00;background:rgba(156,255,0,0.07);}
 .profile-cell[data-sev="good"] .profile-v{color:#c5ff40;text-shadow:0 0 10px rgba(156,255,0,0.45);}
 .profile-cell[data-sev="warn"]{--ip-c:#ffb347;background:rgba(255,168,0,0.07);}
@@ -1258,48 +1274,194 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
        MODAL · IMPACT PROFILE DEFINITIONS
        ============================================================ -->
   <div class="modal-backdrop" id="modal-ip-info">
-    <div class="modal-panel" style="max-width:580px;">
+    <div class="modal-panel" style="max-width:560px;">
       <div class="modal-hdr">
         <div>
-          <div class="modal-title">IMPACT PROFILE · DEFINITIONS</div>
-          <div class="modal-sub">What each readout on the impact profile actually means</div>
+          <div class="modal-title">IMPACT PROFILE</div>
+          <div class="modal-sub">What this card tells you at a glance</div>
         </div>
         <button class="modal-close" onclick="closeModal('modal-ip-info')">×</button>
       </div>
       <div class="modal-body">
-        <div class="ip-def">
-          <div class="ip-def-hdr">ENGAGEMENT RANGE</div>
-          <div class="ip-def-body">Where the target sits relative to the platform's optimal effective distance.
-            <ul>
-              <li><strong>WITHIN OPTIMAL ENVELOPE</strong> — inside the distance band where retained energy and accuracy are both reliable.</li>
-              <li><strong>EDGE OF OPTIMAL</strong> — energy or accuracy is starting to fall off; shots land but authority drops.</li>
-              <li><strong>EXCEEDS OPTIMAL</strong> — beyond the platform's reliable envelope. Expect poor grouping and unreliable effect.</li>
-              <li><strong>FAR EXCEEDS OPTIMAL</strong> — this is not an engagement distance for this platform. Do not use as a primary option at this range.</li>
-            </ul>
-          </div>
-        </div>
-        <div class="ip-def">
-          <div class="ip-def-hdr">ENERGY STATE</div>
-          <div class="ip-def-body">How much of the muzzle energy actually arrives at the target.
-            <ul>
-              <li><span class="ip-swatch good"></span><strong>GOOD</strong> — retained energy within 15% of muzzle. The round is landing with full intended authority.</li>
-              <li><span class="ip-swatch warn"></span><strong>DIMINISHING</strong> — 15–30% loss. Still effective but the bite is coming off.</li>
-              <li><span class="ip-swatch bad"></span><strong>DEGRADED</strong> — 30–45% loss. Bruising round at best. Plan a follow-up.</li>
-              <li><span class="ip-swatch crit"></span><strong>SPENT</strong> — more than 45% lost. Round is marginal; do not rely on it for compliance.</li>
-            </ul>
-          </div>
-        </div>
-        <div class="ip-def">
-          <div class="ip-def-hdr">STABILITY</div>
-          <div class="ip-def-body">How reliably the projectile tracks to point of aim at this distance. Accounts for range, projectile mass, bore match, and platform class. <strong>GREEN</strong> = point-of-aim. <strong>YELLOW</strong> = slight dispersion. <strong>ORANGE</strong> = meaningful drift, plan for 1–2 MOA+. <strong>RED</strong> = shots will wander; you cannot predict impact.</div>
-        </div>
-        <div class="ip-def">
-          <div class="ip-def-hdr">EFFECTIVE CONFIDENCE</div>
-          <div class="ip-def-body">Overall confidence in the platform's ability to <em>neutralize a committed threat</em> at this range with this energy and this placement. This is the answer to the question: "If I take this shot, will it do the job?" — combining energy, stability, and range band into a single call. It does NOT account for legal justification, subject behavior, or your training — it is a <em>capability</em> readout only.</div>
+        <div class="disclaimer-body" style="font-size:15px;line-height:1.7;">
+          <p>The <strong>Impact Profile</strong> is the live read of what your current configuration <em>actually delivers</em> to the target at the distance entered. It answers four separate questions in one glance:</p>
+          <p>&nbsp;&nbsp;• <strong>Engagement Range</strong> — am I inside the platform's optimal envelope?</p>
+          <p>&nbsp;&nbsp;• <strong>Energy State</strong> — how much muzzle energy survives flight?</p>
+          <p>&nbsp;&nbsp;• <strong>Stability</strong> — will the projectile track to point-of-aim?</p>
+          <p>&nbsp;&nbsp;• <strong>Effective Confidence</strong> — will the shot actually do the job?</p>
+          <p>Each readout is severity-coloured: <strong style="color:#9cff00;">green</strong> = good, <strong style="color:#ffb347;">yellow</strong> = marginal, <strong style="color:#ff6a3a;">orange</strong> = degraded, <strong style="color:#ff2d2d;">red</strong> = critical.</p>
+          <p><strong>Click any cell on the Impact Profile card to open its full definition and the rules that drive it.</strong></p>
         </div>
       </div>
-      <div class="modal-footer">
-        <button class="btn" onclick="closeModal('modal-ip-info')">CLOSE</button>
+    </div>
+  </div>
+
+  <!-- ROOT: ENGAGEMENT RANGE -->
+  <div class="modal-backdrop" id="modal-range-info">
+    <div class="modal-panel" style="max-width:560px;">
+      <div class="modal-hdr">
+        <div>
+          <div class="modal-title">ENGAGEMENT RANGE</div>
+          <div class="modal-sub">Are you inside the platform's effective envelope?</div>
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-range-info')">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="disclaimer-body" style="font-size:15px;line-height:1.7;">
+          <p><strong>Engagement Range</strong> expresses where your target sits relative to the <em>optimal effective distance</em> of the equipped platform. Each platform class has a different envelope — pistol ≈ 25 ft, shotgun ≈ 40 ft, rifle ≈ 60 ft — driven by barrel length, bore match, projectile mass, and muzzle energy.</p>
+          <p><strong>Bands:</strong></p>
+          <p>&nbsp;&nbsp;• <strong style="color:#9cff00;">WITHIN OPTIMAL ENVELOPE</strong> — inside 65% of optimal distance. Retained energy and accuracy are both reliable.</p>
+          <p>&nbsp;&nbsp;• <strong style="color:#ffb347;">EDGE OF OPTIMAL</strong> — between 65% and 100% of optimal. Shots land but authority drops.</p>
+          <p>&nbsp;&nbsp;• <strong style="color:#ff6a3a;">EXCEEDS OPTIMAL</strong> — up to 150% of optimal. Expect poor grouping and unreliable effect.</p>
+          <p>&nbsp;&nbsp;• <strong style="color:#ff2d2d;">FAR EXCEEDS OPTIMAL</strong> — beyond 150%. Not a primary engagement distance for this platform.</p>
+          <p><em>Context:</em> distance is a force-multiplier in both directions — closing range restores energy AND improves placement reliability. If the band reads yellow or worse, consider whether closing distance is safer than taking the shot.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROOT: ENERGY STATE -->
+  <div class="modal-backdrop" id="modal-energy-info">
+    <div class="modal-panel" style="max-width:560px;">
+      <div class="modal-hdr">
+        <div>
+          <div class="modal-title">ENERGY STATE</div>
+          <div class="modal-sub">How much muzzle energy actually reaches the target</div>
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-energy-info')">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="disclaimer-body" style="font-size:15px;line-height:1.7;">
+          <p><strong>Energy State</strong> is the percentage of muzzle energy retained at the target distance. Kinetic projectiles lose energy quickly to air drag, and lighter rounds lose it faster than heavier ones. This cell tells you how much of the bite has dropped off in flight.</p>
+          <p><strong>Bands (energy loss vs muzzle):</strong></p>
+          <p>&nbsp;&nbsp;• <strong style="color:#9cff00;">GOOD</strong> — ≤ 15% loss. Round is landing with full intended authority.</p>
+          <p>&nbsp;&nbsp;• <strong style="color:#ffb347;">DIMINISHING</strong> — 15–30% loss. Still effective, but the bite is coming off.</p>
+          <p>&nbsp;&nbsp;• <strong style="color:#ff6a3a;">DEGRADED</strong> — 30–45% loss. Bruising round at best. Plan a follow-up.</p>
+          <p>&nbsp;&nbsp;• <strong style="color:#ff2d2d;">SPENT</strong> — &gt; 45% loss. Round is marginal; do not rely on it for compliance.</p>
+          <p><em>Context:</em> Energy State is purely kinetic — it does not know whether you chose a round that concentrates force or spreads it. Combine this reading with the round's injury profile (e.g. aluminum vs rubber vs irritant) when judging whether the shot is appropriate.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROOT: STABILITY -->
+  <div class="modal-backdrop" id="modal-stability-info">
+    <div class="modal-panel" style="max-width:560px;">
+      <div class="modal-hdr">
+        <div>
+          <div class="modal-title">STABILITY</div>
+          <div class="modal-sub">How reliably the projectile tracks to point-of-aim</div>
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-stability-info')">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="disclaimer-body" style="font-size:15px;line-height:1.7;">
+          <p><strong>Stability</strong> expresses your realistic ability to put the round where you're aiming. It is derived from distance-vs-optimal ratio, platform class, barrel length, and bore-match between the barrel and the projectile. A mismatched bore or a long-range shot from a short-barrel pistol will score lower even if the muzzle energy is fine.</p>
+          <p><strong>Bands:</strong></p>
+          <p>&nbsp;&nbsp;• <strong style="color:#9cff00;">STABLE</strong> — point-of-aim, point-of-impact at this range.</p>
+          <p>&nbsp;&nbsp;• <strong style="color:#ffb347;">VARIABLE</strong> — slight dispersion, still usable for center-mass.</p>
+          <p>&nbsp;&nbsp;• <strong style="color:#ff6a3a;">DEGRADED</strong> — meaningful drift, plan for 1–2 MOA or worse. Body-zone precision is not realistic.</p>
+          <p>&nbsp;&nbsp;• <strong style="color:#ff2d2d;">UNRELIABLE</strong> — shots wander. You cannot predict impact inside a body silhouette.</p>
+          <p><em>Context:</em> Stability is why placement-specific thresholds are conservative. If the cell is red, the ethical assumption is that you <strong>cannot</strong> avoid the head/neck/spine — close distance, change platforms, or don't take the shot.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROOT: HARM REDUCTION OVERVIEW -->
+  <div class="modal-backdrop" id="modal-harm-info">
+    <div class="modal-panel" style="max-width:560px;">
+      <div class="modal-hdr">
+        <div>
+          <div class="modal-title">HARM REDUCTION BRIEFING</div>
+          <div class="modal-sub">Why this section exists</div>
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-harm-info')">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="disclaimer-body" style="font-size:15px;line-height:1.7;">
+          <p>Less-lethal launchers are <strong>de-escalation tools</strong>. This briefing exists so that everyone using the platform understands the foundational rules <em>before</em> they look at the numeric readouts below it. Numbers without context are dangerous.</p>
+          <p>The briefing covers: ethical bounds, documented injury, aftercare obligations, legal exposure, and the zones that are always excluded from doctrine.</p>
+          <p>Read it once on first visit. Re-read it any time you change platforms, change rounds, or add mods that push energy higher.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROOT: TARGET RESPONSE OVERVIEW -->
+  <div class="modal-backdrop" id="modal-tr-info">
+    <div class="modal-panel" style="max-width:560px;">
+      <div class="modal-hdr">
+        <div>
+          <div class="modal-title">TARGET RESPONSE BY PLACEMENT</div>
+          <div class="modal-sub">Will this shot actually do the job?</div>
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-tr-info')">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="disclaimer-body" style="font-size:15px;line-height:1.7;">
+          <p><strong>Target Response by Placement</strong> maps your current impact energy to a realistic outcome for each major non-lethal body zone — dense muscle, bony edges, and soft tissue — using a five-tier severity scale:</p>
+          <p>&nbsp;&nbsp;• <strong style="color:#6e7b8a;">INEFFECTIVE</strong> — no meaningful effect.</p>
+          <p>&nbsp;&nbsp;• <strong style="color:#c5cf3a;">AGGRAVATES</strong> — stings without stopping; may escalate.</p>
+          <p>&nbsp;&nbsp;• <strong style="color:#f5a623;">DETERS</strong> — enough authority to disrupt stance briefly.</p>
+          <p>&nbsp;&nbsp;• <strong style="color:#ff6a3a;">INCAPACITATES</strong> — practical stopping band for a less-lethal tool.</p>
+          <p>&nbsp;&nbsp;• <strong style="color:#ff2d2d;">LETHAL RISK</strong> — crossing into less-than-lethal territory.</p>
+          <p><em>Thresholds vary by zone</em> — the same energy is devastating to soft tissue but shrugged off by dense muscle. Click any tier badge on the card for its full definition. These are planning references only, not guarantees.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROOT: LETHAL ZONES -->
+  <div class="modal-backdrop" id="modal-lethal-info">
+    <div class="modal-panel" style="max-width:560px;">
+      <div class="modal-hdr">
+        <div>
+          <div class="modal-title" style="color:#ff6a6a;">LETHAL ZONES · HEAD · NECK · TRACHEA</div>
+          <div class="modal-sub">Excluded from doctrine entirely</div>
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-lethal-info')">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="disclaimer-body" style="font-size:15px;line-height:1.7;">
+          <p><strong class="never-target-static">NEVER TARGET.</strong> Less-lethal launchers are not less-lethal at the head, neck, or trachea — they are lethal weapons aimed at lethal anatomy. No energy band, round selection, or configuration makes these zones acceptable targets.</p>
+          <p><strong>Head / Skull / Orbital:</strong> Cranial impacts at any kinetic energy carry traumatic brain injury, intracranial hemorrhage, and orbital-destruction risk. No threshold tier applies.</p>
+          <p><strong>Throat / Trachea / Larynx:</strong> Cartilage collapses under kinetic impact at any achievable .68 cal energy, producing airway closure and likely death without immediate intervention.</p>
+          <p>These zones are <em>excluded from the Zone Threshold Table</em> and from the Target Response grid. They are shown only as a reminder — they are never a shot you plan to take. If the only shot available is to the head or neck, the ethical answer is to not take the shot.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ONBOARDING · GETTING STARTED -->
+  <div class="modal-backdrop" id="modal-onboard">
+    <div class="modal-panel" style="max-width:600px;">
+      <div class="modal-hdr">
+        <div>
+          <div class="modal-title">GETTING STARTED</div>
+          <div class="modal-sub">Equip a launcher and a projectile to unlock the readouts</div>
+        </div>
+        <button class="modal-close" onclick="closeModal('modal-onboard')">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="disclaimer-body" style="font-size:14px;line-height:1.7;">
+          <p>Welcome to <strong>[S.L.A.T.E.]</strong>. Nothing on this app will display meaningful numbers until you tell it what you're running. Three quick steps:</p>
+          <ol style="margin:0 0 12px 18px;padding:0;">
+            <li><strong>PLATFORM</strong> — choose your launcher (and barrel / bolt if applicable).</li>
+            <li><strong>GAS</strong> — HPA pressure or CO2 size + temperature.</li>
+            <li><strong>ROUND</strong> — projectile type and mass.</li>
+          </ol>
+          <p>You can also skip the configuration and log a shot with raw chrono data directly. All of this can be edited later from the equipment strip at the top of the Calculator tab.</p>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px;">
+          <button class="btn" onclick="closeModal('modal-onboard');openModal('modal-platform');" style="width:100%;">1 · PLATFORM</button>
+          <button class="btn" onclick="closeModal('modal-onboard');openModal('modal-gas');" style="width:100%;">2 · GAS</button>
+          <button class="btn" onclick="closeModal('modal-onboard');openModal('modal-round');" style="width:100%;">3 · ROUND</button>
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content:space-between;">
+        <button class="btn" onclick="dismissOnboard(true);" style="background:transparent;border-color:rgba(255,255,255,0.14);color:var(--muted);">DON'T SHOW AGAIN</button>
+        <button class="btn btn-primary" onclick="dismissOnboard(false);">I'LL CONFIGURE LATER</button>
       </div>
     </div>
   </div>
@@ -1461,18 +1623,30 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
       <div class="profile-card">
         <div class="profile-title-row">
           <div class="profile-title">IMPACT PROFILE</div>
-          <button type="button" class="info-dot" onclick="openModal('modal-ip-info')" aria-label="Impact profile definitions">i</button>
+          <button type="button" class="info-dot" onclick="openModal('modal-ip-info')" aria-label="What is the Impact Profile?">i</button>
         </div>
-        <div class="profile-sub">LIVE READOUT · Non-medical estimate</div>
+        <div class="profile-sub">LIVE READOUT · Non-medical estimate · Click any cell for its definition</div>
         <div class="profile-grid">
-          <div class="profile-cell" id="ip-cell-range" data-ip="range"><div class="profile-k">Engagement Range</div><div class="profile-v" id="ip-range">—</div></div>
-          <div class="profile-cell" id="ip-cell-energy" data-ip="energy"><div class="profile-k">Energy State</div><div class="profile-v" id="ip-energy">—</div></div>
-          <div class="profile-cell" id="ip-cell-stability" data-ip="stability"><div class="profile-k">Stability</div><div class="profile-v" id="ip-stability">—</div></div>
-          <div class="profile-cell" id="ip-cell-confidence" data-ip="confidence"><div class="profile-k">Effective Confidence</div><div class="profile-v" id="ip-confidence">—</div></div>
+          <div class="profile-cell profile-cell-click" id="ip-cell-range" data-ip="range" onclick="openModal('modal-range-info')" title="What is Engagement Range?"><div class="profile-k">Engagement Range <span class="cell-i">i</span></div><div class="profile-v" id="ip-range">—</div></div>
+          <div class="profile-cell profile-cell-click" id="ip-cell-energy" data-ip="energy" onclick="openModal('modal-energy-info')" title="What is Energy State?"><div class="profile-k">Energy State <span class="cell-i">i</span></div><div class="profile-v" id="ip-energy">—</div></div>
+          <div class="profile-cell profile-cell-click" id="ip-cell-stability" data-ip="stability" onclick="openModal('modal-stability-info')" title="What is Stability?"><div class="profile-k">Stability <span class="cell-i">i</span></div><div class="profile-v" id="ip-stability">—</div></div>
+          <div class="profile-cell profile-cell-click" id="ip-cell-confidence" data-ip="confidence" onclick="openModal('modal-conf-info')" title="What is Effective Confidence?"><div class="profile-k">Effective Confidence <span class="cell-i">i</span></div><div class="profile-v" id="ip-confidence">—</div></div>
         </div>
       </div>
       <div class="profile-card">
-        <div class="profile-title">TARGET RESPONSE BY PLACEMENT</div>
+        <div class="profile-title-row">
+          <div class="profile-title">HARM REDUCTION BRIEFING</div>
+          <button type="button" class="info-dot" onclick="openModal('modal-harm-info')" aria-label="Why this section exists">i</button>
+        </div>
+        <div class="profile-sub">READ THIS FIRST · Less-lethal is a de-escalation tool, not a lethality exemption</div>
+        <div id="pl-response" class="harm-body"></div>
+      </div>
+      <div class="zone-legend" id="zone-legend"></div>
+      <div class="profile-card">
+        <div class="profile-title-row">
+          <div class="profile-title">TARGET RESPONSE BY PLACEMENT</div>
+          <button type="button" class="info-dot" onclick="openModal('modal-tr-info')" aria-label="What is Target Response?">i</button>
+        </div>
         <div class="tr-help">
           Did the shot do the job? At <strong style="color:var(--pip);"><span id="tr-impact">—</span> impact J</strong>, here's the realistic outcome for each placement. Click any tier badge for its definition.
         </div>
@@ -1485,11 +1659,14 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
           <div class="tr-tier-detail" id="tr-tier-detail" style="display:none;"></div>
         </div>
       </div>
-      <div class="profile-card">
-        <div class="profile-title">TARGET RESPONSE (EDUCATION + HARM-REDUCTION)</div>
-        <div id="pl-response"></div>
+      <div class="profile-card lethal-card">
+        <div class="profile-title-row">
+          <div class="profile-title" style="color:#ff4040;text-shadow:0 0 12px rgba(255,30,30,0.4);">HEAD · NECK · TRACHEA &middot; <strong class="never-target-static">NEVER TARGET</strong></div>
+          <button type="button" class="info-dot" style="background:rgba(255,60,60,0.12);border-color:rgba(255,60,60,0.5);color:#ff6a6a;" onclick="openModal('modal-lethal-info')" aria-label="Why these zones are excluded from doctrine">i</button>
+        </div>
+        <div class="profile-sub" style="color:#ff9a9a;">EXCLUDED FROM DOCTRINE · NO THRESHOLD APPLIES AT ANY ENERGY LEVEL</div>
+        <div class="lethal-grid" id="lethal-zone-body"></div>
       </div>
-      <div class="zone-legend" id="zone-legend"></div>
     </div>
   </div>
 
@@ -1636,8 +1813,8 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
       </div>
 
       <!-- TIS Hero Score -->
-      <div class="card" style="padding:20px 16px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;">
-        <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.14em;margin-bottom:6px;">THREAT INTERRUPTION</div>
+      <div class="card" style="padding:20px 16px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;" onclick="openModal('modal-tis-info')">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.14em;margin-bottom:6px;">THREAT INTERRUPTION <span style="border:1px solid rgba(197,255,0,0.2);border-radius:50%;width:14px;height:14px;display:inline-block;text-align:center;line-height:14px;font-size:9px;cursor:pointer;vertical-align:middle;">i</span></div>
         <div id="tis-hero-score" style="font-family:'Orbitron',monospace;font-size:80px;font-weight:900;line-height:1;letter-spacing:-0.02em;transition:color 0.3s;">—</div>
         <div id="tis-hero-band" style="font-family:'Share Tech Mono',monospace;font-size:14px;letter-spacing:0.12em;margin-top:6px;">—</div>
         <div style="height:6px;margin:10px auto 0;width:80%;background:rgba(255,255,255,0.04);border-radius:3px;overflow:hidden;">
@@ -2513,6 +2690,7 @@ let equippedPlatform=null;           // platformKey currently "equipped" (locked
 const LS_EQUIPPED='slate_equipped_v1';
 const LS_LOADOUT ='slate_loadout_v1';
 const LS_DISCLAIMER='slate_disclaimer';
+const LS_ONBOARD='slate_onboard_dismissed';
 const DISCLAIMER_VERSION='1.0';
 
 // -------------------- EQUIP SYSTEM --------------------
@@ -3771,8 +3949,11 @@ function updatePlacement(impact,muzzle,dist){
     if(j>=z.mJ)return 1;
     return 0;
   }
-  // Include every zone in the legend — lethal zones (head, throat) sort to the top as NEVER TARGET.
-  const sorted=[...azones].sort((a,b)=>{
+  // Non-lethal zones feed the ranked legend; lethal zones render in their own
+  // dedicated card at the bottom of the placement stack.
+  const nonLethal=azones.filter(z=>z.type!=='lethal');
+  const lethalZones=azones.filter(z=>z.type==='lethal');
+  const sorted=[...nonLethal].sort((a,b)=>{
     const ta=sevTier(a,impact),tb=sevTier(b,impact);
     if(ta!==tb)return tb-ta;
     // within same tier, sort by how much current impact exceeds the tier threshold (more margin = more severe)
@@ -3785,9 +3966,7 @@ function updatePlacement(impact,muzzle,dist){
   sorted.forEach((z,i)=>{
     const s=zStat(z,impact);
     const stStr=`<span class="zone-status-label" style="color:${s.col};text-shadow:0 0 8px ${s.glow};">${s.txt}</span>`;
-    const thr = z.type==='lethal'
-      ? '<div class="zone-thr">NO THRESHOLD APPLIES — NEVER TARGET</div>'
-      : `<div class="zone-thr"><span class="thr-m">M ${z.mJ}</span> · <span class="thr-y">Y ${z.yJ}</span> · <span class="thr-o">O ${z.oJ}</span> · <span class="thr-r">R ${z.rJ}</span> impact J</div>`;
+    const thr=`<div class="zone-thr"><span class="thr-m">M ${z.mJ}</span> · <span class="thr-y">Y ${z.yJ}</span> · <span class="thr-o">O ${z.oJ}</span> · <span class="thr-r">R ${z.rJ}</span> impact J</div>`;
     const desc = z.desc
       ? `<div class="zone-desc" id="zd-${i}" style="display:none;">${thr}<div class="zone-desc-body">${z.desc}</div></div>`
       : '';
@@ -3804,6 +3983,17 @@ function updatePlacement(impact,muzzle,dist){
     </div>`;
   });
   document.getElementById('zone-legend').innerHTML=legend;
+
+  // Dedicated lethal zone box — static NEVER TARGET, no thresholds, no click toggles.
+  const lethalBody=document.getElementById('lethal-zone-body');
+  if(lethalBody){
+    lethalBody.innerHTML=lethalZones.map(z=>(
+      '<div class="lethal-row">'+
+        '<div class="lethal-name">'+z.label+'</div>'+
+        '<div class="lethal-desc">'+(z.desc||z.eff(0,z))+'</div>'+
+      '</div>'
+    )).join('');
+  }
 }
 
 function toggleZD(i){
@@ -5121,6 +5311,7 @@ function initApp(){
   renderPresetList();
   renderGasBottles();
   renderLog();
+  renderHarmBriefing();
   updateCharts();
   calcUpdate();
   updateDistanceMarker();
@@ -5129,12 +5320,52 @@ function initApp(){
   // Show disclaimer gate on first load or when disclaimer version changes
   try{
     const agreed=localStorage.getItem(LS_DISCLAIMER);
-    if(!agreed||agreed!==DISCLAIMER_VERSION)openModal('modal-disclaimer');
+    if(!agreed||agreed!==DISCLAIMER_VERSION){
+      openModal('modal-disclaimer');
+    } else {
+      maybeShowOnboarding();
+    }
   }catch(e){openModal('modal-disclaimer');}
 }
 function acceptDisclaimer(){
   try{localStorage.setItem(LS_DISCLAIMER,DISCLAIMER_VERSION);}catch(e){}
   closeModal('modal-disclaimer');
+  maybeShowOnboarding();
+}
+// ----- Onboarding -----
+function maybeShowOnboarding(){
+  // Skip if user already equipped a platform or dismissed the helper.
+  try{
+    if(localStorage.getItem(LS_ONBOARD)==='1')return;
+  }catch(e){}
+  if(equippedPlatform)return;
+  if(presets&&presets.length>0)return;
+  // Defer slightly so the disclaimer close animation finishes cleanly
+  setTimeout(()=>openModal('modal-onboard'),250);
+}
+function dismissOnboard(persist){
+  if(persist){
+    try{localStorage.setItem(LS_ONBOARD,'1');}catch(e){}
+  }
+  closeModal('modal-onboard');
+}
+// ----- Harm reduction briefing content -----
+function renderHarmBriefing(){
+  const el=document.getElementById('pl-response');
+  if(!el)return;
+  el.innerHTML=
+    '<span class="harm-k">SCOPE OF FORCE</span>'+
+    '<p>Less-lethal is the bridge between verbal de-escalation and lethal force. It is not a first option, it is not a substitute for training, and it is not a lethality exemption. If the situation does not justify <em>some</em> level of force, it does not justify a less-lethal strike either.</p>'+
+    '<span class="harm-k">DOCUMENTED INJURY IS EXPECTED</span>'+
+    '<p>Every effective less-lethal impact leaves bruising, welts, or worse. Treat every hit as an injury you will need to document, photograph, and explain. Courts, insurers, and review boards will.</p>'+
+    '<span class="harm-k">AFTERCARE IS PART OF THE SHOT</span>'+
+    '<p>As soon as the scene is safe, render aid — clean and cover open injury, monitor for respiratory distress, and call EMS for any chest, abdominal, or above-the-neck impact. Refusal of care must be documented.</p>'+
+    '<span class="harm-k">PLACEMENT OVER POWER</span>'+
+    '<p>More joules does not mean more compliance. A well-placed shot into the thigh or shin at 45 J beats a chest hit at 90 J in every meaningful outcome. Prioritize platform accuracy and distance discipline over raw velocity.</p>'+
+    '<span class="harm-k">ZONES THAT ARE NEVER TARGETED</span>'+
+    '<p>Head, skull, orbital, neck, throat, trachea, spine, and groin are <strong class="never-target-static">NEVER TARGET</strong> zones at any energy level. They are excluded from doctrine. If the only available shot is to one of these zones, the ethical answer is to not take the shot.</p>'+
+    '<span class="harm-k">KNOW THE LAW</span>'+
+    '<p>Jurisdictions differ dramatically on who may carry, where they may carry, and what force level is authorized. This tool does not substitute for your local statutes, agency policy, or legal counsel.</p>';
 }
 initApp();
 </script>
