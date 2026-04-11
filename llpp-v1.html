@@ -605,6 +605,11 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 .energy-warn ul{margin:8px 0 0 4px;padding:0;list-style:none;}
 .energy-warn ul li{padding:3px 0;position:relative;padding-left:14px;}
 .energy-warn ul li::before{content:'·';position:absolute;left:0;font-weight:700;}
+/* TIS verification status — Predicted / Partially Verified / Verified badge */
+.tis-status{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.12em;padding:4px 10px;border-radius:3px;display:inline-block;text-transform:uppercase;cursor:help;border:1px solid transparent;}
+.tis-status-pred{color:#ffb86b;background:rgba(255,184,107,0.08);border-color:rgba(255,184,107,0.3);}
+.tis-status-partial{color:#ffe066;background:rgba(255,224,102,0.08);border-color:rgba(255,224,102,0.3);}
+.tis-status-verif{color:var(--pip);background:rgba(197,255,0,0.08);border-color:rgba(197,255,0,0.35);}
 @media (max-width:860px){
   #tis-hero-active .card{min-width:0;}
 }
@@ -1500,6 +1505,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
         <div style="height:6px;margin:10px auto 0;width:80%;background:rgba(255,255,255,0.04);border-radius:3px;overflow:hidden;">
           <div id="tis-hero-bar-fill" style="height:100%;width:0%;border-radius:3px;transition:width 0.6s ease,background 0.3s;"></div>
         </div>
+        <div id="tis-status" class="tis-status tis-status-pred" title="" style="margin-top:10px;">PREDICTED / UNVERIFIED</div>
       </div>
 
       <!-- Injury Potential -->
@@ -4243,6 +4249,75 @@ function renderEnergyWarnings(muzzleJ,roundVal){
   el.innerHTML=warns.map(w=>'<div class="energy-warn '+w.level+'"><div class="energy-warn-title">'+w.title+'</div><div class="energy-warn-body">'+w.body+'</div></div>').join('');
 }
 
+// ============================================================
+// TIS 2.0 — Predicted / Verified two-stage scoring
+// ============================================================
+// Stage 1: Predicted — from launcher, projectile, gas, mod stack, distance.
+// Stage 2: Verified — progressively replaced by shot-string analytics
+// (average impact energy, standard deviation, decay over string) as chrono
+// shots are logged. Final TIS blends: TIS = (1-V)*pred + V*verif, where
+// V = min(n/10, 1). CO2 without temperature context caps V at 0.8.
+//
+// Note: we deliberately do NOT fold Confidence into the TIS weighted sum —
+// Confidence is a display companion that measures how much you trust the
+// score, not a component that is the score. Similarly, spread/decay are
+// penalized ONCE via the Consistency factor in verified mode, not double-
+// counted through an effective-energy deduction.
+
+// Stable string key for a mod set — lets us tell when two shot strings were
+// fired under the same loadout, so the verified baseline rebuilds from scratch
+// when parts change. Accepts a Set or Array.
+function getModSignature(mods){
+  const arr=(mods instanceof Set)?[...mods]:(Array.isArray(mods)?mods:[]);
+  return arr.slice().sort().join('|');
+}
+
+function _mean(arr){ if(!arr.length) return 0; return arr.reduce((a,b)=>a+b,0)/arr.length; }
+function _stdDev(arr){
+  if(arr.length<2) return 0;
+  const m=_mean(arr);
+  const v=arr.reduce((a,b)=>a+(b-m)*(b-m),0)/arr.length;
+  return Math.sqrt(v);
+}
+
+// Shot-string statistics used by the verified pipeline.
+function computeShotStringStats(validShots){
+  const impacts=validShots.map(s=>s.impact).filter(x=>Number.isFinite(x)&&x>0);
+  const muzzles=validShots.map(s=>s.muzzle).filter(x=>Number.isFinite(x)&&x>0);
+  if(!impacts.length&&!muzzles.length) return null;
+  const impAvg=_mean(impacts);
+  const impSd=_stdDev(impacts);
+  const muzAvg=_mean(muzzles);
+  const muzSd=_stdDev(muzzles);
+  const n=Math.min(3,impacts.length);
+  const first=_mean(impacts.slice(0,n));
+  const last=_mean(impacts.slice(-n));
+  const decay=Math.max(0,first-last);
+  return {impAvg,impSd,muzAvg,muzSd,decay,n:impacts.length};
+}
+
+// Verification weight — how much the verified score replaces the predicted.
+// HPA reaches full verification at 5 shots (tighter, more repeatable gas system).
+// CO2 needs 10 shots because of higher inherent shot-to-shot variance.
+// CO2 without a logged temperature input caps V at 0.8 — you can't claim full
+// verification on CO2 if you don't know the ambient temp it was shot at.
+function getShotsNeeded(gType){ return (gType==='hpa')?5:10; }
+function getVerificationWeight(nShots,gType,hasTemp){
+  const needed=getShotsNeeded(gType);
+  let v=Math.min(nShots/needed,1);
+  if(gType==='co2'&&!hasTemp) v=Math.min(v,0.8);
+  return v;
+}
+
+// Status label for the current verification level.
+// Gated on shot count so the label matches the fraction ("5/5" = verified).
+function getTisStatus(V,nShots,gType){
+  const needed=getShotsNeeded(gType);
+  if(nShots===0) return {label:'PREDICTED / UNVERIFIED',cls:'tis-status-pred',note:'Built from launcher, projectile, gas, mod stack, and selected distance. No chrono data has validated actual output. Log '+needed+' chrono shots on '+(gType==='hpa'?'HPA':'CO2')+' to build a verified baseline.'};
+  if(nShots<needed) return {label:'PARTIALLY VERIFIED ('+nShots+'/'+needed+')',cls:'tis-status-partial',note:'Some chrono data exists. Score is shifting from modeled output to observed performance. Log '+(needed-nShots)+' more shot(s) to reach full verification.'};
+  return {label:'VERIFIED ('+nShots+'/'+needed+')',cls:'tis-status-verif',note:'Score is driven primarily by actual shot-string analytics: average impact, spread, and decay.'};
+}
+
 // --- Main TIS calculation ---
 function calculateTIS(){
   const p=getCurrentPlatform();
@@ -4257,75 +4332,124 @@ function calculateTIS(){
   }
   setTisNull(false);
 
-  // Energy source: platform mod stack baseline, refined by logged shots
-  const stack=computeModStack();
-  let muzzleJ=stack.mid||0;
-
-  // If active preset has logged shots, use their average muzzle energy
-  const activeP=presets.find(x=>x.id===activePresetId);
-  const loggedShots=(activeP&&activeP.shots)?activeP.shots:[];
-  const validShots=loggedShots.filter(s=>s.muzzle>0);
-  if(validShots.length>0){
-    const avgMuzzle=validShots.reduce((a,s)=>a+s.muzzle,0)/validShots.length;
-    // Blend: logged data overrides stack estimate when available
-    muzzleJ=avgMuzzle;
-  }
-
+  // ================ SHARED INPUTS ================
   const sel=document.getElementById('c-round');
   const roundVal=sel?sel.value:'';
   const dist=parseInt(document.getElementById('c-dist').value)||15;
-  const impactJ=calcImpact(muzzleJ,dist);
-
-  // Clothing
   const clothEl=document.getElementById('tis-clothing');
   const clothing=clothEl?clothEl.value:'summer';
   const clothMult=CLOTHING_MULT[clothing]||0.92;
-  const adjustedJ=impactJ*clothMult;
-
-  // Movement
   const moveEl=document.getElementById('tis-movement');
   const moving=moveEl?moveEl.value==='moving':false;
-
-  // Factor 1: Impact Energy (35%)
-  const f1=scoreEnergy(adjustedJ);
-
-  // Factor 2: Projectile Behavior (20%)
+  const gType=typeof gasType!=='undefined'?gasType:'co2';
+  const magSize=p.mag||6;
   const proj=PROJECTILE_DB[roundVal];
-  let f2=proj?proj.base:50;
   const feedMod=proj?proj.feedMod:0;
   const shapeEl=document.getElementById('c-custom-shape');
+
+  // Projectile factor — same in both stages
+  let fP=proj?proj.base:50;
   if(roundVal==='custom'&&shapeEl){
-    const shape=shapeEl.value;
-    if(shape==='shaped') f2=Math.max(0,f2-8);
-    if(shape==='slug') f2=Math.max(0,f2-4);
+    if(shapeEl.value==='shaped') fP=Math.max(0,fP-8);
+    if(shapeEl.value==='slug') fP=Math.max(0,fP-4);
   }
 
-  // Factor 3: Platform Consistency (20%)
-  const gType=typeof gasType!=='undefined'?gasType:'co2';
-  let f3=getGasConsistency(platformKey,gType);
-  f3+=getPlatformReliabilityMod(platformKey);
-  f3+=getColdMod(gType,typeof tempF!=='undefined'?tempF:70,platformKey);
-  f3+=feedMod;
-  // Reliability mods improve shot-to-shot consistency
+  // Context factor — clothing/moving/distance penalty
+  const ctxPen=getContextPenalty(clothing,moving,dist);
+  const fCtx=Math.max(0,100-ctxPen*6.67);
+
+  // Logged shot string (for verification pipeline)
+  // Only shots fired under the CURRENT mod signature count toward the verified
+  // baseline. When the user adds/removes a part, the verified average rebuilds
+  // from scratch (shot history itself is preserved for analytics). Gas type
+  // must also match — swapping gas systems invalidates the previous string.
+  const activeP=presets.find(x=>x.id===activePresetId);
+  const loggedShots=(activeP&&activeP.shots)?activeP.shots:[];
+  const currentModSig=getModSignature(selMods);
+  const validShots=loggedShots.filter(s=>{
+    if(!(s.muzzle>0))return false;
+    if(s.gas&&s.gas!==gType)return false;
+    const shotSig=getModSignature(s.mods||[]);
+    return shotSig===currentModSig;
+  });
+  const shotStats=computeShotStringStats(validShots);
+
+  // ================ STAGE 1: PREDICTED ================
+  // Built purely from mod stack + platform baseline. No shot data considered.
+  const stack=computeModStack();
+  const predMuzzleJ=stack.mid||0;
+  const predImpactJ=calcImpact(predMuzzleJ,dist);
+  const predAdjJ=predImpactJ*clothMult;
+
+  const predFE=scoreEnergy(predAdjJ);
+
+  // Predicted consistency — gas baseline + platform + cold + reliability mods
+  let predFC=getGasConsistency(platformKey,gType);
+  predFC+=getPlatformReliabilityMod(platformKey);
+  predFC+=getColdMod(gType,typeof tempF!=='undefined'?tempF:70,platformKey);
+  predFC+=feedMod;
   if(typeof selMods!=='undefined'){
     const reliIds=['oring','detent','boltspring','heatcore','lube'];
     let rCnt=0;
     selMods.forEach(id=>{if(reliIds.includes(id))rCnt++;});
-    f3+=rCnt*3;
+    predFC+=rCnt*3;
   }
-  f3=Math.max(0,Math.min(100,f3));
+  predFC=Math.max(0,Math.min(100,predFC));
 
-  // Factor 4: Accuracy & Follow-Up (15%)
-  const magSize=p.mag||6;
-  const f4=getFollowUpScore(adjustedJ,magSize,platformKey);
+  const predFF=getFollowUpScore(predAdjJ,magSize,platformKey);
 
-  // Factor 5: Context modifier (10%)
-  const ctxPen=getContextPenalty(clothing,moving,dist);
-  const f5=Math.max(0,100-ctxPen*6.67);
+  const predRaw=(predFE*0.35)+(fP*0.20)+(predFC*0.20)+(predFF*0.15)+(fCtx*0.10);
+  const predTIS=Math.max(0,Math.min(100,predRaw));
 
-  // Weighted TIS
-  const rawTIS=(f1*0.35)+(f2*0.20)+(f3*0.20)+(f4*0.15)+(f5*0.10);
+  // ================ STAGE 2: VERIFIED ================
+  // Driven by shot-string analytics. Only computed if we have real data.
+  let verifTIS=null, verifFE=null, verifFC=null, verifFF=null, verifAdjJ=null;
+  if(shotStats){
+    // Effective muzzle/impact from the actual chrono data
+    const measuredImpactJ=shotStats.impAvg>0?shotStats.impAvg:calcImpact(shotStats.muzAvg,dist);
+    verifAdjJ=measuredImpactJ*clothMult;
+
+    // F_E verified — uses actual measured impact. Variance is penalized only
+    // in F_C below, NOT here (avoid double-counting same spread).
+    verifFE=scoreEnergy(verifAdjJ);
+
+    // F_C verified — actual SD and decay from the string.
+    // Scale: 100 - 2.2*SD(J) - 1.5*decay(J). Reliability mods still help.
+    let fcAdj=100-2.2*shotStats.impSd-1.5*shotStats.decay;
+    if(typeof selMods!=='undefined'){
+      const reliIds=['oring','detent','boltspring','heatcore','lube'];
+      let rCnt=0;
+      selMods.forEach(id=>{if(reliIds.includes(id))rCnt++;});
+      fcAdj+=rCnt*2; // smaller boost when we have real data
+    }
+    verifFC=Math.max(0,Math.min(100,fcAdj));
+
+    verifFF=getFollowUpScore(verifAdjJ,magSize,platformKey);
+
+    const verifRaw=(verifFE*0.35)+(fP*0.20)+(verifFC*0.20)+(verifFF*0.15)+(fCtx*0.10);
+    verifTIS=Math.max(0,Math.min(100,verifRaw));
+  }
+
+  // ================ BLEND ================
+  const hasTemp=(typeof tempF!=='undefined'&&tempF!==null);
+  const V=getVerificationWeight(validShots.length,gType,hasTemp);
+  const rawTIS=(verifTIS!==null)?((1-V)*predTIS+V*verifTIS):predTIS;
   const tis=Math.max(0,Math.min(100,Math.round(rawTIS)));
+
+  // Displayed factor values — use verified if we have them, otherwise predicted
+  const f1=(verifFE!==null)?Math.round((1-V)*predFE+V*verifFE):Math.round(predFE);
+  const f2=Math.round(fP);
+  const f3=(verifFC!==null)?Math.round((1-V)*predFC+V*verifFC):Math.round(predFC);
+  const f4=(verifFF!==null)?Math.round((1-V)*predFF+V*verifFF):Math.round(predFF);
+  const f5=Math.round(fCtx);
+
+  // Displayed muzzle/impact/adjusted — use verified if available
+  const muzzleJ=shotStats?shotStats.muzAvg:predMuzzleJ;
+  const impactJ=shotStats?(shotStats.impAvg>0?shotStats.impAvg:calcImpact(muzzleJ,dist)):predImpactJ;
+  const adjustedJ=(verifAdjJ!==null)?verifAdjJ:predAdjJ;
+
+  // Verification status
+  const tisStatus=getTisStatus(V,validShots.length,gType);
 
   // IPS & Confidence
   const ips=calcIPS(impactJ,roundVal);
@@ -4350,6 +4474,12 @@ function calculateTIS(){
   if(heroScore){heroScore.textContent=tis;heroScore.style.color=bandColor(tisBand.cls);}
   if(heroBand){heroBand.textContent=tisBand.label;heroBand.className=tisBand.cls;}
   if(heroBar){heroBar.style.width=tis+'%';heroBar.style.background=bandColor(tisBand.cls);}
+  const statusEl=document.getElementById('tis-status');
+  if(statusEl){
+    statusEl.textContent=tisStatus.label;
+    statusEl.className='tis-status '+tisStatus.cls;
+    statusEl.title=tisStatus.note;
+  }
 
   // --- Launcher Profile (Score tab) ---
   const launcherImg=document.getElementById('tis-launcher-img');
