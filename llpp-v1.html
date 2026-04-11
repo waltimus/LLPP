@@ -4015,8 +4015,9 @@ function detectSeason(){
 
 // --- Energy band scoring (post-clothing) ---
 function scoreEnergy(j){
-  if(j>100)return 100; if(j>=85)return 95; if(j>=70)return 82;
-  if(j>=50)return 65; if(j>=30)return 45; if(j>=15)return 20; return 5;
+  if(j>=100)return 98; if(j>=85)return 93; if(j>=75)return 87;
+  if(j>=60)return 78; if(j>=50)return 68; if(j>=40)return 56;
+  if(j>=30)return 44; if(j>=20)return 30; if(j>=10)return 16; return 5;
 }
 
 // --- Gas consistency baseline ---
@@ -4059,11 +4060,11 @@ function getFollowUpScore(joules,magSize,pKey){
   // HDS exception: 2-shot hard cap
   if(pKey==='hds68') return 15;
   let ceiling;
-  if(joules>=75) ceiling=3;
-  else if(joules>=50) ceiling=3;
-  else if(joules>=35) ceiling=6;
-  else if(joules>=20) ceiling=8;
-  else ceiling=8;
+  if(joules>=75) ceiling=5;
+  else if(joules>=50) ceiling=7;
+  else if(joules>=35) ceiling=8;
+  else if(joules>=20) ceiling=10;
+  else ceiling=10;
   const effective=Math.min(magSize,ceiling);
   if(effective<=1)return 15;
   if(effective<=2)return 35;
