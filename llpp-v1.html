@@ -716,7 +716,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
     <div class="brand">[S.L.A.T.E.]</div>
     <div class="brand-sub">[SYSTEM FOR LESS-LETHAL ASSESSMENT &amp; TRAINING EVALUATION] · v3.1</div>
   </div>
-  <div id="topbar-loadout" class="topbar-loadout" onclick="showTab('score')" title="Equipped loadout — click for full score breakdown" style="display:none;">
+  <div id="topbar-loadout" class="topbar-loadout" onclick="openModal('modal-sessions')" title="Equipped loadout — click to save or switch weapon sessions" style="display:none;">
     <img id="tl-thumb" class="tl-thumb" alt="">
     <div class="tl-body">
       <div class="tl-name" id="tl-name">—</div>
@@ -2706,15 +2706,21 @@ const DISCLAIMER_VERSION='1.0';
 // weapons with the arrows, then press EQUIP to lock it in. The "equipped"
 // weapon is the one considered loaded for fire. This persists to localStorage.
 function toggleEquip(){
+  let justEquipped=false;
   if(equippedPlatform===platformKey){
     equippedPlatform=null;
     try{localStorage.removeItem(LS_EQUIPPED);}catch(e){}
   } else {
     equippedPlatform=platformKey;
     try{localStorage.setItem(LS_EQUIPPED,platformKey);}catch(e){}
+    justEquipped=true;
   }
   updateEquipUI();
   saveLoadoutDraft();
+  // Newly equipping a launcher opens the Weapon Sessions modal so the
+  // operator can save / name / switch the loadout immediately. Un-equipping
+  // does not trigger the modal.
+  if(justEquipped)openModal('modal-sessions');
 }
 function updateEquipUI(){
   const btn=document.getElementById('btn-equip');
