@@ -1493,7 +1493,9 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
           <select id="onboard-platform" style="width:100%;margin-bottom:14px;" onchange="onboardPlatformChange()"></select>
           <div class="lbl">PROJECTILE</div>
           <select id="onboard-round" style="width:100%;margin-bottom:14px;"></select>
-          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.06em;line-height:1.5;margin-bottom:14px;">To add barrel mods, gas tuning, or other upgrades, use the <strong style="color:var(--bright);">MODS</strong> and <strong style="color:var(--bright);">GAS</strong> buttons on the Calculator tab after saving.</div>
+          <div class="lbl">LOADOUT NAME</div>
+          <input type="text" id="onboard-name" placeholder="e.g. Home Defense HDR68, Range Day Milsig..." style="width:100%;margin-bottom:10px;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.06em;line-height:1.5;margin-bottom:14px;">This saves your configuration as a named loadout. To add barrel mods, gas tuning, or other upgrades, use the <strong style="color:var(--bright);">MODS</strong> and <strong style="color:var(--bright);">GAS</strong> buttons on the Calculator tab.</div>
         </div>
         <button class="btn btn-primary" id="onboard-save" onclick="applyOnboardSetup();" style="width:100%;">SAVE &amp; START</button>
       </div>
@@ -5690,17 +5692,37 @@ function onboardPlatformChange(){
 function applyOnboardSetup(){
   const pSel=document.getElementById('onboard-platform');
   const rSel=document.getElementById('onboard-round');
-  if(!pSel||!pSel.value){return;}
-  if(!rSel||!rSel.value){return;}
+  const nameInp=document.getElementById('onboard-name');
+  if(!pSel||!pSel.value){pSel.focus();return;}
+  if(!rSel||!rSel.value){rSel.focus();return;}
+  const name=(nameInp?nameInp.value:'').trim();
+  if(!name){nameInp.focus();return;}
   // Apply platform
   const mainP=document.getElementById('c-launcher');
   if(mainP){mainP.value=pSel.value;onPlatformChange();}
   // Apply round
   const mainR=document.getElementById('c-round');
   if(mainR){mainR.value=rSel.value;if(typeof onRoundChange==='function')onRoundChange();}
-  // Close onboard and run calc
-  dismissOnboard(false);
+  // Run calc so state is current before saving preset
   calcUpdate();
+  // Save as named preset
+  const state=capturePresetState();
+  const stk=computeModStack();
+  const id='p'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  const preset={
+    id,name,createdAt:Date.now(),lastUsedAt:Date.now(),
+    state,
+    estLo:Math.round(stk.lo),estHi:Math.round(stk.hi),estMid:Math.round(stk.mid),
+    shots:[],
+  };
+  presets.unshift(preset);
+  activePresetId=id;
+  savePresetsToStorage();
+  renderPresetList();
+  renderQuickLogAuto();
+  if(typeof updateHeroPanel==='function')updateHeroPanel();
+  // Close onboard
+  dismissOnboard(false);
 }
 // ----- Harm reduction briefing content -----
 function renderHarmBriefing(){
