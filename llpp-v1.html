@@ -4554,7 +4554,32 @@ function detectSeason(){
 function scoreEnergy(j){
   if(j>=100)return 98; if(j>=85)return 93; if(j>=75)return 87;
   if(j>=60)return 78; if(j>=50)return 68; if(j>=40)return 56;
-  if(j>=30)return 44; if(j>=20)return 30; if(j>=10)return 16; return 5;
+  if(j>=30)return 44; if(j>=25)return 32; if(j>=20)return 22;
+  if(j>=15)return 14; if(j>=10)return 8; return 3;
+}
+
+// --- Energy adequacy multiplier ---
+// Kinetic energy is the prerequisite for all other factors. Below the doctrine
+// floor (~25 J for .68 cal) the entire composite is progressively suppressed
+// because consistency, follow-up, and projectile selection become academically
+// irrelevant when each round lacks the energy for pain compliance.
+//   50 J+  = fully adequate, no suppression
+//   40-49  = slightly below optimal but still effective
+//   30-39  = below doctrine floor, marginal deterrence through pain
+//   25-29  = threshold zone, pain compliance uncertain on most subjects
+//   20-24  = paintball+ energy, psychological deterrence only
+//   15-19  = stock paintball energy, minimal physical effect
+//   10-14  = sub-paintball, nearly ineffective
+//   <10    = negligible kinetic contribution
+function energyFloorMult(j){
+  if(j>=50) return 1.0;
+  if(j>=40) return 0.90;
+  if(j>=30) return 0.78;
+  if(j>=25) return 0.65;
+  if(j>=20) return 0.50;
+  if(j>=15) return 0.38;
+  if(j>=10) return 0.26;
+  return 0.15;
 }
 
 // --- Gas consistency baseline ---
@@ -4596,18 +4621,22 @@ function getColdMod(gType,tempF,pKey){
 function getFollowUpScore(joules,magSize,pKey){
   // HDS exception: 2-shot hard cap
   if(pKey==='hds68') return 15;
+  // At very low energy each follow-up round has diminished value. The ceiling
+  // represents how many rounds contribute meaningful cumulative effect.
   let ceiling;
-  if(joules>=75) ceiling=5;
+  if(joules>=75) ceiling=5;       // High energy — fewer rounds needed
   else if(joules>=50) ceiling=7;
   else if(joules>=35) ceiling=8;
+  else if(joules>=25) ceiling=10;
   else if(joules>=20) ceiling=10;
-  else ceiling=10;
+  else ceiling=12;                 // Low energy — need more rounds, but cap still exists
   const effective=Math.min(magSize,ceiling);
   if(effective<=1)return 15;
   if(effective<=2)return 35;
   if(effective<=4)return 55;
-  if(effective<=6)return 72;
-  if(effective<=8)return 82;
+  if(effective<=6)return 68;
+  if(effective<=8)return 78;
+  if(effective<=10)return 84;
   return 88;
 }
 
@@ -4929,8 +4958,8 @@ function calculateTIS(){
 
   const predFF=getFollowUpScore(predAdjJ,magSize,platformKey);
 
-  const predRaw=(predFE*0.35)+(fP*0.20)+(predFC*0.20)+(predFF*0.15)+(fCtx*0.10);
-  const predTIS=Math.max(0,Math.min(100,predRaw));
+  const predRawBase=(predFE*0.35)+(fP*0.20)+(predFC*0.20)+(predFF*0.15)+(fCtx*0.10);
+  const predTIS=Math.max(0,Math.min(100,predRawBase*energyFloorMult(predAdjJ)));
 
   // ================ STAGE 2: VERIFIED ================
   // Driven by shot-string analytics. Only computed if we have real data.
@@ -4957,8 +4986,8 @@ function calculateTIS(){
 
     verifFF=getFollowUpScore(verifAdjJ,magSize,platformKey);
 
-    const verifRaw=(verifFE*0.35)+(fP*0.20)+(verifFC*0.20)+(verifFF*0.15)+(fCtx*0.10);
-    verifTIS=Math.max(0,Math.min(100,verifRaw));
+    const verifRawBase=(verifFE*0.35)+(fP*0.20)+(verifFC*0.20)+(verifFF*0.15)+(fCtx*0.10);
+    verifTIS=Math.max(0,Math.min(100,verifRawBase*energyFloorMult(verifAdjJ)));
   }
 
   // ================ BLEND ================
