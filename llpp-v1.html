@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:;">
 <title>[SLATE] System for Less-lethal Assessment & Training Evaluation</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;500&display=swap" rel="stylesheet">
@@ -27,9 +28,10 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
 
 /* TABS */
 .tabs{background:#030405;border-bottom:1px solid var(--border);display:flex;padding:0 18px;gap:2px;overflow-x:auto;}
-.tab{font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;padding:13px 16px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:all 0.15s;white-space:nowrap;}
+.tab{font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;padding:13px 16px;cursor:pointer;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;transition:all 0.15s;white-space:nowrap;}
 .tab.active{color:var(--pip);border-bottom-color:var(--pip);text-shadow:0 0 15px rgba(197,255,0,0.35);}
 .tab:hover:not(.active){color:var(--text);}
+.tab:focus-visible{outline:2px solid var(--pip);outline-offset:-2px;}
 
 /* PANELS */
 .panel{display:none;padding:16px;}
@@ -724,6 +726,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 </head>
 <body>
 
+<div id="storage-warn" style="display:none;padding:8px 16px;background:rgba(255,100,0,0.12);border-bottom:1px solid rgba(255,100,0,0.4);font-family:'Share Tech Mono',monospace;font-size:11px;color:#ff8800;letter-spacing:0.06em;text-align:center;">STORAGE FULL — session data may not be saved. Clear old presets or browser data to free space.</div>
 <div class="topbar">
   <div>
     <div class="brand">[S.L.A.T.E.]</div>
@@ -750,12 +753,12 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
   </div>
 </div>
 
-<div class="tabs">
-  <div class="tab active" onclick="showTab('calc')">Calculator</div>
-  <div class="tab" onclick="showTab('placement')">Placement</div>
-  <div class="tab" onclick="showTab('analytics')">Analytics</div>
-  <div class="tab" onclick="showTab('score')">Score</div>
-  <div class="tab" onclick="showTab('info')">Information</div>
+<div class="tabs" role="tablist">
+  <button class="tab active" role="tab" aria-selected="true" onclick="showTab('calc')">Calculator</button>
+  <button class="tab" role="tab" aria-selected="false" onclick="showTab('placement')">Placement</button>
+  <button class="tab" role="tab" aria-selected="false" onclick="showTab('analytics')">Analytics</button>
+  <button class="tab" role="tab" aria-selected="false" onclick="showTab('score')">Score</button>
+  <button class="tab" role="tab" aria-selected="false" onclick="showTab('info')">Information</button>
 </div>
 
 <!-- CALCULATOR -->
@@ -847,7 +850,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
           <div class="section-title">Chronograph</div>
           <div class="section-subtitle">Live command readout</div>
           <div class="hero-fps-section">
-            <input type="number" id="c-fps" class="hero-fps-input" value="300" min="0" max="800" placeholder="300" oninput="calcUpdate()">
+            <input type="number" id="c-fps" class="hero-fps-input" value="300" min="0" max="800" placeholder="300">
             <div class="hero-fps-unit">FPS</div>
           </div>
 
@@ -882,13 +885,14 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
           <div class="section-subtitle">Live distance scrubber</div>
           <div class="lbl">Current Distance — <span id="c-dist-out" style="color:var(--pip);font-family:'Orbitron',monospace;font-size:14px;text-shadow:0 0 12px rgba(197,255,0,0.3);">30 ft</span></div>
           <div class="dist-wrap">
-            <input type="range" id="c-dist" min="3" max="100" value="30" step="1" oninput="calcUpdate()" style="margin:0 0 8px;">
+            <input type="range" id="c-dist" min="3" max="150" value="30" step="1" oninput="calcUpdate()" style="margin:0 0 8px;">
             <div class="dist-zonebar" id="dist-zonebar">
               <div class="dist-marker" id="dist-marker"></div>
-              <div class="dz dz-cq" style="flex:22;"><span>3-25 CLOSE QUARTERS</span></div>
-              <div class="dz dz-pe" style="flex:25;"><span>25-50 PRIMARY ENVELOPE</span></div>
-              <div class="dz dz-er" style="flex:25;"><span>50-75 EXTENDED RANGE</span></div>
-              <div class="dz dz-mr" style="flex:25;"><span>75-100 MAXIMUM RANGE</span></div>
+              <div class="dz dz-cq" style="flex:15;"><span>3-25 CQ</span></div>
+              <div class="dz dz-pe" style="flex:17;"><span>25-50 PRIMARY</span></div>
+              <div class="dz dz-er" style="flex:17;"><span>50-75 EXTENDED</span></div>
+              <div class="dz dz-mr" style="flex:17;"><span>75-100 MAX</span></div>
+              <div class="dz dz-mr" style="flex:34;opacity:0.7;"><span>100-150 BEYOND MAX</span></div>
             </div>
           </div>
           <div id="c-range-warn" style="display:none;margin-top:10px;padding:9px 12px;background:rgba(255,30,30,0.06);border:1px solid rgba(255,30,30,0.3);font-family:'Share Tech Mono',monospace;font-size:11px;color:#ff5050;letter-spacing:0.04em;line-height:1.5;">
@@ -1737,69 +1741,6 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
   </div>
 </div>
 
-<!-- SESSION LOG -->
-<div id="log" class="panel">
-  <div class="r2">
-    <div class="card" style="margin-bottom:0">
-      <div class="lbl">Launcher</div>
-      <select id="l-launcher"></select>
-    </div>
-    <div class="card" style="margin-bottom:0">
-      <div class="lbl">Round</div>
-      <select id="l-round">
-        <option>Rubber-Steel — 6.59g</option>
-        <option>Grimburg JUL V3 — 7.70g</option>
-        <option>Grimburg JUL V2 — 8.00g</option>
-        <option>Smasher XL — 8.58g</option>
-        <option>Smasher XXL — 8.66g</option>
-        <option>AR Tactical LL — 9.88g</option>
-      </select>
-    </div>
-  </div>
-  <div class="r2" style="margin-top:12px;">
-    <div class="card" style="margin-bottom:0">
-      <div class="lbl">Muzzle J</div>
-      <input type="text" id="l-muzzle" placeholder="e.g. 80">
-    </div>
-    <div class="card" style="margin-bottom:0">
-      <div class="lbl">Distance ft</div>
-      <input type="text" id="l-dist" placeholder="e.g. 15">
-    </div>
-  </div>
-  <div class="r2" style="margin-top:12px;">
-    <div class="card" style="margin-bottom:0">
-      <div class="lbl">Target Medium</div>
-      <select id="l-medium">
-        <option value="Trap" selected>Trap</option>
-        <option value="Silicone Mold">Silicone Mold</option>
-        <option value="Coconut">Coconut</option>
-        <option value="Wood Board">Wood Board</option>
-        <option value="Composite Panel">Composite Panel</option>
-        <option value="Sheet Pan">Sheet Pan</option>
-        <option value="Gel Block">Gel Block</option>
-        <option value="Foam">Foam</option>
-        <option value="Denim">Denim</option>
-        <option value="Cardboard">Cardboard</option>
-        <option value="Other">Other</option>
-      </select>
-    </div>
-    <div class="card" style="margin-bottom:0">
-      <div class="lbl">Active Mods</div>
-      <input type="text" id="l-mods" placeholder="e.g. 11.5 bbl, 12-chamber exp">
-    </div>
-  </div>
-  <div class="card" style="margin-top:12px;">
-    <div class="lbl">Observations</div>
-    <textarea id="l-notes" placeholder="Penetration depth, round behavior, deformation, impact signature..."></textarea>
-  </div>
-  <div style="display:flex;gap:10px;margin-bottom:16px;">
-    <button class="btn" onclick="logShot()" style="flex:1">+ LOG SHOT</button>
-    <button class="btn" onclick="clearLog()">CLEAR</button>
-  </div>
-  <div class="stitle">Session Entries</div>
-  <div id="l-entries"><div class="empty">— no shots logged —</div></div>
-</div>
-
 <!-- ANALYTICS -->
 <div id="analytics" class="panel">
   <div id="ana-empty" style="padding:3rem 0;text-align:center;font-family:'Orbitron',monospace;font-size:11px;color:var(--muted);letter-spacing:0.15em;">LOG SHOTS TO GENERATE ANALYTICS</div>
@@ -2279,7 +2220,7 @@ function computeStats(){
   const midJ=stack?stack.mid:0;
   // DAMAGE — impact joule output scaled 0–100. 100J is full bar.
   const damage=Math.max(0,Math.min(100,Math.round(midJ*1.05)));
-  // ACCURACY — starts at 45 baseline. Bore match +18, barrel length near 12" +12, stock upgrade +4, HDR tune +6, suppressor +4, rail +2.
+  // ACCURACY — starts at 45 baseline. Bore match +18, barrel length near 12" +12, stock upgrade +4, HDR tune +6, rail +2.
   let acc=45;
   const p=getCurrentPlatform();
   if(selMods&&selMods.has('barrel')){
@@ -2294,7 +2235,7 @@ function computeStats(){
   }
   if(selMods&&selMods.has('stockup'))acc+=4;
   if(selMods&&selMods.has('hdr_tune'))acc+=6;
-  if(selMods&&selMods.has('suppressor'))acc+=4;
+
   if(selMods&&selMods.has('rail'))acc+=2;
   // Penalty for very low output — can't hit what you can't deliver
   if(midJ>0&&midJ<25)acc-=8;
@@ -2329,16 +2270,6 @@ function getCurrentGasSize(){
 }
 
 // Shots per fill estimate — scales bottle's shotsRef by output efficiency.
-function shotsPerFill(){
-  const gs=getCurrentGasSize();
-  if(!gs)return 0;
-  const stack=computeModStack();
-  const midJ=stack?stack.mid:30;
-  // Higher output = fewer shots per fill. Reference is ~30J/shot.
-  const efficiencyFactor=midJ>0?(30/Math.max(15,midJ)):1;
-  return Math.round(gs.shotsRef*efficiencyFactor);
-}
-
 // CO2 temperature → joule delta vs 70°F baseline (low / high).
 function co2DeltaRange(tempF){
   if(tempF>=88) return [3,6];
@@ -2462,6 +2393,8 @@ const ROUNDS_50=[
 // .50 cal projectiles concentrate energy in a smaller cross-section,
 // so the same joules produce more focal trauma. Lower thresholds.
 const CAL_FACTOR={'68':1.0,'50':0.85};
+const RELIABILITY_MOD_IDS=['oring','detent','boltspring','heatcore','lube'];
+const BRAND_REGEX=/^(Umarex|Valken|NXWerks|Defense Innovations|DI|Mercury Rise|Milsig)\s*/i;
 
 function caliberOf(launcherKey){
   const l=PLATFORMS[launcherKey];
@@ -2808,6 +2741,16 @@ const LS_DISCLAIMER='slate_disclaimer';
 const LS_ONBOARD='slate_onboard_dismissed';
 const DISCLAIMER_VERSION='1.0';
 
+function safeSetItem(key,val){
+  try{localStorage.setItem(key,val);}
+  catch(e){
+    if(e.name==='QuotaExceededError'||e.code===22){
+      const w=document.getElementById('storage-warn');
+      if(w)w.style.display='block';
+    }
+  }
+}
+
 // -------------------- EQUIP SYSTEM --------------------
 // The equip system treats platform selection like a game loadout: you browse
 // weapons with the arrows, then press EQUIP to lock it in. The "equipped"
@@ -2823,7 +2766,7 @@ function toggleEquip(){
     try{localStorage.removeItem(LS_EQUIPPED);}catch(e){}
   } else {
     equippedPlatform=platformKey;
-    try{localStorage.setItem(LS_EQUIPPED,platformKey);}catch(e){}
+    safeSetItem(LS_EQUIPPED,platformKey);
     justEquipped=true;
   }
   updateEquipUI();
@@ -2921,7 +2864,7 @@ function captureLoadout(){
 }
 function saveLoadoutDraft(){
   if(!isSetupComplete())return; // don't save incomplete setup
-  try{localStorage.setItem(LS_LOADOUT,JSON.stringify(captureLoadout()));}catch(e){}
+  safeSetItem(LS_LOADOUT,JSON.stringify(captureLoadout()));
 }
 function loadLoadoutDraft(){
   try{
@@ -2961,7 +2904,7 @@ function applyLoadout(s){
   }
   if(typeof s.fps==='number' && s.fps>0){
     const fpsEl=document.getElementById('c-fps');
-    if(fpsEl){fpsEl.value=s.fps;calcUpdate();}
+    if(fpsEl){fpsEl.value=Math.max(0,Math.min(800,Math.round(s.fps)));calcUpdate();}
   }
   if(typeof s.dist==='number' && s.dist>0){
     const dEl=document.getElementById('c-dist');
@@ -3515,12 +3458,13 @@ function getCurrentGasDelta(){
 // -------------------- MODS --------------------
 function getModCatalog(){
   const cls=getCurrentPlatformClass();
-  const power=MODS_POWER.filter(m=>!m.appliesTo||m.appliesTo.includes(cls));
+  const isHpa=gasType==='hpa';
+  const power=MODS_POWER.filter(m=>(!m.appliesTo||m.appliesTo.includes(cls))&&(!m.hpaOnly||isHpa));
   if(platformKey==='hdr68'){
     HDR68_MODS.forEach(m=>power.push(m));
   }
-  const reli=MODS_RELI.filter(m=>!m.appliesTo||m.appliesTo.includes(cls));
-  const tac=MODS_TAC.filter(m=>!m.appliesTo||m.appliesTo.includes(cls));
+  const reli=MODS_RELI.filter(m=>(!m.appliesTo||m.appliesTo.includes(cls))&&(!m.hpaOnly||isHpa));
+  const tac=MODS_TAC.filter(m=>(!m.appliesTo||m.appliesTo.includes(cls))&&(!m.hpaOnly||isHpa));
   return {power,reli,tac};
 }
 
@@ -3748,8 +3692,7 @@ function renderModStack(){
     const rLbl=rSel&&rSel.selectedOptions[0]?rSel.selectedOptions[0].textContent.split(' —')[0]:'—';
     wsSub.textContent=(p?p.platformClass.toUpperCase():'—')+' · '+gasLbl+' · '+modLbl+' · '+rLbl;
   }
-  // Output changed → refresh hero stats + live bottle shot estimates
-  if(typeof updateHeroPanel==='function')updateHeroPanel();
+  // Refresh live bottle shot estimates (hero panel is updated by calcUpdate)
   if(typeof renderGasBottles==='function')renderGasBottles();
 }
 
@@ -3768,12 +3711,12 @@ function loadPresetsFromStorage(){
 }
 
 function savePresetsToStorage(){
-  try{localStorage.setItem(LS_PRESETS,JSON.stringify(presets));}catch(e){}
-  try{if(activePresetId)localStorage.setItem(LS_ACTIVE,activePresetId);else localStorage.removeItem(LS_ACTIVE);}catch(e){}
+  safeSetItem(LS_PRESETS,JSON.stringify(presets));
+  try{if(activePresetId)safeSetItem(LS_ACTIVE,activePresetId);else localStorage.removeItem(LS_ACTIVE);}catch(e){}
 }
 
 function saveSessionLog(){
-  try{localStorage.setItem('slate_session_log_v1',JSON.stringify(sessionLog));}catch(e){}
+  safeSetItem('slate_session_log_v1',JSON.stringify(sessionLog));
 }
 
 function capturePresetState(){
@@ -3943,7 +3886,7 @@ function switchSessionLauncher(key){
   onPlatformChange(false);
   // Auto-equip the newly selected platform so the EQUIPPED banner updates.
   equippedPlatform=key;
-  try{localStorage.setItem(LS_EQUIPPED,key);}catch(e){}
+  safeSetItem(LS_EQUIPPED,key);
   updateEquipUI();
   saveLoadoutDraft();
   if(typeof updateHeroPanel==='function')updateHeroPanel();
@@ -4297,10 +4240,10 @@ function renderLog(){
     if(e.muzzle>=120) warnHtml='<div class="energy-warn red" style="margin-top:6px;padding:8px 10px;font-size:11px;"><div class="energy-warn-title" style="font-size:10px;">⛔ CRITICAL OUTPUT</div><div class="energy-warn-body" style="font-size:11px;">This shot was logged at '+e.muzzle.toFixed(0)+'J muzzle — above the 120J lethal threshold.</div></div>';
     else if(e.muzzle>=80) warnHtml='<div class="energy-warn amber" style="margin-top:6px;padding:8px 10px;font-size:11px;"><div class="energy-warn-title" style="font-size:10px;">⚠ ELEVATED OUTPUT</div><div class="energy-warn-body" style="font-size:11px;">This shot was logged at '+e.muzzle.toFixed(0)+'J muzzle — above the 80J elevated consequence zone.</div></div>';
     return`<div class="log-entry">
-      <div class="log-hdr"><span class="log-launcher">${e.launcher}</span><span class="log-time">${e.time}</span></div>
-      <div class="log-meta">${e.round} · ${e.dist}ft · ${e.muzzle}J → <span class="ibadge ${sc}">${impStr}</span></div>
-      <div class="log-meta">MEDIUM: ${e.medium} · MODS: ${e.mods}</div>
-      ${e.notes?'<div class="log-note">'+e.notes+'</div>':''}${warnHtml}
+      <div class="log-hdr"><span class="log-launcher">${escapeHTML(e.launcher)}</span><span class="log-time">${escapeHTML(e.time)}</span></div>
+      <div class="log-meta">${escapeHTML(e.round)} · ${e.dist}ft · ${e.muzzle}J → <span class="ibadge ${sc}">${impStr}</span></div>
+      <div class="log-meta">MEDIUM: ${escapeHTML(e.medium)} · MODS: ${escapeHTML(e.mods)}</div>
+      ${e.notes?'<div class="log-note">'+escapeHTML(e.notes)+'</div>':''}${warnHtml}
     </div>`;
   }).join('');
 }
@@ -4418,7 +4361,7 @@ function updateCharts(){
 
   // Temperature correlation (CO2 only)
   const co2=wc.filter(e=>e.gas==='co2'&&typeof e.tempF==='number');
-  if(charts.temp)charts.temp.destroy();
+  if(charts.temp){charts.temp.destroy();charts.temp=null;}
   if(co2.length){
     charts.temp=new Chart(document.getElementById('chart-temp'),{type:'scatter',
       data:{datasets:[{data:co2.map(e=>({x:e.tempF,y:parseFloat((e.muzzle||0).toFixed(1))})),
@@ -4488,9 +4431,13 @@ function showTab(id){
   const ids=['calc','placement','analytics','score','info'];
   const tabs=document.querySelectorAll('.tabs > .tab');
   ids.forEach((t,i)=>{
-    if(tabs[i])tabs[i].classList.toggle('active',t===id);
+    const isActive=t===id;
+    if(tabs[i]){
+      tabs[i].classList.toggle('active',isActive);
+      tabs[i].setAttribute('aria-selected',isActive?'true':'false');
+    }
     const el=document.getElementById(t);
-    if(el)el.classList.toggle('active',t===id);
+    if(el)el.classList.toggle('active',isActive);
   });
 }
 
@@ -4677,7 +4624,7 @@ function updateHeroPanel(){
   renderWeaponVisual();
   // Action button labels
   const bhP=document.getElementById('bh-platform-val');
-  if(bhP)bhP.textContent=p?p.name.replace(/^(Umarex|Valken|NXWerks|Defense Innovations|DI|Mercury Rise|Milsig)\s*/i,''):'SELECT';
+  if(bhP)bhP.textContent=p?p.name.replace(BRAND_REGEX,''):'SELECT';
   const bhM=document.getElementById('bh-mods-val');
   if(bhM){
     if(!setupDone){bhM.textContent='—';}
@@ -4857,9 +4804,8 @@ function calcConfidence(loggedShots,roundVal,pKey,gType){
   if(roundVal==='custom') score-=10;
   // Mod stack: reliability mods BOOST confidence, tactical mods ignored
   if(typeof selMods!=='undefined'){
-    const reliMods=['oring','detent','boltspring','heatcore','lube'];
     let reliCount=0;
-    selMods.forEach(id=>{if(reliMods.includes(id)) reliCount++;});
+    selMods.forEach(id=>{if(RELIABILITY_MOD_IDS.includes(id)) reliCount++;});
     // Each reliability mod adds +3 confidence (verified improvement)
     score+=reliCount*3;
   }
@@ -4948,10 +4894,6 @@ function getTisWarnings(roundVal,impactJ,pKey){
   if(proj&&proj.cls==='kinetic-flagged'){
     warnings.push({level:'amber',text:'⚠ BARREL WEAR AND ACCURACY RISK — Aluminum rounds are typically not bore-matched to .68 caliber platforms. Extended use will cause barrel scoring and permanent accuracy degradation. Rounds deform after repeated use, further reducing consistency. Use for training familiarization only. Not recommended for primary defensive loadout.'});
   }
-  // Pepperball fragmentation above 25J
-  if(proj&&proj.cls==='irritant-frangible'&&impactJ>25){
-    warnings.push({level:'red',text:'⛔ LAUNCHER DAMAGE RISK — Standard pepperball rounds are not rated for outputs above 25 joules. At your current configuration, these rounds risk fragmenting inside the barrel. This can cause permanent launcher damage and potential injury to the operator. Use Grimburg KinetiCS or equivalent hardened rounds if irritant delivery above 25J is required. KinetiCS rounds are rated to approximately 30J.'});
-  }
   // X-68 Gen1 reliability (only if no seal kit)
   const hasSeals=typeof selMods!=='undefined'&&selMods.has('oring');
   if(pKey==='x68'&&!hasSeals){
@@ -5032,6 +4974,7 @@ function computeShotStringStats(validShots){
   const impacts=validShots.map(s=>s.impact).filter(x=>Number.isFinite(x)&&x>0);
   const muzzles=validShots.map(s=>s.muzzle).filter(x=>Number.isFinite(x)&&x>0);
   if(!impacts.length&&!muzzles.length) return null;
+  if(!impacts.length) return null;
   const impAvg=_mean(impacts);
   const impSd=_stdDev(impacts);
   const muzAvg=_mean(muzzles);
@@ -5039,7 +4982,7 @@ function computeShotStringStats(validShots){
   const n=Math.min(3,impacts.length);
   const first=_mean(impacts.slice(0,n));
   const last=_mean(impacts.slice(-n));
-  const decay=Math.max(0,first-last);
+  const decay=Math.max(0,last-first);
   return {impAvg,impSd,muzAvg,muzSd,decay,n:impacts.length};
 }
 
@@ -5065,161 +5008,82 @@ function getTisStatus(V,nShots,gType){
   return {label:'VERIFIED ('+nShots+'/'+needed+')',cls:'tis-status-verif',note:'Score is driven primarily by actual shot-string analytics: average impact, spread, and decay.'};
 }
 
-// --- Main TIS calculation ---
-function calculateTIS(){
-  const p=getCurrentPlatform();
-  const heroNull=document.getElementById('tis-hero-null');
-  const heroActive=document.getElementById('tis-hero-active');
-  const inlineEl=document.getElementById('tis-inline');
-
-  // Null state — no platform selected or setup incomplete
-  if(!p||!platformKey||platformKey==='custom'||!isSetupComplete()){
-    setTisNull(true);
-    return;
-  }
-  setTisNull(false);
-
-  // ================ SHARED INPUTS ================
-  const sel=document.getElementById('c-round');
-  const roundVal=sel?sel.value:'';
-  const dist=parseInt(document.getElementById('c-dist').value)||15;
-  const clothEl=document.getElementById('tis-clothing');
-  const clothing=clothEl?clothEl.value:'summer';
-  const clothMult=CLOTHING_MULT[clothing]||0.92;
-  const moveEl=document.getElementById('tis-movement');
-  const moving=moveEl?moveEl.value==='moving':false;
-  const gType=typeof gasType!=='undefined'?gasType:'co2';
-  const magSize=p.mag||6;
-  const proj=PROJECTILE_DB[roundVal];
-  const feedMod=proj?proj.feedMod:0;
-  const shapeEl=document.getElementById('c-custom-shape');
-
-  // Projectile factor — same in both stages
-  let fP=proj?proj.base:50;
-  if(roundVal==='custom'&&shapeEl){
-    if(shapeEl.value==='shaped') fP=Math.max(0,fP-8);
-    if(shapeEl.value==='slug') fP=Math.max(0,fP-4);
-  }
-
-  // Context factor — clothing/moving/distance penalty
-  const ctxPen=getContextPenalty(clothing,moving,dist);
-  const fCtx=Math.max(0,100-ctxPen*6.67);
-
-  // Logged shot string (for verification pipeline)
-  // Only shots fired under the CURRENT mod signature count toward the verified
-  // baseline. When the user adds/removes a part, the verified average rebuilds
-  // from scratch (shot history itself is preserved for analytics). Gas type
-  // must also match — swapping gas systems invalidates the previous string.
-  const activeP=presets.find(x=>x.id===activePresetId);
-  const loggedShots=(activeP&&activeP.shots)?activeP.shots:[];
-  const currentModSig=getModSignature(selMods);
-  const validShots=loggedShots.filter(s=>{
-    if(!(s.muzzle>0))return false;
-    if(s.gas&&s.gas!==gType)return false;
-    const shotSig=getModSignature(s.mods||[]);
-    return shotSig===currentModSig;
-  });
-  const shotStats=computeShotStringStats(validShots);
-
-  // --- Effective round count (platform hard caps) ---
-  const effectiveRounds=platformKey==='hds68'?2:Math.min(magSize,p.mag||6);
-  const gSize=gType==='co2'?gasSize:'';
-
-  // ================ STAGE 1: PREDICTED ================
-  // Built purely from mod stack + platform baseline. No shot data considered.
+function computePredictedTIS(params){
+  const {dist,clothMult,effectiveRounds,platformKey,gType,gSize,cadence,tempF,selMods,feedMod,magSize,fP,fCtx}=params;
   const stack=computeModStack();
   const predMuzzleJ=stack.mid||0;
-  const predImpactJ=calcImpact(predMuzzleJ,dist); // raw impact (display only)
-
-  // CO2 thermal degradation — compute effective volley average
+  const predImpactJ=calcImpact(predMuzzleJ,dist);
   const predVolley=computeVolleyEnergy(predMuzzleJ,platformKey,gType,gSize,cadence,dist,clothMult,effectiveRounds);
   const predAdjJ=predVolley.avgAdjJ;
   const predEffRounds=predVolley.effectiveRounds;
-
   const predFE=scoreEnergy(predAdjJ);
-
-  // Predicted consistency — gas baseline + platform + cold + reliability mods
   let predFC=getGasConsistency(platformKey,gType);
   predFC+=getPlatformReliabilityMod(platformKey);
   predFC+=getColdMod(gType,typeof tempF!=='undefined'?tempF:70,platformKey);
   predFC+=feedMod;
   if(typeof selMods!=='undefined'){
-    const reliIds=['oring','detent','boltspring','heatcore','lube'];
     let rCnt=0;
-    selMods.forEach(id=>{if(reliIds.includes(id))rCnt++;});
+    selMods.forEach(id=>{if(RELIABILITY_MOD_IDS.includes(id))rCnt++;});
     predFC+=rCnt*3;
   }
   predFC=Math.max(0,Math.min(100,predFC));
-
   const predFF=getFollowUpScore(predAdjJ,magSize,platformKey);
-
   const predRaw=(predFE*0.35)+(fP*0.20)+(predFC*0.20)+(predFF*0.15)+(fCtx*0.10);
   const rawCeilP=energyCeiling(predAdjJ,predEffRounds);
   const predCeil=rawCeilP-capacityRiskPenalty(predAdjJ,predEffRounds);
   const predTIS=Math.max(0,Math.min(predCeil,Math.round(predRaw)));
+  return {predTIS,predFE,predFC,predFF,predAdjJ,predEffRounds,predMuzzleJ,predImpactJ};
+}
 
-  // ================ STAGE 2: VERIFIED ================
-  // Driven by shot-string analytics. Only computed if we have real data.
-  let verifTIS=null, verifFE=null, verifFC=null, verifFF=null, verifAdjJ=null;
-  let verifEffRounds=null;
-  if(shotStats){
-    // Effective muzzle/impact from the actual chrono data
-    const measuredMuzzleJ=shotStats.muzAvg||0;
-    // Apply degradation model to the measured muzzle average for consistent ceiling computation
-    const verifVolley=computeVolleyEnergy(measuredMuzzleJ,platformKey,gType,gSize,cadence,dist,clothMult,effectiveRounds);
-    verifAdjJ=verifVolley.avgAdjJ;
-    verifEffRounds=verifVolley.effectiveRounds;
-
-    // F_E verified — uses degradation-aware average
-    verifFE=scoreEnergy(verifAdjJ);
-
-    // F_C verified — actual SD and decay from the string.
-    // Scale: 100 - 2.2*SD(J) - 1.5*decay(J). Reliability mods still help.
-    let fcAdj=100-2.2*shotStats.impSd-1.5*shotStats.decay;
-    if(typeof selMods!=='undefined'){
-      const reliIds=['oring','detent','boltspring','heatcore','lube'];
-      let rCnt=0;
-      selMods.forEach(id=>{if(reliIds.includes(id))rCnt++;});
-      fcAdj+=rCnt*2; // smaller boost when we have real data
-    }
-    verifFC=Math.max(0,Math.min(100,fcAdj));
-
-    verifFF=getFollowUpScore(verifAdjJ,magSize,platformKey);
-
-    const verifRaw=(verifFE*0.35)+(fP*0.20)+(verifFC*0.20)+(verifFF*0.15)+(fCtx*0.10);
-    const rawCeilV=energyCeiling(verifAdjJ,verifEffRounds);
-    const verifCeil=rawCeilV-capacityRiskPenalty(verifAdjJ,verifEffRounds);
-    verifTIS=Math.max(0,Math.min(verifCeil,Math.round(verifRaw)));
+function computeVerifiedTIS(params,shotStats){
+  if(!shotStats) return null;
+  const {dist,clothMult,effectiveRounds,platformKey,gType,gSize,cadence,selMods,magSize,fP,fCtx}=params;
+  const measuredMuzzleJ=shotStats.muzAvg||0;
+  const verifVolley=computeVolleyEnergy(measuredMuzzleJ,platformKey,gType,gSize,cadence,dist,clothMult,effectiveRounds);
+  const verifAdjJ=verifVolley.avgAdjJ;
+  const verifEffRounds=verifVolley.effectiveRounds;
+  const verifFE=scoreEnergy(verifAdjJ);
+  let fcAdj=100-2.2*shotStats.impSd-1.5*shotStats.decay;
+  if(typeof selMods!=='undefined'){
+    let rCnt=0;
+    selMods.forEach(id=>{if(RELIABILITY_MOD_IDS.includes(id))rCnt++;});
+    fcAdj+=rCnt*2;
   }
+  const verifFC=Math.max(0,Math.min(100,fcAdj));
+  const verifFF=getFollowUpScore(verifAdjJ,magSize,platformKey);
+  const verifRaw=(verifFE*0.35)+(fP*0.20)+(verifFC*0.20)+(verifFF*0.15)+(fCtx*0.10);
+  const rawCeilV=energyCeiling(verifAdjJ,verifEffRounds);
+  const verifCeil=rawCeilV-capacityRiskPenalty(verifAdjJ,verifEffRounds);
+  const verifTIS=Math.max(0,Math.min(verifCeil,Math.round(verifRaw)));
+  return {verifTIS,verifFE,verifFC,verifFF,verifAdjJ,verifEffRounds};
+}
 
-  // ================ BLEND ================
-  const hasTemp=(typeof tempF!=='undefined'&&tempF!==null);
-  const V=getVerificationWeight(validShots.length,gType,hasTemp);
-  const rawTIS=(verifTIS!==null)?((1-V)*predTIS+V*verifTIS):predTIS;
+function blendScores(pred,verif,V,params){
+  const {shotStats,validShots,roundVal,platformKey,gType,fP,fCtx,dist}=params;
+  const rawTIS=(verif!==null)?((1-V)*pred.predTIS+V*verif.verifTIS):pred.predTIS;
   const tis=Math.max(0,Math.min(100,Math.round(rawTIS)));
-
-  // Displayed factor values — use verified if we have them, otherwise predicted
-  const f1=(verifFE!==null)?Math.round((1-V)*predFE+V*verifFE):Math.round(predFE);
+  const f1=(verif!==null)?Math.round((1-V)*pred.predFE+V*verif.verifFE):Math.round(pred.predFE);
   const f2=Math.round(fP);
-  const f3=(verifFC!==null)?Math.round((1-V)*predFC+V*verifFC):Math.round(predFC);
-  const f4=(verifFF!==null)?Math.round((1-V)*predFF+V*verifFF):Math.round(predFF);
+  const f3=(verif!==null)?Math.round((1-V)*pred.predFC+V*verif.verifFC):Math.round(pred.predFC);
+  const f4=(verif!==null)?Math.round((1-V)*pred.predFF+V*verif.verifFF):Math.round(pred.predFF);
   const f5=Math.round(fCtx);
-
-  // Displayed muzzle/impact/adjusted — use verified if available
-  const muzzleJ=shotStats?shotStats.muzAvg:predMuzzleJ;
-  const impactJ=shotStats?(shotStats.impAvg>0?shotStats.impAvg:calcImpact(muzzleJ,dist)):predImpactJ;
-  const adjustedJ=(verifAdjJ!==null)?verifAdjJ:predAdjJ;
-
-  // Verification status
+  const muzzleJ=shotStats?shotStats.muzAvg:pred.predMuzzleJ;
+  const impactJ=shotStats?(shotStats.impAvg>0?shotStats.impAvg:calcImpact(muzzleJ,dist)):pred.predImpactJ;
+  const adjustedJ=(verif!==null)?verif.verifAdjJ:pred.predAdjJ;
   const tisStatus=getTisStatus(V,validShots.length,gType);
-
-  // IPS & Confidence
   const ips=calcIPS(impactJ,roundVal);
   const conf=calcConfidence(validShots.length,roundVal,platformKey,gType);
-
   const tisBand=getTisBand(tis);
   const ipsBand=getIpsBand(ips);
   const confBand=getConfBand(conf);
+  return {tis,f1,f2,f3,f4,f5,muzzleJ,impactJ,adjustedJ,tisStatus,ips,conf,tisBand,ipsBand,confBand};
+}
+
+function renderTISResults(scores,meta){
+  const {tis,f1,f2,f3,f4,f5,muzzleJ,impactJ,adjustedJ,tisStatus,ips,conf,tisBand,ipsBand,confBand}=scores;
+  const {p,platformKey,roundVal,dist,clothing,clothMult,moving,gType,magSize,proj,feedMod,fP,fCtx,ctxPen,
+    validShots,effectiveRounds,cadence,selMods,tempF,psi,gasSize,gasSizeHPA,
+    predAdjJ,predEffRounds,verifAdjJ,verifEffRounds,V,shotStats}=meta;
 
   // --- Inline TIS (next to Active Session) ---
   const inScore=document.getElementById('tis-score');
@@ -5380,9 +5244,8 @@ function calculateTIS(){
       else penList.push('CO2 depletion curve (−8)');
     }
     if(roundVal==='custom') penList.push('Unknown projectile (−10)');
-    const reliMods=['oring','detent','boltspring','heatcore','lube'];
     let reliCount=0;
-    if(typeof selMods!=='undefined') selMods.forEach(id=>{if(reliMods.includes(id)) reliCount++;});
+    if(typeof selMods!=='undefined') selMods.forEach(id=>{if(RELIABILITY_MOD_IDS.includes(id)) reliCount++;});
     if(reliCount>0) penList.push('Reliability mods installed (+'+reliCount*3+')');
     const curPsi=typeof psi!=='undefined'?psi:800;
     if(gType==='hpa'&&curPsi>1200) penList.push('HPA above 1200 PSI (−12)');
@@ -5419,7 +5282,7 @@ function calculateTIS(){
   if(bsEl){
     bsEl.style.display='block';
     // Build string: PLATFORM / GAS / ROUND / IMPACT / DIST / MOD COUNT
-    const pShort=p.name.replace(/^(Umarex|Valken|NXWerks|Defense Innovations|DI|Mercury Rise|Milsig)\s*/i,'').toUpperCase();
+    const pShort=p.name.replace(BRAND_REGEX,'').toUpperCase();
     const gasShort=gType==='hpa'?'HPA':'CO2';
     const roundShort=(proj?proj.name:roundVal||'—').toUpperCase();
     const modCount=(typeof selMods!=='undefined')?selMods.size:0;
@@ -5547,9 +5410,8 @@ function calculateTIS(){
         else reasons.push('−8 CO2 depletion curve');
       }
       if(roundVal==='custom') reasons.push('−10 unknown projectile');
-      const reliIds=['oring','detent','boltspring','heatcore','lube'];
       let rCnt=0;
-      if(typeof selMods!=='undefined') selMods.forEach(id=>{if(reliIds.includes(id))rCnt++;});
+      if(typeof selMods!=='undefined') selMods.forEach(id=>{if(RELIABILITY_MOD_IDS.includes(id))rCnt++;});
       if(rCnt>0) reasons.push('+'+(rCnt*3)+' reliability mods installed');
       const curPsi=typeof psi!=='undefined'?psi:800;
       if(gType==='hpa'&&curPsi>1200) reasons.push('−12 HPA over 1200 PSI');
@@ -5575,7 +5437,7 @@ function calculateTIS(){
       else{tlThumb.removeAttribute('src');tlThumb.style.display='none';}
     }
     const tlNameEl=document.getElementById('tl-name');
-    if(tlNameEl) tlNameEl.textContent=p.name.replace(/^(Umarex|Valken|NXWerks|Defense Innovations|DI|Mercury Rise|Milsig)\s*/i,'');
+    if(tlNameEl) tlNameEl.textContent=p.name.replace(BRAND_REGEX,'');
     const tlMetaEl=document.getElementById('tl-meta');
     if(tlMetaEl){
       const gasLbl=(gType==='co2')?(gasSize.toUpperCase()+' CO2'):('HPA '+gasSizeHPA.toUpperCase());
@@ -5592,12 +5454,103 @@ function calculateTIS(){
   // --- Summary ---
   const summEl=document.getElementById('tis-summary');
   if(summEl){
-    const pName=p.name.replace(/^(Umarex|Valken|NXWerks|Defense Innovations|DI|Mercury Rise|Milsig)\s*/i,'');
+    const pName=p.name.replace(BRAND_REGEX,'');
     const projName=proj?proj.name:'your loaded projectile';
     const gasWord=gType==='hpa'?'HPA':'CO2';
     const energySrc=validShots.length>0?('chrono-validated at '+Math.round(muzzleJ)+'J avg'):('estimated at '+Math.round(muzzleJ)+'J from mod stack');
     summEl.textContent='Your '+pName+' loaded with '+projName+' running '+gasWord+', '+energySrc+', at '+dist+' ft is projected to deliver '+tisBand.label.toLowerCase()+' immediate disruption with '+ipsBand.label.toLowerCase()+' injury consequence. Confidence is '+confBand.label.toLowerCase()+(conf<70?' — log chrono shots to validate your actual output.':'.');
   }
+
+}
+
+// --- Main TIS calculation ---
+function calculateTIS(){
+  const p=getCurrentPlatform();
+  const heroNull=document.getElementById('tis-hero-null');
+  const heroActive=document.getElementById('tis-hero-active');
+  const inlineEl=document.getElementById('tis-inline');
+
+  // Null state — no platform selected or setup incomplete
+  if(!p||!platformKey||platformKey==='custom'||!isSetupComplete()){
+    setTisNull(true);
+    return;
+  }
+  setTisNull(false);
+
+  // ================ SHARED INPUTS ================
+  const sel=document.getElementById('c-round');
+  const roundVal=sel?sel.value:'';
+  const dist=parseInt(document.getElementById('c-dist').value)||15;
+  const clothEl=document.getElementById('tis-clothing');
+  const clothing=clothEl?clothEl.value:'summer';
+  const clothMult=CLOTHING_MULT[clothing]||0.92;
+  const moveEl=document.getElementById('tis-movement');
+  const moving=moveEl?moveEl.value==='moving':false;
+  const gType=typeof gasType!=='undefined'?gasType:'co2';
+  const magSize=p.mag||6;
+  const proj=PROJECTILE_DB[roundVal];
+  const feedMod=proj?proj.feedMod:0;
+  const shapeEl=document.getElementById('c-custom-shape');
+
+  // Projectile factor — same in both stages
+  let fP=proj?proj.base:50;
+  if(roundVal==='custom'&&shapeEl){
+    if(shapeEl.value==='shaped') fP=Math.max(0,fP-8);
+    if(shapeEl.value==='slug') fP=Math.max(0,fP-4);
+  }
+
+  // Context factor — clothing/moving/distance penalty
+  const ctxPen=getContextPenalty(clothing,moving,dist);
+  const fCtx=Math.max(0,100-ctxPen*6.67);
+
+  // Logged shot string (for verification pipeline)
+  // Only shots fired under the CURRENT mod signature count toward the verified
+  // baseline. When the user adds/removes a part, the verified average rebuilds
+  // from scratch (shot history itself is preserved for analytics). Gas type
+  // must also match — swapping gas systems invalidates the previous string.
+  const activeP=presets.find(x=>x.id===activePresetId);
+  const loggedShots=(activeP&&activeP.shots)?activeP.shots:[];
+  const currentModSig=getModSignature(selMods);
+  const validShots=loggedShots.filter(s=>{
+    if(!(s.muzzle>0))return false;
+    if(s.gas&&s.gas!==gType)return false;
+    const shotSig=getModSignature(s.mods||[]);
+    return shotSig===currentModSig;
+  });
+  const shotStats=computeShotStringStats(validShots);
+
+  // --- Effective round count (platform hard caps) ---
+  const effectiveRounds=platformKey==='hds68'?2:Math.min(magSize,p.mag||6);
+  const gSize=gType==='co2'?gasSize:'';
+
+  // ================ STAGE 1: PREDICTED ================
+  const tisParams={dist,clothMult,effectiveRounds,platformKey,gType,gSize,cadence,tempF,selMods,feedMod,magSize,fP,fCtx};
+  const pred=computePredictedTIS(tisParams);
+  const {predTIS,predFE,predFC,predFF,predAdjJ,predEffRounds}=pred;
+  const predMuzzleJ=pred.predMuzzleJ;
+  const predImpactJ=pred.predImpactJ;
+
+  // ================ STAGE 2: VERIFIED ================
+  const verif=computeVerifiedTIS(tisParams,shotStats);
+  let verifTIS=null,verifFE=null,verifFC=null,verifFF=null,verifAdjJ=null;
+  let verifEffRounds=null;
+  if(verif){
+    ({verifTIS,verifFE,verifFC,verifFF,verifAdjJ,verifEffRounds}=verif);
+  }
+
+  // ================ BLEND ================
+  const hasTemp=(typeof tempF!=='undefined'&&tempF!==null);
+  const V=getVerificationWeight(validShots.length,gType,hasTemp);
+  const blended=blendScores(pred,verif,V,{shotStats,validShots,roundVal,platformKey,gType,fP,fCtx,dist});
+  const {tis,f1,f2,f3,f4,f5,muzzleJ,impactJ,adjustedJ,tisStatus,ips,conf,tisBand,ipsBand,confBand}=blended;
+
+  // ================ RENDER ================
+  renderTISResults(
+    {tis,f1,f2,f3,f4,f5,muzzleJ,impactJ,adjustedJ,tisStatus,ips,conf,tisBand,ipsBand,confBand},
+    {p,platformKey,roundVal,dist,clothing,clothMult,moving,gType,magSize,proj,feedMod,fP,fCtx,ctxPen,
+     validShots,effectiveRounds,cadence,selMods,tempF,psi,gasSize,gasSizeHPA,
+     predAdjJ,predEffRounds,verifAdjJ,verifEffRounds,V,shotStats}
+  );
 }
 
 function setTisNull(isNull){
@@ -5631,7 +5584,16 @@ function setTisNull(isNull){
 // ============================================================
 // INIT
 // ============================================================
+let fpsDebounceTimer;
 function initApp(){
+  // Debounced FPS input — avoids full TIS recalc on every keystroke
+  const fpsEl=document.getElementById('c-fps');
+  if(fpsEl){
+    fpsEl.addEventListener('input',()=>{
+      clearTimeout(fpsDebounceTimer);
+      fpsDebounceTimer=setTimeout(calcUpdate,150);
+    });
+  }
   initPlatformOptions();
   // Auto-detect season for TIS clothing
   const clothSel=document.getElementById('tis-clothing');
@@ -5686,7 +5648,7 @@ function initApp(){
   }catch(e){openModal('modal-disclaimer');}
 }
 function acceptDisclaimer(){
-  try{localStorage.setItem(LS_DISCLAIMER,DISCLAIMER_VERSION);}catch(e){}
+  safeSetItem(LS_DISCLAIMER,DISCLAIMER_VERSION);
   closeModal('modal-disclaimer');
   maybeShowOnboarding();
 }
@@ -5703,7 +5665,7 @@ function maybeShowOnboarding(){
 }
 function dismissOnboard(persist){
   if(persist){
-    try{localStorage.setItem(LS_ONBOARD,'1');}catch(e){}
+    safeSetItem(LS_ONBOARD,'1');
   }
   closeModal('modal-onboard');
 }
