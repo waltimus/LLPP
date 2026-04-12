@@ -1873,7 +1873,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
       <button class="modal-close" onclick="closeModal('modal-tis-info')">&times;</button>
     </div>
     <div class="modal-body">
-      <div id="tis-info-live" style="margin-bottom:14px;padding:10px 12px;background:rgba(197,255,0,0.05);border-left:3px solid var(--pip);font-family:'Share Tech Mono',monospace;font-size:12px;line-height:1.6;color:var(--bright);"></div>
+      <div id="tis-info-live" style="margin-bottom:16px;padding:14px 16px;background:linear-gradient(180deg,rgba(197,255,0,0.06),rgba(0,0,0,0.20));border:1px solid rgba(197,255,0,0.25);border-left:3px solid var(--pip);"></div>
       <div class="disclaimer-body" style="font-size:15px;line-height:1.7;">
         <p>The Threat Interruption Score (TIS) estimates how effectively this loadout is likely to <strong>stop an aggressor's committed action</strong> at the current configuration and distance. Higher is better for the operator — it means a faster, more reliable interruption.</p>
         <p><strong>Two-stage scoring (TIS 2.0):</strong></p>
@@ -1902,7 +1902,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
       <button class="modal-close" onclick="closeModal('modal-ips-info')">&times;</button>
     </div>
     <div class="modal-body">
-      <div id="ips-info-live" style="margin-bottom:14px;padding:10px 12px;background:rgba(197,255,0,0.05);border-left:3px solid var(--pip);font-family:'Share Tech Mono',monospace;font-size:12px;line-height:1.6;color:var(--bright);"></div>
+      <div id="ips-info-live" style="margin-bottom:16px;padding:14px 16px;background:linear-gradient(180deg,rgba(197,255,0,0.06),rgba(0,0,0,0.20));border:1px solid rgba(197,255,0,0.25);border-left:3px solid var(--pip);"></div>
       <div class="disclaimer-body" style="font-size:15px;line-height:1.7;">
         <p>The Injury Potential Score (IPS) estimates the <strong>consequence severity</strong> if impact occurs at the current energy level and projectile type. A higher score means greater risk of injury.</p>
         <p>It is driven primarily by <strong>retained energy at distance</strong> (post-clothing adjustment) and modified by projectile class — aluminum rounds concentrate force and score higher, while frangible irritant rounds score lower on kinetic injury.</p>
@@ -1924,7 +1924,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
       <button class="modal-close" onclick="closeModal('modal-conf-info')">&times;</button>
     </div>
     <div class="modal-body">
-      <div id="conf-info-live" style="margin-bottom:14px;padding:10px 12px;background:rgba(197,255,0,0.05);border-left:3px solid var(--pip);font-family:'Share Tech Mono',monospace;font-size:12px;line-height:1.6;color:var(--bright);"></div>
+      <div id="conf-info-live" style="margin-bottom:16px;padding:14px 16px;background:linear-gradient(180deg,rgba(197,255,0,0.06),rgba(0,0,0,0.20));border:1px solid rgba(197,255,0,0.25);border-left:3px solid var(--pip);"></div>
       <div class="disclaimer-body" style="font-size:16px;line-height:1.8;">
         <p>Confidence measures <strong>how much the system trusts its own output</strong> given the information you've provided. It starts at 88 (never 100 — there is always modeling uncertainty) and applies penalties for each source of unknown.</p>
         <p><strong>Penalties (reduce confidence):</strong></p>
@@ -5373,23 +5373,36 @@ function renderTISResults(scores,meta){
     }
 
     // Live reasoning for info modals (TIS / IPS / Confidence)
+    const liveHdr='font-family:\'Orbitron\',sans-serif;font-weight:900;letter-spacing:0.15em;text-transform:uppercase;text-shadow:0 0 15px rgba(197,255,0,0.35);';
+    const liveScore='font-family:\'Orbitron\',monospace;font-size:32px;font-weight:900;line-height:1;letter-spacing:-0.02em;';
+    const liveBand='font-family:\'Share Tech Mono\',monospace;font-size:12px;letter-spacing:0.12em;margin-top:4px;';
+    const liveSub='font-family:\'Share Tech Mono\',monospace;font-size:11px;letter-spacing:0.05em;color:var(--text);line-height:1.55;margin-top:10px;border-top:1px solid rgba(197,255,0,0.12);padding-top:8px;';
     const tisInfoLive=document.getElementById('tis-info-live');
     if(tisInfoLive){
-      const parts=[];
-      parts.push('<strong>Current TIS: '+tis+' ('+tisBand.label+')</strong>');
-      parts.push('Factors: Energy '+f1+' · Projectile '+f2+' · Stability '+f3+' · Follow-up '+f4+' · Distance '+f5);
-      if(validShots.length===0) parts.push('Status: predicted only — no logged shots yet under the current mod stack.');
-      else parts.push('Status: '+tisStatus.label.toLowerCase()+' ('+validShots.length+' of '+getShotsNeeded(gType)+' '+gType.toUpperCase()+' shots logged).');
-      tisInfoLive.innerHTML=parts.join('<br>');
+      const tc=bandColor(tisBand.cls);
+      let h='<div style="'+liveHdr+'font-size:11px;color:var(--muted);margin-bottom:6px;">CURRENT CONFIGURATION</div>';
+      h+='<div style="'+liveScore+'color:'+tc+';">'+tis+' <span style="font-size:14px;letter-spacing:0.1em;">TIS</span></div>';
+      h+='<div style="'+liveBand+'color:'+tc+';">'+tisBand.label+'</div>';
+      h+='<div style="'+liveSub+'">Factors: Energy '+f1+' · Projectile '+f2+' · Stability '+f3+' · Follow-up '+f4+' · Distance '+f5+'<br>';
+      if(validShots.length===0) h+='Status: predicted only — no logged shots yet under the current mod stack.';
+      else h+='Status: '+tisStatus.label.toLowerCase()+' ('+validShots.length+' of '+getShotsNeeded(gType)+' '+gType.toUpperCase()+' shots logged).';
+      h+='</div>';
+      tisInfoLive.innerHTML=h;
     }
     const ipsInfoLive=document.getElementById('ips-info-live');
     if(ipsInfoLive){
-      ipsInfoLive.innerHTML='<strong>Current IPS: '+ips+' ('+ipsBand.label+')</strong><br>'+
-        'Retained energy at target: '+adjustedJ.toFixed(1)+' J (post-clothing) at '+dist+' ft<br>'+
-        'Projectile: '+(proj?proj.name:'custom')+(roundVal==='custom'?' — unknown injury profile':'');
+      const ic=bandColor(ipsBand.cls);
+      let h='<div style="'+liveHdr+'font-size:11px;color:var(--muted);margin-bottom:6px;">CURRENT CONFIGURATION</div>';
+      h+='<div style="'+liveScore+'color:'+ic+';">'+ips+' <span style="font-size:14px;letter-spacing:0.1em;">IPS</span></div>';
+      h+='<div style="'+liveBand+'color:'+ic+';">'+ipsBand.label+'</div>';
+      h+='<div style="'+liveSub+'">Retained energy at target: '+adjustedJ.toFixed(1)+' J (post-clothing) at '+dist+' ft<br>';
+      h+='Projectile: '+(proj?proj.name:'custom')+(roundVal==='custom'?' — unknown injury profile':'');
+      h+='</div>';
+      ipsInfoLive.innerHTML=h;
     }
     const confInfoLive=document.getElementById('conf-info-live');
     if(confInfoLive){
+      const cc=bandColor(confBand.cls);
       const reasons=[];
       if(validShots.length>=5) reasons.push('+5 chrono-validated ('+validShots.length+' shots)');
       else if(validShots.length>=1) reasons.push('+2 partial chrono ('+validShots.length+' shots)');
@@ -5407,8 +5420,11 @@ function renderTISResults(scores,meta){
       if(platformKey==='x68'&&!(typeof selMods!=='undefined'&&selMods.has('oring'))) reasons.push('−12 Gen1 X-68 without seal kit');
       if(typeof tempF!=='undefined'&&tempF<55&&gType==='co2') reasons.push('−8 cold weather CO2');
       if(dist>50) reasons.push('−5 extended range');
-      confInfoLive.innerHTML='<strong>Current Confidence: '+conf+' ('+confBand.label+')</strong><br>'+
-        (reasons.length?'Applied: '+reasons.join(' · '):'No penalties or boosts currently active.');
+      let h='<div style="'+liveHdr+'font-size:11px;color:var(--muted);margin-bottom:6px;">CURRENT CONFIGURATION</div>';
+      h+='<div style="'+liveScore+'color:'+cc+';">'+conf+' <span style="font-size:14px;letter-spacing:0.1em;">CONF</span></div>';
+      h+='<div style="'+liveBand+'color:'+cc+';">'+confBand.label+'</div>';
+      h+='<div style="'+liveSub+'">'+(reasons.length?'Applied: '+reasons.join(' · '):'No penalties or boosts currently active.')+'</div>';
+      confInfoLive.innerHTML=h;
     }
   }
 
