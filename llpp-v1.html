@@ -1480,29 +1480,26 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
       <div class="modal-hdr">
         <div>
           <div class="modal-title">GETTING STARTED</div>
-          <div class="modal-sub">Equip a launcher and a projectile to unlock the readouts</div>
+          <div class="modal-sub">Select a launcher and projectile to unlock the calculator</div>
         </div>
         <button class="modal-close" onclick="closeModal('modal-onboard')">×</button>
       </div>
       <div class="modal-body">
         <div class="disclaimer-body" style="font-size:14px;line-height:1.7;">
-          <p>Welcome to <strong>[S.L.A.T.E.]</strong>. Nothing on this app will display meaningful numbers until you tell it what you're running. Three quick steps:</p>
-          <ol style="margin:0 0 12px 18px;padding:0;">
-            <li><strong>PLATFORM</strong> — choose your launcher (and barrel / bolt if applicable).</li>
-            <li><strong>GAS</strong> — HPA pressure or CO2 size + temperature.</li>
-            <li><strong>ROUND</strong> — projectile type and mass.</li>
-          </ol>
-          <p>You can also skip the configuration and log a shot with raw chrono data directly. All of this can be edited later from the equipment strip at the top of the Calculator tab.</p>
+          <p>Welcome to <strong>[S.L.A.T.E.]</strong>. Select your launcher and projectile below to get started. Gas defaults to 12g CO2 — you can adjust this and add mods later from the equipment strip on the Calculator tab.</p>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px;">
-          <button class="btn" onclick="closeModal('modal-onboard');openModal('modal-platform');" style="width:100%;">1 · PLATFORM</button>
-          <button class="btn" onclick="closeModal('modal-onboard');openModal('modal-gas');" style="width:100%;">2 · GAS</button>
-          <button class="btn" onclick="closeModal('modal-onboard');openModal('modal-round');" style="width:100%;">3 · ROUND</button>
+        <div style="margin-top:14px;">
+          <div class="lbl">PLATFORM</div>
+          <select id="onboard-platform" style="width:100%;margin-bottom:14px;" onchange="onboardPlatformChange()"></select>
+          <div class="lbl">PROJECTILE</div>
+          <select id="onboard-round" style="width:100%;margin-bottom:14px;"></select>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.06em;line-height:1.5;margin-bottom:14px;">To add barrel mods, gas tuning, or other upgrades, use the <strong style="color:var(--bright);">MODS</strong> and <strong style="color:var(--bright);">GAS</strong> buttons on the Calculator tab after saving.</div>
         </div>
+        <button class="btn btn-primary" id="onboard-save" onclick="applyOnboardSetup();" style="width:100%;">SAVE &amp; START</button>
       </div>
       <div class="modal-footer" style="justify-content:space-between;">
         <button class="btn" onclick="dismissOnboard(true);" style="background:transparent;border-color:rgba(255,255,255,0.14);color:var(--muted);">DON'T SHOW AGAIN</button>
-        <button class="btn btn-primary" onclick="dismissOnboard(false);">I'LL CONFIGURE LATER</button>
+        <button class="btn" onclick="dismissOnboard(false);">I'LL CONFIGURE LATER</button>
       </div>
     </div>
   </div>
@@ -1874,6 +1871,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
       <button class="modal-close" onclick="closeModal('modal-tis-info')">&times;</button>
     </div>
     <div class="modal-body">
+      <div id="tis-info-live" style="margin-bottom:14px;padding:10px 12px;background:rgba(197,255,0,0.05);border-left:3px solid var(--pip);font-family:'Share Tech Mono',monospace;font-size:12px;line-height:1.6;color:var(--bright);"></div>
       <div class="disclaimer-body" style="font-size:15px;line-height:1.7;">
         <p>The Threat Interruption Score (TIS) estimates how effectively this loadout is likely to <strong>stop an aggressor's committed action</strong> at the current configuration and distance. Higher is better for the operator — it means a faster, more reliable interruption.</p>
         <p><strong>Two-stage scoring (TIS 2.0):</strong></p>
@@ -1887,7 +1885,6 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
         <p>&nbsp;&nbsp;• Accuracy &amp; Follow-Up — 15%</p>
         <p>&nbsp;&nbsp;• Context Uncertainty (clothing, movement, distance) — 10%</p>
         <p><strong>Bands:</strong> 85+ Severe · 70+ Strong · 50+ Moderate · 25+ Limited · &lt;25 Minimal</p>
-        <p id="tis-info-live" style="margin-top:14px;padding:10px;background:rgba(197,255,0,0.05);border-left:3px solid var(--pip);"></p>
       </div>
     </div>
   </div>
@@ -1903,12 +1900,12 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
       <button class="modal-close" onclick="closeModal('modal-ips-info')">&times;</button>
     </div>
     <div class="modal-body">
+      <div id="ips-info-live" style="margin-bottom:14px;padding:10px 12px;background:rgba(197,255,0,0.05);border-left:3px solid var(--pip);font-family:'Share Tech Mono',monospace;font-size:12px;line-height:1.6;color:var(--bright);"></div>
       <div class="disclaimer-body" style="font-size:15px;line-height:1.7;">
         <p>The Injury Potential Score (IPS) estimates the <strong>consequence severity</strong> if impact occurs at the current energy level and projectile type. A higher score means greater risk of injury.</p>
         <p>It is driven primarily by <strong>retained energy at distance</strong> (post-clothing adjustment) and modified by projectile class — aluminum rounds concentrate force and score higher, while frangible irritant rounds score lower on kinetic injury.</p>
         <p><strong>This is not a lethality index.</strong> It reflects the probability of bruising, fracture, soft tissue damage, and pain compliance at the delivered energy level. Use it alongside TIS to understand the full picture: high TIS with low IPS is the ideal outcome.</p>
         <p><strong>Bands:</strong> 85+ Extreme · 70+ High · 50+ Moderate · 25+ Low · &lt;25 Minimal</p>
-        <p id="ips-info-live" style="margin-top:14px;padding:10px;background:rgba(197,255,0,0.05);border-left:3px solid var(--pip);"></p>
       </div>
     </div>
   </div>
@@ -1925,6 +1922,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
       <button class="modal-close" onclick="closeModal('modal-conf-info')">&times;</button>
     </div>
     <div class="modal-body">
+      <div id="conf-info-live" style="margin-bottom:14px;padding:10px 12px;background:rgba(197,255,0,0.05);border-left:3px solid var(--pip);font-family:'Share Tech Mono',monospace;font-size:12px;line-height:1.6;color:var(--bright);"></div>
       <div class="disclaimer-body" style="font-size:16px;line-height:1.8;">
         <p>Confidence measures <strong>how much the system trusts its own output</strong> given the information you've provided. It starts at 88 (never 100 — there is always modeling uncertainty) and applies penalties for each source of unknown.</p>
         <p><strong>Penalties (reduce confidence):</strong></p>
@@ -1942,7 +1940,6 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
         <p>Each reliability mod (O-ring, detent, bolt spring, heatcore, lube): <em>+3 each</em></p>
         <p>Seal kit on Gen1 X-68: <em>removes −12 reliability penalty</em></p>
         <p style="margin-top:14px;"><strong>How to improve your confidence:</strong> Install reliability mods, log real chrono data, use a known projectile, run HPA if possible, and stay within your platform's effective envelope.</p>
-        <p id="conf-info-live" style="margin-top:14px;padding:10px;background:rgba(197,255,0,0.05);border-left:3px solid var(--pip);"></p>
       </div>
     </div>
   </div>
@@ -2590,6 +2587,19 @@ function calcUpdate(){
     document.getElementById('c-vel-line').textContent='— M/S · —G';
     const lr=document.getElementById('live-readout');
     if(lr)lr.innerHTML='— / —';
+    // Show setup prompt
+    const statusEl=document.getElementById('c-status');
+    if(statusEl){
+      const launcher=document.getElementById('c-launcher');
+      const round=document.getElementById('c-round');
+      const needsLauncher=!launcher||launcher.value==='';
+      const needsRound=!round||round.value==='';
+      let msg='';
+      if(needsLauncher&&needsRound) msg='SELECT A PLATFORM AND PROJECTILE TO BEGIN — Use the buttons below or <a href="#" onclick="event.preventDefault();populateOnboardSelectors();openModal(\'modal-onboard\');" style="color:var(--pip);text-decoration:underline;">open setup wizard</a>';
+      else if(needsRound) msg='SELECT A PROJECTILE TO UNLOCK CALCULATIONS — Click the <span style="color:var(--pip);">PROJECTILE</span> button below';
+      else if(needsLauncher) msg='SELECT A PLATFORM TO UNLOCK CALCULATIONS — Click the <span style="color:var(--pip);">PLATFORM</span> button below';
+      statusEl.innerHTML='<div class="status-strip s-warn" style="text-transform:none;letter-spacing:0.04em;">'+msg+'</div>';
+    }
     return;
   }
   const sel=document.getElementById('c-round');
@@ -5661,13 +5671,59 @@ function maybeShowOnboarding(){
   if(equippedPlatform)return;
   if(presets&&presets.length>0)return;
   // Defer slightly so the disclaimer close animation finishes cleanly
-  setTimeout(()=>openModal('modal-onboard'),250);
+  setTimeout(()=>{populateOnboardSelectors();openModal('modal-onboard');},250);
 }
 function dismissOnboard(persist){
   if(persist){
     safeSetItem(LS_ONBOARD,'1');
   }
   closeModal('modal-onboard');
+}
+function populateOnboardSelectors(){
+  const pSel=document.getElementById('onboard-platform');
+  const rSel=document.getElementById('onboard-round');
+  if(!pSel||!rSel)return;
+  // Populate platforms
+  pSel.innerHTML='<option value="">— select a launcher —</option>';
+  Object.entries(PLATFORMS).forEach(([key,p])=>{
+    const o=document.createElement('option');
+    o.value=key;o.textContent=p.name;
+    pSel.appendChild(o);
+  });
+  // Populate rounds — start with .68 cal defaults
+  populateOnboardRounds();
+}
+function populateOnboardRounds(){
+  const rSel=document.getElementById('onboard-round');
+  if(!rSel)return;
+  rSel.innerHTML='<option value="">— select a projectile —</option>';
+  const pKey=document.getElementById('onboard-platform').value;
+  const p=PLATFORMS[pKey];
+  const cal=(p&&p.bore<0.6)?'50':'68';
+  const rounds=cal==='50'?ROUNDS_50:ROUNDS_68;
+  rounds.forEach(r=>{
+    const o=document.createElement('option');
+    o.value=r.v;o.textContent=r.label;
+    rSel.appendChild(o);
+  });
+}
+function onboardPlatformChange(){
+  populateOnboardRounds();
+}
+function applyOnboardSetup(){
+  const pSel=document.getElementById('onboard-platform');
+  const rSel=document.getElementById('onboard-round');
+  if(!pSel||!pSel.value){return;}
+  if(!rSel||!rSel.value){return;}
+  // Apply platform
+  const mainP=document.getElementById('c-launcher');
+  if(mainP){mainP.value=pSel.value;onPlatformChange();}
+  // Apply round
+  const mainR=document.getElementById('c-round');
+  if(mainR){mainR.value=rSel.value;if(typeof onRoundChange==='function')onRoundChange();}
+  // Close onboard and run calc
+  dismissOnboard(false);
+  calcUpdate();
 }
 // ----- Harm reduction briefing content -----
 function renderHarmBriefing(){
