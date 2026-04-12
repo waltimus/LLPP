@@ -623,6 +623,9 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 .tis-warning{margin-top:8px;padding:10px 14px;font-family:'Barlow Condensed',sans-serif;font-size:13px;line-height:1.4;}
 .tis-warning.amber{background:rgba(255,179,71,0.06);border:1px solid rgba(255,179,71,0.2);border-left:3px solid #ffb347;color:#ffb347;}
 .tis-warning.red{background:rgba(255,40,40,0.06);border:1px solid rgba(255,40,40,0.2);border-left:3px solid #ff4040;color:#ff6a6a;}
+.tis-sticky-hdr{position:sticky;top:0;z-index:12;background:linear-gradient(180deg,#03050a 0%,#03050a 92%,transparent 100%);padding-bottom:14px;margin:-16px -16px 0;padding:16px 16px 14px;}
+.tis-sticky-hdr .card{border-color:rgba(197,255,0,0.18);}
+@media(max-width:860px){.tis-sticky-hdr{position:relative;}}
 /* Energy warning banners — prominent safety alerts */
 .energy-warn{margin-top:10px;padding:14px 16px;font-family:'Share Tech Mono',monospace;font-size:13px;line-height:1.7;letter-spacing:0.02em;position:relative;overflow:hidden;}
 .energy-warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;}
@@ -1813,8 +1816,8 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
     </div>
     <div class="stitle">Muzzle Energy Over Time</div>
     <div class="chart-wrap"><canvas id="chart-timeline"></canvas></div>
-    <div class="stitle">Impact J vs Distance</div>
-    <div class="chart-wrap"><canvas id="chart-scatter"></canvas></div>
+    <div class="stitle">Session Activity — Shots by Date</div>
+    <div class="chart-wrap"><canvas id="chart-sessions"></canvas></div>
     <div class="stitle">Performance Summary</div>
     <div id="ana-stats"></div>
     <div class="stitle">Round Comparison — Avg Impact J</div>
@@ -1834,8 +1837,9 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
   </div>
   <div id="tis-hero-active" style="display:none;">
 
-    <!-- ROW 1: Launcher Profile + Score Cards -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:12px;">
+    <!-- STICKY HEADER: Launcher Profile + Score Cards -->
+    <div class="tis-sticky-hdr">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;">
 
       <!-- Launcher Profile -->
       <div class="card" style="padding:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
@@ -1871,6 +1875,8 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
         <div id="conf-band" style="font-family:'Share Tech Mono',monospace;font-size:13px;letter-spacing:0.1em;margin-top:6px;">—</div>
       </div>
     </div>
+    <div id="tis-sticky-detail" style="margin-top:8px;padding:8px 14px;border:1px solid rgba(0,200,255,0.12);background:rgba(0,200,255,0.03);font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.04em;line-height:1.6;display:none;"></div>
+    </div><!-- /tis-sticky-hdr -->
 
     <!-- ROW 2: Scenario Context (compact) + Assessment -->
     <div style="display:grid;grid-template-columns:1fr 2fr;gap:12px;margin-bottom:12px;">
@@ -4323,22 +4329,37 @@ function updateCharts(){
       }}
   });
 
-  // Impact J vs Distance scatter
-  if(charts.scatter)charts.scatter.destroy();
-  charts.scatter=new Chart(document.getElementById('chart-scatter'),{type:'scatter',
-    data:{datasets:[
-      {data:wc.map(e=>({x:e.dist,y:parseFloat(e.impact.toFixed(1))})),
-        backgroundColor:wc.map(e=>colorFor(e.impact)),
-        pointRadius:7,pointHoverRadius:10},
-      {data:[{x:0,y:50},{x:100,y:50}],type:'line',borderColor:PIP+'0.3)',borderDash:[6,3],pointRadius:0,borderWidth:1},
-      {data:[{x:0,y:45},{x:100,y:45}],type:'line',borderColor:'rgba(255,100,0,0.3)',borderDash:[6,3],pointRadius:0,borderWidth:1},
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},title:{display:true,text:label,color:tickColor,font:{size:10,family:'Share Tech Mono'}}},
-      scales:{
-        x:{title:{display:true,text:'DISTANCE (FT)',color:tickColor,font:{size:10,family:'Share Tech Mono'}},ticks:{color:tickColor},grid:{color:gridColor},min:0,max:100},
-        y:{title:{display:true,text:'IMPACT J',color:tickColor,font:{size:10,family:'Share Tech Mono'}},min:0,max:yMax,ticks:{color:tickColor},grid:{color:gridColor}}
-      }}
-  });
+  // Session Activity — shots grouped by date
+  if(charts.sessions)charts.sessions.destroy();
+  {
+    // Group all shots (including non-impact) by calendar date
+    const dateBuckets={};
+    shots.forEach(s=>{
+      const d=new Date(s.ts);
+      const key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+      if(!dateBuckets[key]) dateBuckets[key]={count:0,date:d};
+      dateBuckets[key].count++;
+    });
+    const dateKeys=Object.keys(dateBuckets).sort();
+    const dateLabels=dateKeys.map(k=>{
+      const d=dateBuckets[k].date;
+      return (d.getMonth()+1)+'/'+d.getDate()+'/'+String(d.getFullYear()).slice(2);
+    });
+    const dateCounts=dateKeys.map(k=>dateBuckets[k].count);
+    const maxCount=Math.max(...dateCounts,1);
+    charts.sessions=new Chart(document.getElementById('chart-sessions'),{type:'bar',
+      data:{labels:dateLabels,datasets:[{label:'Shots',data:dateCounts,
+        backgroundColor:PIP+'0.65)',borderColor:PIP+'0.9)',borderWidth:1,borderRadius:2}]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},
+          title:{display:true,text:label+' — '+shots.length+' total shots across '+dateKeys.length+' session'+(dateKeys.length!==1?'s':''),
+            color:tickColor,font:{size:10,family:'Share Tech Mono'}}},
+        scales:{
+          x:{title:{display:true,text:'SESSION DATE',color:tickColor,font:{size:10,family:'Share Tech Mono'}},ticks:{color:tickColor,font:{size:9},maxRotation:45},grid:{color:gridColor}},
+          y:{title:{display:true,text:'SHOTS LOGGED',color:tickColor,font:{size:10,family:'Share Tech Mono'}},min:0,max:Math.ceil(maxCount*1.2),ticks:{color:tickColor,stepSize:1,precision:0},grid:{color:gridColor}}
+        }}
+    });
+  }
 
   // Round comparison
   const rm={};
@@ -5183,6 +5204,22 @@ function calculateTIS(){
       selMods.forEach(id=>{const m=allMods.find(x=>x.id===id);if(m)names.push(m.name);});
       launcherMods.textContent=names.length?names.join(' · '):(selMods.size+' mods');
     }
+  }
+
+  // --- Sticky detail strip ---
+  const stickyDet=document.getElementById('tis-sticky-detail');
+  if(stickyDet){
+    const gasLbl2=(gType==='co2')?(gasSize.toUpperCase()+' CO2'):('HPA '+gasSizeHPA.toUpperCase());
+    const distLbl=dist+' ft';
+    const clothLbl=clothing==='winter'?'Winter coat':clothing==='spring'?'Hoodie':'Light layer';
+    const cadLbl=cadence==='rapid'?'Rapid':cadence==='deliberate'?'Deliberate':'Controlled';
+    const shotCount=validShots.length;
+    const muzzLbl=shotCount>0?('Chrono avg '+Math.round(muzzleJ)+'J / '+shotCount+' shots'):('Stack est '+Math.round(muzzleJ)+'J');
+    const impLbl=Math.round(adjustedJ*10)/10+'J post-clothing';
+    const ceilVal=energyCeiling(adjustedJ,(verifEffRounds!==null)?verifEffRounds:predEffRounds)-capacityRiskPenalty(adjustedJ,(verifEffRounds!==null)?verifEffRounds:predEffRounds);
+    const ceilLbl=ceilVal<100?(' · <span style="color:#e02020;">CEILING '+ceilVal+'</span>'):'';
+    stickyDet.innerHTML=gasLbl2+' · '+distLbl+' · '+clothLbl+' · '+cadLbl+' cadence · '+muzzLbl+' · <span style="color:var(--pip);">'+impLbl+'</span>'+ceilLbl;
+    stickyDet.style.display='block';
   }
 
   // --- IPS & Confidence sub-scores ---
