@@ -2114,7 +2114,7 @@ cqmf:       {name:'Valken CQMF',                   platformClass:'rifle',    bor
 hdr68:      {name:'Umarex HDR 68',                 platformClass:'revolver', bore:0.687, stockBarrel:6,  mag:5,  stockLow:7,  stockHigh:16, gas:['co2'], belowFloor:true, note:'Revolver. Highest mechanical reliability in the family but very low capacity (5 rounds). HPA conversion available via platform-specific mod.'},
 hds68:      {name:'Umarex HDS 68',                 platformClass:'shotgun',  bore:0.687, stockBarrel:6,  mag:2,  stockLow:7,  stockHigh:16, gas:['co2'], note:'Compact double-barrel less-lethal shotgun. Low energy, short barrel. 2-round capacity.'},
 hdx68:      {name:'Umarex HDX 68',                 platformClass:'shotgun',  bore:0.687, stockBarrel:10, mag:18, versions:'hdx', gas:['co2'], note:'Pump shotgun — select version below (standard 16J or performance 40J). High capacity.'},
-hdb68:      {name:'Umarex HDB 68',                 platformClass:'rifle',    bore:0.687, stockBarrel:14, mag:18, stockLow:11, stockHigh:16, gas:['co2','hpa'], note:'Semi-auto .68 cal tactical carbine. High capacity (up to 18 rounds).'},
+hdb68:      {name:'Umarex HDB 68',                 platformClass:'shotgun',    bore:0.687, stockBarrel:14, mag:18, stockLow:11, stockHigh:16, gas:['co2','hpa'], note:'Semi-auto .68 cal tactical carbine. High capacity (up to 18 rounds).'},
 tc68:       {name:'Umarex TC68',                   platformClass:'rifle',    bore:0.687, stockBarrel:14, mag:15, stockLow:7,  stockHigh:20, gas:['co2','hpa'], co2Options:['12g-dual','88g'], note:'.68 cal training carbine. 2×12g CO2, 88g CO2, or HPA compatible. 7-20J stock depending on gas/setup.'},
 x68:        {name:'NXWerks Pistelle X-68',         platformClass:'pistol',   bore:0.687, stockBarrel:6,  mag:7,  stockLow:42, stockHigh:45, gas:['co2','hpa']},
 x68g2:      {name:'Defense Innovations Pistelle X-68 Gen 2', platformClass:'pistol', bore:0.687, stockBarrel:6, mag:7, stockLow:42, stockHigh:45, gas:['co2','hpa']},
@@ -2484,10 +2484,15 @@ function getActiveZones(){
 
 function populateRounds(){
   const sel=document.getElementById('c-round');
-  const cal=caliberOf(document.getElementById('c-launcher').value);
+  const launcherVal=document.getElementById('c-launcher').value;
+  const cal=caliberOf(launcherVal);
   const list=cal==='50'?ROUNDS_50:ROUNDS_68;
   const prev=sel.value;
   sel.innerHTML='';
+  // Placeholder — forces user to explicitly choose a projectile
+  const ph=document.createElement('option');
+  ph.value='';ph.textContent='— SELECT PROJECTILE —';ph.disabled=true;
+  sel.appendChild(ph);
   list.forEach(r=>{
     const o=document.createElement('option');
     o.value=r.v;o.textContent=r.label;
@@ -2496,9 +2501,12 @@ function populateRounds(){
   const co=document.createElement('option');
   co.value='custom';co.textContent='Custom mass...';
   sel.appendChild(co);
-  // restore prior selection if compatible; otherwise prefer JUL V3 default for .68 cal
-  if(prev && [...sel.options].some(o=>o.value===prev)){
+  // restore prior selection if compatible; otherwise keep placeholder
+  if(prev && prev!=='' && [...sel.options].some(o=>o.value===prev)){
     sel.value=prev;
+  } else if(prev==='' || !prev){
+    // Fresh load or reset — keep placeholder selected
+    sel.selectedIndex=0;
   } else if(cal==='68' && [...sel.options].some(o=>o.value==='7.70|0.687')){
     sel.value='7.70|0.687';
   }
@@ -2517,6 +2525,7 @@ function onRoundChange(){
   const wrap=document.getElementById('c-custom-wrap');
   if(wrap)wrap.style.display = sel.value==='custom' ? 'block' : 'none';
   calcUpdate();
+  updateHeroPanel();
 }
 
 function renderDoctrineTable(){
@@ -2640,6 +2649,16 @@ function renderResponse(elId, impactJ){
 }
 
 function calcUpdate(){
+  // Gate: require launcher + projectile before running calculations
+  if(!isSetupComplete()){
+    document.getElementById('c-muzzle').textContent='—';
+    document.getElementById('c-impact').textContent='—';
+    document.getElementById('c-loss').textContent='—';
+    document.getElementById('c-vel-line').textContent='— M/S · —G';
+    const lr=document.getElementById('live-readout');
+    if(lr)lr.innerHTML='— / —';
+    return;
+  }
   const sel=document.getElementById('c-round');
   let mass;
   if(sel.value==='custom'){
@@ -2794,6 +2813,10 @@ const DISCLAIMER_VERSION='1.0';
 // weapons with the arrows, then press EQUIP to lock it in. The "equipped"
 // weapon is the one considered loaded for fire. This persists to localStorage.
 function toggleEquip(){
+  if(!isSetupComplete()){
+    alert('Select a launcher and projectile before equipping.');
+    return;
+  }
   let justEquipped=false;
   if(equippedPlatform===platformKey){
     equippedPlatform=null;
@@ -2897,6 +2920,7 @@ function captureLoadout(){
   };
 }
 function saveLoadoutDraft(){
+  if(!isSetupComplete())return; // don't save incomplete setup
   try{localStorage.setItem(LS_LOADOUT,JSON.stringify(captureLoadout()));}catch(e){}
 }
 function loadLoadoutDraft(){
@@ -2978,13 +3002,25 @@ function onImportLoadout(){
 function initPlatformOptions(){
   const sel=document.getElementById('c-launcher');
   sel.innerHTML='';
+  // Placeholder — forces user to explicitly choose a launcher
+  const ph=document.createElement('option');
+  ph.value='';ph.textContent='— SELECT LAUNCHER —';ph.disabled=true;
+  sel.appendChild(ph);
   Object.keys(PLATFORMS).forEach(k=>{
     const p=PLATFORMS[k];
     const o=document.createElement('option');
     o.value=k;o.textContent=p.name;
     sel.appendChild(o);
   });
-  sel.value=platformKey;
+  sel.value=platformKey||'';
+}
+// Returns true when user has explicitly chosen both launcher and projectile
+function isSetupComplete(){
+  const launcher=document.getElementById('c-launcher');
+  const round=document.getElementById('c-round');
+  if(!launcher||launcher.value==='')return false;
+  if(!round||round.value==='')return false;
+  return true;
 }
 
 function getCurrentPlatform(){return PLATFORMS[platformKey];}
@@ -3289,7 +3325,9 @@ function getCurrentStockRange(){
 }
 
 function onPlatformChange(skipModClear){
-  platformKey=document.getElementById('c-launcher').value;
+  const newKey=document.getElementById('c-launcher').value;
+  if(!newKey||!PLATFORMS[newKey])return; // guard against placeholder
+  platformKey=newKey;
   const p=getCurrentPlatform();
   // Clear ALL mods when user manually switches platforms.
   // Skip when loading a preset — preset has the correct mod set saved.
@@ -3350,6 +3388,7 @@ function onPlatformChange(skipModClear){
   updateEquipUI();
   saveLoadoutDraft();
   calcUpdate();
+  updateHeroPanel();
 }
 
 function onVersionChange(){
@@ -3779,6 +3818,10 @@ function applyPresetState(p){
 }
 
 function savePresetFromInput(){
+  if(!isSetupComplete()){
+    alert('Select a launcher and projectile before saving a loadout.');
+    return;
+  }
   const inp=document.getElementById('c-preset-name');
   const name=(inp.value||'').trim();
   if(!name){inp.focus();return;}
@@ -4543,12 +4586,22 @@ function setStatBar(fillId,valId,pct){
 }
 
 function renderWeaponVisual(){
-  const p=getCurrentPlatform();
+  const setupDone=isSetupComplete();
+  const p=setupDone?getCurrentPlatform():null;
   const img=document.getElementById('hero-weapon-image');
   const empty=document.getElementById('hero-weapon-empty');
   const status=document.getElementById('hero-visual-status');
   const meta=document.getElementById('hero-visual-meta');
   if(!img||!empty||!status||!meta)return;
+  if(!setupDone){
+    img.removeAttribute('src');
+    img.style.display='none';
+    empty.style.display='block';
+    status.textContent='AWAITING SELECTION';
+    status.className='visual-tag warn';
+    meta.textContent='SELECT LAUNCHER & PROJECTILE TO BEGIN';
+    return;
+  }
   let src=PLATFORM_IMAGES[platformKey]||'';
   if(!src && (platformKey==='m17g3'||platformKey==='t17')) src=PLATFORM_IMAGES.milsig||PLATFORM_IMAGES.m17||'';
   if(src){
@@ -4588,23 +4641,32 @@ function cyclePlatform(dir){
 }
 
 function updateHeroPanel(){
-  const p=getCurrentPlatform();
-  const stats=computeStats();
+  const setupDone=isSetupComplete();
+  const p=setupDone?getCurrentPlatform():null;
+  const stats=setupDone?computeStats():{damage:0,accuracy:0,capacity:0,reliability:0,effRange:0,midJ:0};
   // Weapon name + sub
   const nameEl=document.getElementById('hero-weapon');
   const subEl =document.getElementById('hero-weapon-sub');
   const frameTitle=document.getElementById('visual-frame-title');
   if(nameEl){
-    const activeP=presets.find(x=>x.id===activePresetId);
-    nameEl.textContent=(activeP?activeP.name:(p?p.name:'SELECT A PLATFORM')).toUpperCase();
+    if(!setupDone){
+      nameEl.textContent='SELECT A PLATFORM';
+    } else {
+      const activeP=presets.find(x=>x.id===activePresetId);
+      nameEl.textContent=(activeP?activeP.name:(p?p.name:'SELECT A PLATFORM')).toUpperCase();
+    }
   }
   if(frameTitle){
-    frameTitle.textContent=(p?p.name:'SELECT A PLATFORM').toUpperCase();
+    frameTitle.textContent=setupDone&&p?p.name.toUpperCase():'SELECT A PLATFORM';
   }
-  if(subEl&&p){
-    const [lo,hi]=getCurrentStockRange();
-    const gasLbl=(gasType==='co2')?(gasSize.toUpperCase()+' CO2'):('HPA '+gasSizeHPA.toUpperCase());
-    subEl.textContent='STOCK '+lo+'–'+hi+'J · '+gasLbl+' · EST '+(stats.midJ||'—')+'J';
+  if(subEl){
+    if(!setupDone){
+      subEl.textContent='Choose launcher & projectile to begin';
+    } else if(p){
+      const [lo,hi]=getCurrentStockRange();
+      const gasLbl=(gasType==='co2')?(gasSize.toUpperCase()+' CO2'):('HPA '+gasSizeHPA.toUpperCase());
+      subEl.textContent='STOCK '+lo+'–'+hi+'J · '+gasLbl+' · EST '+(stats.midJ||'—')+'J';
+    }
   }
   // Stat bars
   setStatBar('stat-damage-fill','stat-damage-val',stats.damage);
@@ -4615,18 +4677,22 @@ function updateHeroPanel(){
   renderWeaponVisual();
   // Action button labels
   const bhP=document.getElementById('bh-platform-val');
-  if(bhP)bhP.textContent=p?p.name.replace(/^(Umarex|Valken|NXWerks|Defense Innovations|DI|Mercury Rise|Milsig)\s*/i,''):'—';
+  if(bhP)bhP.textContent=p?p.name.replace(/^(Umarex|Valken|NXWerks|Defense Innovations|DI|Mercury Rise|Milsig)\s*/i,''):'SELECT';
   const bhM=document.getElementById('bh-mods-val');
   if(bhM){
-    const n=selMods.size;
-    bhM.textContent=n===0?'STOCK':(n+' INSTALLED');
+    if(!setupDone){bhM.textContent='—';}
+    else{const n=selMods.size;bhM.textContent=n===0?'STOCK':(n+' INSTALLED');}
   }
   const bhG=document.getElementById('bh-gas-val');
-  if(bhG)bhG.textContent=(gasType==='co2')?(gasSize+' CO2'):('HPA '+gasSizeHPA);
+  if(bhG)bhG.textContent=setupDone?(gasType==='co2')?(gasSize+' CO2'):('HPA '+gasSizeHPA):'—';
   const bhR=document.getElementById('bh-round-val');
   if(bhR){
     const rSel=document.getElementById('c-round');
-    bhR.textContent=rSel&&rSel.selectedOptions[0]?rSel.selectedOptions[0].textContent.split(' ')[0]:'.68 CAL';
+    if(!setupDone||!rSel||rSel.value===''){
+      bhR.textContent='SELECT';
+    } else {
+      bhR.textContent=rSel.selectedOptions[0]?rSel.selectedOptions[0].textContent.split(' ')[0]:'.68 CAL';
+    }
   }
   // Active session label (top bar)
   const actLbl=document.getElementById('active-session-name');
@@ -5006,8 +5072,8 @@ function calculateTIS(){
   const heroActive=document.getElementById('tis-hero-active');
   const inlineEl=document.getElementById('tis-inline');
 
-  // Null state — no platform selected
-  if(!p||!platformKey||platformKey==='custom'){
+  // Null state — no platform selected or setup incomplete
+  if(!p||!platformKey||platformKey==='custom'||!isSetupComplete()){
     setTisNull(true);
     return;
   }
@@ -5592,7 +5658,11 @@ function initApp(){
     if(activeP){
       applyPresetState(activeP.state);
     } else {
-      onPlatformChange();
+      // Fresh load — keep placeholders, force user to choose
+      const lSel=document.getElementById('c-launcher');
+      const rSel=document.getElementById('c-round');
+      if(lSel)lSel.selectedIndex=0; // placeholder
+      if(rSel)rSel.selectedIndex=0; // placeholder
     }
   }
   renderPresetList();
