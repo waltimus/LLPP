@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:;">
+
 <title>[SLATE] System for Less-lethal Assessment & Training Evaluation</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;500&display=swap" rel="stylesheet">
@@ -4189,32 +4189,6 @@ function toggleDoctrine(){
   if(tg)tg.textContent = open ? '▲' : '▼';
 }
 
-function logShot(){
-  const muzzle=parseFloat(document.getElementById('l-muzzle').value)||0;
-  const dist=parseFloat(document.getElementById('l-dist').value)||0;
-  const impact=muzzle>0&&dist>0?calcImpact(muzzle,dist):0;
-  const entry={
-    ts:Date.now(),
-    launcher:document.getElementById('l-launcher').value,
-    round:document.getElementById('l-round').value,
-    muzzle,dist,impact:+impact.toFixed(1),
-    medium:document.getElementById('l-medium').value||'—',
-    mods:document.getElementById('l-mods').value||'—',
-    notes:document.getElementById('l-notes').value.trim(),
-    time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),
-    presetId:null,
-  };
-  sessionLog.unshift(entry);
-  saveSessionLog();
-  ['l-muzzle','l-dist','l-medium','l-mods','l-notes'].forEach(id=>document.getElementById(id).value='');
-  renderLog();updateCharts();
-}
-function clearLog(){
-  if(!confirm('Clear session log? Preset shot histories are preserved.'))return;
-  sessionLog=[];
-  saveSessionLog();
-  renderLog();updateCharts();
-}
 function clearAnalytics(){
   const sel=document.getElementById('ana-weapon-filter');
   const val=sel?sel.value:'__all__';
@@ -4241,6 +4215,7 @@ function clearAnalytics(){
 }
 function renderLog(){
   const el=document.getElementById('l-entries');
+  if(!el)return;
   if(!sessionLog.length){el.innerHTML='<div class="empty">— no shots logged —</div>';return;}
   el.innerHTML=sessionLog.map(e=>{
     const impStr=e.impact>0?e.impact.toFixed(1)+'J':'?';
