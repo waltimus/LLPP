@@ -1184,6 +1184,16 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
           </div>
         </div>
 
+        <div class="modal-section">
+          <div class="modal-section-hdr">FIRE CADENCE</div>
+          <div class="gas-tabs" id="cadence-tabs">
+            <div class="gas-tab" id="cad-rapid" onclick="onCadenceChange('rapid')">RAPID</div>
+            <div class="gas-tab active" id="cad-controlled" onclick="onCadenceChange('controlled')">CONTROLLED</div>
+            <div class="gas-tab" id="cad-deliberate" onclick="onCadenceChange('deliberate')">DELIBERATE</div>
+          </div>
+          <div class="sub-note" id="cadence-note" style="margin-top:8px;">Controlled cadence (1–2s between shots). Default for trained engagement scoring. CO2 platforms experience thermal degradation at faster cadences.</div>
+        </div>
+
         <!-- CO2 wrap: bottle size grid + temp slider -->
         <div id="gas-co2-wrap" style="display:none;">
           <div class="modal-section">
@@ -2198,6 +2208,61 @@ const HPA_BOTTLES=[
   {id:'48ci', label:'48ci', ci:48, shotsRef:450, desc:'Full-size tank. Heavy; long-range sessions or rifle setups.'}
 ];
 
+// CO2 thermal degradation curves — per-shot multipliers at rapid cadence (<1s).
+// At controlled cadence (1–2s), interpolate halfway between rapid and 1.0.
+// At deliberate cadence (>2s), assume full recovery → all 1.0.
+// HPA is always 1.0 regardless of cadence.
+const CO2_DEGRADATION={
+  '12g-single':[1.00,0.88],
+  '12g-dual':  [1.00,0.92,0.86,0.83,0.83],
+  '88g':       [1.00,0.95,0.91,0.88,0.86,0.85]
+};
+
+// --- CO2 degradation key for current platform & gas size ---
+function getCo2DegradationKey(pKey,gSize){
+  if(gSize==='88g') return '88g';
+  const p=PLATFORMS[pKey];
+  if(p&&p.co2Options&&p.co2Options.includes('12g-dual')) return '12g-dual';
+  return '12g-single';
+}
+
+// --- Compute effective volley energy after CO2 degradation ---
+// Returns {avgAdjJ, effectiveRounds, perShotAdjJ[]} for the given muzzle energy.
+// effectiveRounds excludes shots that drop below the 12J pain-compliance floor.
+function computeVolleyEnergy(muzzleJ,pKey,gType,gSize,cad,dist,clothMult,maxRounds){
+  const n=Math.max(1,maxRounds);
+  // HPA or deliberate cadence — no degradation
+  if(gType==='hpa'||cad==='deliberate'){
+    const impJ=calcImpact(muzzleJ,dist)*clothMult;
+    return {avgAdjJ:impJ,effectiveRounds:impJ>=12?n:0,perShotAdjJ:Array(n).fill(impJ)};
+  }
+  const key=getCo2DegradationKey(pKey,gSize);
+  const curve=CO2_DEGRADATION[key]||[1.0];
+  const perShot=[];
+  let sumAdj=0,effCount=0;
+  for(let i=0;i<n;i++){
+    const rapidMult=(i<curve.length)?curve[i]:curve[curve.length-1];
+    const mult=(cad==='rapid')?rapidMult:(1+rapidMult)/2; // controlled = halfway
+    const shotMuzzle=muzzleJ*mult;
+    const shotAdj=calcImpact(shotMuzzle,dist)*clothMult;
+    perShot.push(shotAdj);
+    sumAdj+=shotAdj;
+    if(shotAdj>=12) effCount++;
+  }
+  return {avgAdjJ:n>0?sumAdj/n:0,effectiveRounds:effCount,perShotAdjJ:perShot};
+}
+
+// --- Capacity risk penalty ---
+// Low-capacity platforms at sub-threshold energy receive a ceiling penalty.
+// A miss or malfunction on a 2-shot platform is categorically worse.
+function capacityRiskPenalty(adjJ,effectiveRounds){
+  if(adjJ>=50) return 0;
+  if(effectiveRounds<=1) return 15;
+  if(effectiveRounds<=2) return 10;
+  if(effectiveRounds<=3) return 5;
+  return 0;
+}
+
 // ============================================================
 // STAT MODEL — Pip-Boy / Mass Effect style live stat bars
 // ============================================================
@@ -2705,6 +2770,7 @@ let platformKey='x68';
 let platformVersion='perf';          // only used when platform has versions
 let customBaseline={low:20,high:30}; // only used when platform.customBaseline
 let gasType='co2';                   // 'co2' | 'hpa'
+let cadence='controlled';            // 'rapid' | 'controlled' | 'deliberate'
 let tempF=70;
 let psi=800;
 let modCfg={bore:0.687,barrelLen:11,customName:'',customDelta:0};
@@ -2814,6 +2880,7 @@ function captureLoadout(){
     version:platformVersion,
     customBaseline:customBaseline,
     gasType:gasType,
+    cadence:cadence,
     tempF:tempF,
     psi:psi,
     modCfg:modCfg,
@@ -2845,6 +2912,7 @@ function applyLoadout(s){
   if(s.version)platformVersion=s.version;
   if(s.customBaseline)customBaseline=s.customBaseline;
   if(s.gasType)gasType=s.gasType;
+  if(s.cadence&&['rapid','controlled','deliberate'].includes(s.cadence))cadence=s.cadence;
   if(typeof s.tempF==='number')tempF=s.tempF;
   if(typeof s.psi==='number')psi=s.psi;
   if(s.modCfg)modCfg={...modCfg,...s.modCfg};
@@ -3319,8 +3387,34 @@ function onGasChange(type){
   if(type==='hpa'&&!(p.gas.includes('hpa')||(platformKey==='hdr68'&&selMods.has('hdr_hpa'))))return;
   gasType=type;
   applyGasTabs();
+  applyCadenceTabs();
   renderModStack();
   calcUpdate();
+}
+
+function onCadenceChange(cad){
+  cadence=cad;
+  applyCadenceTabs();
+  calcUpdate();
+}
+
+function applyCadenceTabs(){
+  const tabs=['rapid','controlled','deliberate'];
+  tabs.forEach(t=>{
+    const el=document.getElementById('cad-'+t);
+    if(el) el.classList.toggle('active',cadence===t);
+  });
+  const note=document.getElementById('cadence-note');
+  if(!note) return;
+  if(gasType==='hpa'){
+    note.textContent='HPA propellant — no thermal degradation at any cadence. Cadence setting has no effect on scoring.';
+  } else if(cadence==='rapid'){
+    note.textContent='Rapid cadence (<1s between shots). Full CO2 thermal degradation applied. Later shots in the volley lose significant energy as the cartridge cools under rapid gas draw.';
+  } else if(cadence==='controlled'){
+    note.textContent='Controlled cadence (1–2s between shots). Default for trained engagement scoring. CO2 degradation at 50% of rapid curve — partial thermal recovery between shots.';
+  } else {
+    note.textContent='Deliberate cadence (>2s between shots). Full CO2 recovery assumed — no thermal degradation. Only realistic for slow, methodical engagement.';
+  }
 }
 
 function onTempChange(){
@@ -3640,7 +3734,7 @@ function saveSessionLog(){
 function capturePresetState(){
   return {
     platformKey,platformVersion,customBaseline:{...customBaseline},
-    gasType,gasSize,gasSizeHPA,tempF,psi,
+    gasType,cadence,gasSize,gasSizeHPA,tempF,psi,
     modCfg:{...modCfg},
     mods:[...selMods],
     fps:parseInt(document.getElementById('c-fps').value)||0,
@@ -3653,6 +3747,7 @@ function applyPresetState(p){
   platformVersion=p.platformVersion||'perf';
   customBaseline={...(p.customBaseline||{low:20,high:30})};
   gasType=p.gasType||'co2';
+  cadence=p.cadence||'controlled';
   gasSize=p.gasSize||'12g';
   gasSizeHPA=p.gasSizeHPA||'9ci';
   tempF=p.tempF||70;
@@ -3674,6 +3769,7 @@ function applyPresetState(p){
   if(p.fps)document.getElementById('c-fps').value=p.fps;
   onPlatformChange(true); // skip mod clear — preset already has correct mods
   if(typeof renderGasBottles==='function')renderGasBottles();
+  if(typeof applyCadenceTabs==='function')applyCadenceTabs();
 }
 
 function savePresetFromInput(){
@@ -4577,13 +4673,13 @@ function scoreEnergy(j){
 //   40J = pain-compliance floor (above paintball, below reliable clothing defeat)
 //   12-17J = standard paintball band (mark only, no deterrence value)
 function energyCeiling(adjJ,volleyCount){
-  const v=Math.max(1,Math.min(10,volleyCount));
-  const volBonus=Math.log2(v)*10;
+  const v=Math.max(1,Math.min(volleyCount||1,10));
+  const volleyBonus=v>1?Math.round(10*Math.log2(v)):0;
   if(adjJ>=50) return 100;
-  if(adjJ>=40) return Math.min(72,Math.round(58+volBonus));
-  if(adjJ>=25) return Math.min(58,Math.round(42+volBonus));
-  if(adjJ>=12) return Math.min(40,Math.round(28+volBonus));
-  return Math.min(18,Math.round(10+volBonus));
+  if(adjJ>=40) return Math.min(72,58+volleyBonus);
+  if(adjJ>=25) return Math.min(58,42+volleyBonus);
+  if(adjJ>=12) return Math.min(40,28+volleyBonus);
+  return Math.min(18,10+volleyBonus);
 }
 
 // --- Gas consistency baseline ---
@@ -4938,12 +5034,20 @@ function calculateTIS(){
   });
   const shotStats=computeShotStringStats(validShots);
 
+  // --- Effective round count (platform hard caps) ---
+  const effectiveRounds=platformKey==='hds68'?2:Math.min(magSize,p.mag||6);
+  const gSize=gType==='co2'?gasSize:'';
+
   // ================ STAGE 1: PREDICTED ================
   // Built purely from mod stack + platform baseline. No shot data considered.
   const stack=computeModStack();
   const predMuzzleJ=stack.mid||0;
-  const predImpactJ=calcImpact(predMuzzleJ,dist);
-  const predAdjJ=predImpactJ*clothMult;
+  const predImpactJ=calcImpact(predMuzzleJ,dist); // raw impact (display only)
+
+  // CO2 thermal degradation — compute effective volley average
+  const predVolley=computeVolleyEnergy(predMuzzleJ,platformKey,gType,gSize,cadence,dist,clothMult,effectiveRounds);
+  const predAdjJ=predVolley.avgAdjJ;
+  const predEffRounds=predVolley.effectiveRounds;
 
   const predFE=scoreEnergy(predAdjJ);
 
@@ -4963,19 +5067,23 @@ function calculateTIS(){
   const predFF=getFollowUpScore(predAdjJ,magSize,platformKey);
 
   const predRaw=(predFE*0.35)+(fP*0.20)+(predFC*0.20)+(predFF*0.15)+(fCtx*0.10);
-  const predCeil=energyCeiling(predAdjJ,Math.min(magSize,p.mag||6));
+  const rawCeilP=energyCeiling(predAdjJ,predEffRounds);
+  const predCeil=rawCeilP-capacityRiskPenalty(predAdjJ,predEffRounds);
   const predTIS=Math.max(0,Math.min(predCeil,Math.round(predRaw)));
 
   // ================ STAGE 2: VERIFIED ================
   // Driven by shot-string analytics. Only computed if we have real data.
   let verifTIS=null, verifFE=null, verifFC=null, verifFF=null, verifAdjJ=null;
+  let verifEffRounds=null;
   if(shotStats){
     // Effective muzzle/impact from the actual chrono data
-    const measuredImpactJ=shotStats.impAvg>0?shotStats.impAvg:calcImpact(shotStats.muzAvg,dist);
-    verifAdjJ=measuredImpactJ*clothMult;
+    const measuredMuzzleJ=shotStats.muzAvg||0;
+    // Apply degradation model to the measured muzzle average for consistent ceiling computation
+    const verifVolley=computeVolleyEnergy(measuredMuzzleJ,platformKey,gType,gSize,cadence,dist,clothMult,effectiveRounds);
+    verifAdjJ=verifVolley.avgAdjJ;
+    verifEffRounds=verifVolley.effectiveRounds;
 
-    // F_E verified — uses actual measured impact. Variance is penalized only
-    // in F_C below, NOT here (avoid double-counting same spread).
+    // F_E verified — uses degradation-aware average
     verifFE=scoreEnergy(verifAdjJ);
 
     // F_C verified — actual SD and decay from the string.
@@ -4992,7 +5100,8 @@ function calculateTIS(){
     verifFF=getFollowUpScore(verifAdjJ,magSize,platformKey);
 
     const verifRaw=(verifFE*0.35)+(fP*0.20)+(verifFC*0.20)+(verifFF*0.15)+(fCtx*0.10);
-    const verifCeil=energyCeiling(verifAdjJ,Math.min(magSize,p.mag||6));
+    const rawCeilV=energyCeiling(verifAdjJ,verifEffRounds);
+    const verifCeil=rawCeilV-capacityRiskPenalty(verifAdjJ,verifEffRounds);
     verifTIS=Math.max(0,Math.min(verifCeil,Math.round(verifRaw)));
   }
 
@@ -5129,16 +5238,25 @@ function calculateTIS(){
     html+=factorRow('Accuracy & Follow-Up (15%)',f4,100,followLabel+(platformKey==='hds68'?' · HDS 2-shot cap':''),f4>=70?'var(--pip)':f4>=50?'#e09940':'#e02020');
     html+=factorRow('Context Uncertainty (10%)',Math.round(f5),100,ctxLabel+' · penalty: −'+Math.round(ctxPen),f5>=70?'var(--pip)':f5>=50?'#e09940':'#e02020');
 
-    // Energy gate warning — show when energyCeiling < 100
+    // Energy gate warning — show when final ceiling < 100
     const dispAdjJ=(verifAdjJ!==null)?verifAdjJ:predAdjJ;
-    const dispVolley=Math.min(magSize,p.mag||6);
-    const dispCeil=energyCeiling(dispAdjJ,dispVolley);
-    if(dispCeil<100){
+    const dispEffR=(verifEffRounds!==null)?verifEffRounds:predEffRounds;
+    const dispRawCeil=energyCeiling(dispAdjJ,dispEffR);
+    const dispCapPen=capacityRiskPenalty(dispAdjJ,dispEffR);
+    const dispFinalCeil=dispRawCeil-dispCapPen;
+    if(dispFinalCeil<100){
       const thresholdLabel=dispAdjJ>=40?'below penetration threshold (50J)':dispAdjJ>=25?'below pain-compliance floor (40J)':dispAdjJ>=12?'paintball-class energy (12–25J)':'sub-paintball energy (<12J)';
-      const volleyNote=dispVolley>1?(' Volley capacity ('+dispVolley+') adds +'+Math.round(Math.log2(Math.max(1,Math.min(10,dispVolley)))*10)+' pts of ceiling headroom.'):'';
+      const volleyBonus=dispEffR>1?Math.round(10*Math.log2(Math.max(1,Math.min(10,dispEffR)))):0;
+      let detailParts=[];
+      detailParts.push('Per-round adjusted energy ('+dispAdjJ.toFixed(1)+'J) is '+thresholdLabel+'.');
+      if(dispEffR>1) detailParts.push('Effective volley ('+dispEffR+' rounds above 12J floor) adds +'+volleyBonus+' pts ceiling headroom.');
+      else detailParts.push('Single effective round — no volley bonus.');
+      if(dispCapPen>0) detailParts.push('Capacity risk penalty: −'+dispCapPen+' ('+effectiveRounds+'-round platform at sub-threshold energy).');
+      if(gType==='co2'&&cadence!=='deliberate') detailParts.push('CO2 thermal degradation applied at '+cadence+' cadence.');
+      detailParts.push('Hardware quality, platform consistency, and follow-up capacity cannot offset insufficient per-round kinetic energy.');
       html+='<div style="margin:14px 0;padding:12px 14px;border:1px solid rgba(224,32,32,0.5);background:rgba(224,32,32,0.08);border-left:3px solid #e02020;">'
-        +'<div style="font-family:\'Orbitron\',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.14em;color:#e02020;margin-bottom:6px;">⛔ ENERGY GATE ACTIVE — SCORE CAPPED AT '+dispCeil+'</div>'
-        +'<div style="font-family:\'Share Tech Mono\',monospace;font-size:12px;color:var(--bright);line-height:1.6;">Per-round adjusted energy ('+dispAdjJ.toFixed(1)+'J) is '+thresholdLabel+'. Hardware quality, platform consistency, and follow-up capacity cannot offset insufficient per-round kinetic energy. Score is hard-capped regardless of other factor performance.'+volleyNote+'</div>'
+        +'<div style="font-family:\'Orbitron\',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.14em;color:#e02020;margin-bottom:6px;">⛔ ENERGY GATE ACTIVE — SCORE CAPPED AT '+dispFinalCeil+'</div>'
+        +'<div style="font-family:\'Share Tech Mono\',monospace;font-size:12px;color:var(--bright);line-height:1.6;">'+detailParts.join(' ')+'</div>'
         +'</div>';
     }
 
@@ -5442,6 +5560,7 @@ function initApp(){
   }
   renderPresetList();
   renderGasBottles();
+  applyCadenceTabs();
   renderLog();
   renderHarmBriefing();
   updateCharts();
