@@ -4551,35 +4551,39 @@ function detectSeason(){
 }
 
 // --- Energy band scoring (post-clothing) ---
+// Below 40J, values are gated to reflect realistic pain-compliance-only territory.
 function scoreEnergy(j){
   if(j>=100)return 98; if(j>=85)return 93; if(j>=75)return 87;
   if(j>=60)return 78; if(j>=50)return 68; if(j>=40)return 56;
-  if(j>=30)return 44; if(j>=25)return 32; if(j>=20)return 22;
-  if(j>=15)return 14; if(j>=10)return 8; return 3;
+  if(j>=30)return 38; if(j>=20)return 24; if(j>=10)return 12; return 4;
 }
 
-// --- Energy adequacy multiplier ---
-// Kinetic energy is the prerequisite for all other factors. Below the doctrine
-// floor (~25 J for .68 cal) the entire composite is progressively suppressed
-// because consistency, follow-up, and projectile selection become academically
-// irrelevant when each round lacks the energy for pain compliance.
-//   50 J+  = fully adequate, no suppression
-//   40-49  = slightly below optimal but still effective
-//   30-39  = below doctrine floor, marginal deterrence through pain
-//   25-29  = threshold zone, pain compliance uncertain on most subjects
-//   20-24  = paintball+ energy, psychological deterrence only
-//   15-19  = stock paintball energy, minimal physical effect
-//   10-14  = sub-paintball, nearly ineffective
-//   <10    = negligible kinetic contribution
-function energyFloorMult(j){
-  if(j>=50) return 1.0;
-  if(j>=40) return 0.90;
-  if(j>=30) return 0.78;
-  if(j>=25) return 0.65;
-  if(j>=20) return 0.50;
-  if(j>=15) return 0.38;
-  if(j>=10) return 0.26;
-  return 0.15;
+// --- Energy ceiling ---
+// Hard maximum TIS based on per-round adjusted joules at distance and volley
+// capacity. Below 50J a single round cannot reliably defeat clothing or produce
+// reliable neuromuscular disruption. Multiple rounds compound disruption
+// logarithmically (cumulative tissue trauma + psychological pressure) but cannot
+// fully substitute for per-round penetration physics.
+//
+//   50J+   → ceiling 100 (no gate)
+//   40-50J → ceiling 58 + log₂(volley) × 10, cap 72
+//   25-40J → ceiling 42 + log₂(volley) × 10, cap 58
+//   12-25J → ceiling 28 + log₂(volley) × 10, cap 40
+//   <12J   → ceiling 10 + log₂(volley) × 10, cap 18
+//
+// volleyCount clamped [1,10]. log₂(1) = 0 so single-shot platforms get no bonus.
+// Key thresholds:
+//   50J = sheet-pan penetration threshold (empirically validated stopping power)
+//   40J = pain-compliance floor (above paintball, below reliable clothing defeat)
+//   12-17J = standard paintball band (mark only, no deterrence value)
+function energyCeiling(adjJ,volleyCount){
+  const v=Math.max(1,Math.min(10,volleyCount));
+  const volBonus=Math.log2(v)*10;
+  if(adjJ>=50) return 100;
+  if(adjJ>=40) return Math.min(72,Math.round(58+volBonus));
+  if(adjJ>=25) return Math.min(58,Math.round(42+volBonus));
+  if(adjJ>=12) return Math.min(40,Math.round(28+volBonus));
+  return Math.min(18,Math.round(10+volBonus));
 }
 
 // --- Gas consistency baseline ---
@@ -4958,8 +4962,9 @@ function calculateTIS(){
 
   const predFF=getFollowUpScore(predAdjJ,magSize,platformKey);
 
-  const predRawBase=(predFE*0.35)+(fP*0.20)+(predFC*0.20)+(predFF*0.15)+(fCtx*0.10);
-  const predTIS=Math.max(0,Math.min(100,predRawBase*energyFloorMult(predAdjJ)));
+  const predRaw=(predFE*0.35)+(fP*0.20)+(predFC*0.20)+(predFF*0.15)+(fCtx*0.10);
+  const predCeil=energyCeiling(predAdjJ,Math.min(magSize,p.mag||6));
+  const predTIS=Math.max(0,Math.min(predCeil,Math.round(predRaw)));
 
   // ================ STAGE 2: VERIFIED ================
   // Driven by shot-string analytics. Only computed if we have real data.
@@ -4986,8 +4991,9 @@ function calculateTIS(){
 
     verifFF=getFollowUpScore(verifAdjJ,magSize,platformKey);
 
-    const verifRawBase=(verifFE*0.35)+(fP*0.20)+(verifFC*0.20)+(verifFF*0.15)+(fCtx*0.10);
-    verifTIS=Math.max(0,Math.min(100,verifRawBase*energyFloorMult(verifAdjJ)));
+    const verifRaw=(verifFE*0.35)+(fP*0.20)+(verifFC*0.20)+(verifFF*0.15)+(fCtx*0.10);
+    const verifCeil=energyCeiling(verifAdjJ,Math.min(magSize,p.mag||6));
+    verifTIS=Math.max(0,Math.min(verifCeil,Math.round(verifRaw)));
   }
 
   // ================ BLEND ================
@@ -5122,6 +5128,20 @@ function calculateTIS(){
     html+=factorRow('Platform Consistency (20%)',f3,100,gasLabel+(getColdMod(gType,tempF,platformKey)<0?' · cold penalty applied':''),f3>=70?'var(--pip)':f3>=50?'#e09940':'#e02020');
     html+=factorRow('Accuracy & Follow-Up (15%)',f4,100,followLabel+(platformKey==='hds68'?' · HDS 2-shot cap':''),f4>=70?'var(--pip)':f4>=50?'#e09940':'#e02020');
     html+=factorRow('Context Uncertainty (10%)',Math.round(f5),100,ctxLabel+' · penalty: −'+Math.round(ctxPen),f5>=70?'var(--pip)':f5>=50?'#e09940':'#e02020');
+
+    // Energy gate warning — show when energyCeiling < 100
+    const dispAdjJ=(verifAdjJ!==null)?verifAdjJ:predAdjJ;
+    const dispVolley=Math.min(magSize,p.mag||6);
+    const dispCeil=energyCeiling(dispAdjJ,dispVolley);
+    if(dispCeil<100){
+      const thresholdLabel=dispAdjJ>=40?'below penetration threshold (50J)':dispAdjJ>=25?'below pain-compliance floor (40J)':dispAdjJ>=12?'paintball-class energy (12–25J)':'sub-paintball energy (<12J)';
+      const volleyNote=dispVolley>1?(' Volley capacity ('+dispVolley+') adds +'+Math.round(Math.log2(Math.max(1,Math.min(10,dispVolley)))*10)+' pts of ceiling headroom.'):'';
+      html+='<div style="margin:14px 0;padding:12px 14px;border:1px solid rgba(224,32,32,0.5);background:rgba(224,32,32,0.08);border-left:3px solid #e02020;">'
+        +'<div style="font-family:\'Orbitron\',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.14em;color:#e02020;margin-bottom:6px;">⛔ ENERGY GATE ACTIVE — SCORE CAPPED AT '+dispCeil+'</div>'
+        +'<div style="font-family:\'Share Tech Mono\',monospace;font-size:12px;color:var(--bright);line-height:1.6;">Per-round adjusted energy ('+dispAdjJ.toFixed(1)+'J) is '+thresholdLabel+'. Hardware quality, platform consistency, and follow-up capacity cannot offset insufficient per-round kinetic energy. Score is hard-capped regardless of other factor performance.'+volleyNote+'</div>'
+        +'</div>';
+    }
+
     html+='<hr class="tis-divider">';
     html+='<div class="tis-factor-row"><div class="tis-factor-label" style="color:var(--bright);font-weight:700;font-size:15px;">WEIGHTED TIS</div><div class="tis-factor-val" style="font-size:22px;color:'+bandColor(tisBand.cls)+';">'+tis+'</div></div>';
     html+='<div class="tis-factor-note" style="margin-bottom:8px;font-size:13px;">'+tisBand.label+'</div>';
